@@ -4,8 +4,7 @@ CXXFLAGS	= -Wall -Werror -Wextra -g -std=c++98
 
 NAME 		= container_test
 
-SRCS		= main.cpp \
-				vector.tpp 
+SRCS		= main.cpp
 
 INCL		= vector.hpp
 
