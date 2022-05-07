@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/06 17:16:07 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 22:55:52 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,27 @@ int	main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	std::cout << "\e[7m===========ITERATOR==================\e[0m" << std::endl;
+	{
+		try
+		{
+			ft::vector<int> test(10);
+
+			int i = 0;
+			for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it) {
+				*it = i++;
+			}
+			i = 0;
+			for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it) {
+				std::cout << i << ": " << test[i] << std::endl;
+				i++;
+			}
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+	
 	return (0);
 }

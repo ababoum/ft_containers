@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 19:15:03 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 23:05:51 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,30 @@
 
 namespace ft {
 
-	// template< class Iter > struct iterator_traits;
-	// template< class T > struct iterator_traits<T*>;
-	// template< class T > struct iterator_traits<const T*>;
-
-	template< class Iter >
+	template< class T >
 	class reverse_iterator
 	{
-		typedef	Iter											iterator_type;
-		typedef	ft::iterator_traits<Iter>::iterator_category	iterator_category;
-		typedef	ft::iterator_traits<Iter>::value_type			value_type;
-		typedef	ft::iterator_traits<Iter>::difference_type		difference_type;
-		typedef	ft::iterator_traits<Iter>::pointer				current;
-		typedef	ft::iterator_traits<Iter>::reference			reference;
+		typedef	T													iterator_type;
+		typedef	typename ft::iterator_traits<T>::iterator_category	iterator_category;
+		typedef	typename ft::iterator_traits<T>::value_type			value_type;
+		typedef	typename ft::iterator_traits<T>::difference_type	difference_type;
+		typedef	typename ft::iterator_traits<T>::pointer			pointer;
+		typedef	typename ft::iterator_traits<T>::reference			reference;
 		
 		public:
 			/* CONSTRUCTORS */
 			reverse_iterator();										/* 1 */
-			explicit reverse_iterator( iterator_type x );			/* 2 */
+			explicit reverse_iterator( pointer x );					/* 2 */
 			template< class U >
 			reverse_iterator( const reverse_iterator<U>& other );	/* 3 */
 
 			/* MEMBER FUNCTIONS */
 			template< class U >
 			reverse_iterator& operator=( const reverse_iterator<U>& other );
-			iterator_type base() const;
+			pointer base() const;
 			reference operator*() const;
 			pointer operator->() const;
-			operator[]( difference_type n ) const;
+			value_type operator[]( difference_type n ) const;
 			reverse_iterator& operator++();
 			reverse_iterator& operator--();
 			reverse_iterator operator++( int );
@@ -57,32 +53,38 @@ namespace ft {
 
 			
 		protected:
-			iterator_type	current_;
+			pointer	current_;
 	};
 
-	template< class Iterator1, class Iterator2 >
-	bool operator==( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
-	template< class Iterator1, class Iterator2 >
-	bool operator!=( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
-	template< class Iterator1, class Iterator2 >
-	bool operator<( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
-	template< class Iterator1, class Iterator2 >
-	bool operator<=( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
-	template< class Iterator1, class Iterator2 >
-	bool operator>( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
-	template< class Iterator1, class Iterator2 >
-	bool operator>=( const ft::reverse_iterator<Iterator1>& lhs,
-		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class T1, class T2 >
+	bool operator==( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
+	template< class T1, class T2 >
+	bool operator!=( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
+	template< class T1, class T2 >
+	bool operator<( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
+	template< class T1, class T2 >
+	bool operator<=( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
+	template< class T1, class T2 >
+	bool operator>( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
+	template< class T1, class T2 >
+	bool operator>=( const ft::reverse_iterator<T1>& lhs,
+		const ft::reverse_iterator<T2>& rhs );
 
-	template< class Iter >
-	reverse_iterator<Iter> operator+( 
-		typename reverse_iterator<Iter>::difference_type n,
-		const reverse_iterator<Iter>& it );
+	template< class T >
+	reverse_iterator<T> operator+( 
+		typename reverse_iterator<T>::difference_type n,
+		const reverse_iterator<T>& it );
+	template< class Iterator >
+	typename reverse_iterator<Iterator>::difference_type operator-(
+		const reverse_iterator<Iterator>& lhs,
+		const reverse_iterator<Iterator>& rhs );
 }
 
 #include "reverse_iterator.tpp"
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/06 17:34:39 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 22:54:28 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ ft::vector<T, Allocator>::vector( InputIt first, InputIt last,
 }
 
 template< class T, class Allocator >					/* 6 */
-ft::vector<T, Allocator>::vector( const vector& other )
+ft::vector<T, Allocator>::vector( const ft::vector<T, Allocator>& other )
 {
 	*this = other;
 }
@@ -217,6 +217,27 @@ template< class T, class Allocator >
 const T*	ft::vector<T, Allocator>::data() const
 {
 	return (_array);
+}
+
+/*
+** -------------------------------- ELEMENT ACCESS ----------------------------
+*/
+
+template< class T, class Allocator >
+typename ft::vector<T, Allocator>::iterator ft::vector<T, Allocator>::begin()
+{
+	typename ft::vector<T, Allocator>::iterator it(_array);
+
+	return (it);
+}
+
+template< class T, class Allocator >
+typename ft::vector<T, Allocator>::iterator ft::vector<T, Allocator>::end()
+{
+	ft::vector<T, Allocator>::iterator it = begin();
+	for (size_type i = 0; i < _size; i++)
+		it++;
+	return (it);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:49:07 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 19:15:27 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 23:05:31 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,114 +14,120 @@
 
 namespace ft {
 
-	typedef	Iter											iterator_type;
-	typedef	ft::iterator_traits<Iter>::iterator_category	iterator_category;
-	typedef	ft::iterator_traits<Iter>::value_type			value_type;
-	typedef	ft::iterator_traits<Iter>::difference_type		difference_type;
-	typedef	ft::iterator_traits<Iter>::pointer				current;
-	typedef	ft::iterator_traits<Iter>::reference			reference;
-
 /*
 ** ------------------------------- CONSTRUCTORS -------------------------------
 */
 
-template< class Iter >					/* 1 */
-ft::reverse_iterator<Iter>::reverse_iterator();
+template< class T >					/* 1 */
+ft::reverse_iterator<T>::reverse_iterator()
 {
 	current_ = 0;
+}
+
+template< class T >					/* 2 */
+ft::reverse_iterator<T>::reverse_iterator(ft::reverse_iterator<T>::pointer x)
+{
+	current_ = x;
+}
+
+template< class T >					/* 3 */
+template< class U >
+ft::reverse_iterator<T>::reverse_iterator( const ft::reverse_iterator<U>& other )
+{
+	*this = other;
 }
 
 /*
 ** ----------------------------- MEMBER FUNCTIONS -----------------------------
 */
 
-template< class Iter >	
+template< class T >	
 template< class U >
-ft::reverse_iterator<Iter>& ft::reverse_iterator<Iter>::operator=( const reverse_iterator<U>& other )
+ft::reverse_iterator<T>& ft::reverse_iterator<T>::operator=( const reverse_iterator<U>& other )
 {
 	this->base() = other->base();
 	return (*this);
 }
 
-template< class Iter >
-iterator_type ft::reverse_iterator<Iter>::base() const
+template< class T >
+typename ft::reverse_iterator<T>::pointer ft::reverse_iterator<T>::base() const
 {
 	return (current_);
 }
 
-template< class Iter >
-reference ft::reverse_iterator<Iter>::operator*() const
+template< class T >
+typename ft::iterator_traits<T>::reference ft::reverse_iterator<T>::operator*() const
 {
-	Iter	tmp = current_;
+	T	tmp = current_;
 
 	return (*--tmp);
 }
 
-template< class Iter >
-pointer ft::reverse_iterator<Iter>::operator->() const
+template< class T >
+typename ft::iterator_traits<T>::pointer ft::reverse_iterator<T>::operator->() const
 {
-	return (std::addressof(operator*()));
+	return (&(operator*()));
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter>::operator[]( difference_type n ) const
+template< class T >
+typename ft::iterator_traits<T>::value_type ft::reverse_iterator<T>::operator[]( difference_type n ) const
 {
 	return (base()[-n - 1]);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator++()
+template< class T >
+ft::reverse_iterator<T>& ft::reverse_iterator<T>::operator++()
 {
 	--current_;
 	return (*this);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator--()
+template< class T >
+ft::reverse_iterator<T>& ft::reverse_iterator<T>::operator--()
 {
 	++current_;
 	return (*this);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter> t::reverse_iterator<Iter>::operator++(int)
+template< class T >
+ft::reverse_iterator<T> ft::reverse_iterator<T>::operator++(int)
 {
-	ft::reverse_iterator<Iter> tmp = *this;
+	ft::reverse_iterator<T> tmp = *this;
 
 	--current_;
 	return (tmp);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter> t::reverse_iterator<Iter>::operator--(int)
+template< class T >
+ft::reverse_iterator<T> ft::reverse_iterator<T>::operator--(int)
 {
-	ft::reverse_iterator<Iter> tmp = *this;
+	ft::reverse_iterator<T> tmp = *this;
 
 	++current_;
 	return (tmp);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter> t::reverse_iterator<Iter>::operator+( difference_type n ) const
+template< class T >
+ft::reverse_iterator<T> ft::reverse_iterator<T>::operator+( difference_type n ) const
 {
 	return (reverse_iterator(base() - n));
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter> t::reverse_iterator<Iter>::operator-( difference_type n ) const
+template< class T >
+ft::reverse_iterator<T> ft::reverse_iterator<T>::operator-( difference_type n ) const
 {
 	return (reverse_iterator(base() + n));
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator+=( difference_type n )
+template< class T >
+ft::reverse_iterator<T>& ft::reverse_iterator<T>::operator+=( difference_type n )
 {
 	current_ -= n;
 	return (*this);
 }
 
-template< class Iter >
-ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator-=( difference_type n )
+template< class T >
+ft::reverse_iterator<T>& ft::reverse_iterator<T>::operator-=( difference_type n )
 {
 	current_ += n;
 	return (*this);
@@ -131,61 +137,63 @@ ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator-=( difference_ty
 ** ----------------------------- NON-MEMBER FUNCTIONS -----------------------------
 */
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator==( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator==( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() == rhs.base());
 }
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator!=( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator!=( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() != rhs.base());
 }
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator<( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator<( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() < rhs.base());
 }
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator<=( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator<=( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() <= rhs.base());
 }
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator>( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator>( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() > rhs.base());
 }
 
-template< class Iter >
-template< class Iterator1, class Iterator2 >
-bool ft::reverse_iterator<Iter>::operator>=( const std::reverse_iterator<Iterator1>& lhs,
-	const std::reverse_iterator<Iterator2>& rhs )
+template< class T1, class T2 >
+bool operator>=( const std::reverse_iterator<T1>& lhs,
+	const std::reverse_iterator<T2>& rhs )
 {
 	return (lhs.base() >= rhs.base());
 }
 
-template< class Iter >
-reverse_iterator<Iter> operator+( 
-	typename reverse_iterator<Iter>::difference_type n,
-	const reverse_iterator<Iter>& it )
-	{
-		
-	}
+template< class T >
+reverse_iterator<T> operator+( 
+	typename reverse_iterator<T>::difference_type n,
+	const reverse_iterator<T>& it )
+{
+	return (reverse_iterator<T>(it.base() - n));
+}
+
+template< class T >
+typename reverse_iterator<T>::difference_type operator-(
+	const reverse_iterator<T>& lhs,
+	const reverse_iterator<T>& rhs )
+{
+	return (rhs.base() - lhs.base());
+}
 
 /* ************************************************************************** */
 } // namespace ft
