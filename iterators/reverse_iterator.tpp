@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:49:07 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 18:13:14 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 19:15:27 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,66 @@ ft::reverse_iterator<Iter>& t::reverse_iterator<Iter>::operator-=( difference_ty
 	current_ += n;
 	return (*this);
 }
+
+/*
+** ----------------------------- NON-MEMBER FUNCTIONS -----------------------------
+*/
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator==( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() == rhs.base());
+}
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator!=( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() != rhs.base());
+}
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator<( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() < rhs.base());
+}
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator<=( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() <= rhs.base());
+}
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator>( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() > rhs.base());
+}
+
+template< class Iter >
+template< class Iterator1, class Iterator2 >
+bool ft::reverse_iterator<Iter>::operator>=( const std::reverse_iterator<Iterator1>& lhs,
+	const std::reverse_iterator<Iterator2>& rhs )
+{
+	return (lhs.base() >= rhs.base());
+}
+
+template< class Iter >
+reverse_iterator<Iter> operator+( 
+	typename reverse_iterator<Iter>::difference_type n,
+	const reverse_iterator<Iter>& it )
+	{
+		
+	}
 
 /* ************************************************************************** */
 } // namespace ft

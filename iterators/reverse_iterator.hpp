@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 18:14:05 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 19:15:03 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,28 @@ namespace ft {
 	};
 
 	template< class Iterator1, class Iterator2 >
-	bool operator==( const std::reverse_iterator<Iterator1>& lhs,
-    	const std::reverse_iterator<Iterator2>& rhs );
-	
+	bool operator==( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class Iterator1, class Iterator2 >
+	bool operator!=( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class Iterator1, class Iterator2 >
+	bool operator<( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class Iterator1, class Iterator2 >
+	bool operator<=( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class Iterator1, class Iterator2 >
+	bool operator>( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+	template< class Iterator1, class Iterator2 >
+	bool operator>=( const ft::reverse_iterator<Iterator1>& lhs,
+		const ft::reverse_iterator<Iterator2>& rhs );
+
+	template< class Iter >
+	reverse_iterator<Iter> operator+( 
+		typename reverse_iterator<Iter>::difference_type n,
+		const reverse_iterator<Iter>& it );
 }
 
 #include "reverse_iterator.tpp"
