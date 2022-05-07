@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/06 17:37:44 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/07 16:35:06 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <iostream>
 # include <string>
+
+# include "iterators/iterators_traits.hpp"
 
 namespace ft {
 
@@ -39,8 +41,8 @@ class vector
 		typedef const value_type&							const_reference;
 		typedef typename Allocator::pointer					pointer;
 		typedef typename Allocator::const_pointer			const_pointer;
-		typedef ft::iterator_traits<It>::value_type			iterator;
-		typedef ft::iterator_traits<It>::const value_type	const_iterator;
+		typedef typename ft::iterator_traits<T*>::value_type			iterator;
+		typedef const typename ft::iterator_traits<T*>::value_type	const_iterator;
 		typedef ft::reverse_iterator<iterator>				reverse_iterator;
 		typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 		
