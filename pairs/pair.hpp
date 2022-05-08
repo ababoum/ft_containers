@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 23:16:43 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 23:27:00 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/08 17:15:54 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,27 +31,27 @@ namespace ft {
 
 		/* MEMBER FUNCTIONS */
 		pair& operator=( const pair& other );
-
-		private:
-			first_type		first;
-			second_type		second;
-	}
-
-	template< class T1, class T2 >
-	std::pair<T1,T2> make_pair( T1 t, T2 u );
+	
+		/* MEMBER OBJECTS */
+		first_type		first;
+		second_type		second;
+	};
 
 	template< class T1, class T2 >
-	bool operator==( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	pair<T1,T2> make_pair( T1 t, T2 u );
+
 	template< class T1, class T2 >
-	bool operator!=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	bool operator==( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
 	template< class T1, class T2 >
-	bool operator<( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	bool operator!=( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
 	template< class T1, class T2 >
-	bool operator<=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	bool operator<( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
 	template< class T1, class T2 >
-	bool operator>( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	bool operator<=( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
 	template< class T1, class T2 >
-	bool operator>=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs );
+	bool operator>( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
+	template< class T1, class T2 >
+	bool operator>=( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs );
 
 } // namespace ft
 

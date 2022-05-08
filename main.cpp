@@ -6,12 +6,17 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 22:55:52 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/08 19:42:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iomanip>
 #include <vector>
 #include "vector.hpp"
+#include "pairs/pair.hpp"
+#include "utils/is_integral.hpp"
+
+#define SHOW(...) std::cout << std::setw(35) << #__VA_ARGS__ << " == " << __VA_ARGS__ << std::endl;
 
 int	main(void)
 {
@@ -79,6 +84,44 @@ int	main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
-	
+	std::cout << "\e[7m===========PAIRS==================\e[0m" << std::endl;
+	{
+		try
+		{
+			std::cout << std::boolalpha;
+			
+			ft::pair<int, int>	pair_test;
+			ft::pair<int, int>	pair_test2(-10, 20);
+
+			pair_test = pair_test2;
+			std::cout << "test is equal to test2? " << (pair_test == pair_test2) <<std::endl;
+			pair_test2 = ft::make_pair<int, int>(-50, 100);
+			std::cout << "test is equal to test2? " << (pair_test == pair_test2) <<std::endl;
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+	std::cout << "\e[7m===========IS_INTEGRAL==============\e[0m" << std::endl;
+	{
+		try
+		{
+			std::cout << std::boolalpha;
+ 
+			SHOW( ft::is_integral<float>::value );
+			SHOW( ft::is_integral<int>::value );
+			SHOW( ft::is_integral<const int>::value );
+			SHOW( ft::is_integral<bool>::value );
+			SHOW( ft::is_integral<char>::value );
+			SHOW( ft::is_integral<long long>::value );
+			SHOW( ft::is_integral<std::string>::value );
+			
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
 	return (0);
 }
