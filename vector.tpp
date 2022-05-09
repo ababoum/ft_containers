@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 22:54:28 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 17:03:55 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ typedef std::size_t		size_type;
 */
 
 template< class T, class Allocator >					/* 1 */
-ft::vector<T, Allocator>::vector()
+vector<T, Allocator>::vector()
 {
 	_size = 0;
 	_capacity = 0;
@@ -29,7 +29,7 @@ ft::vector<T, Allocator>::vector()
 }
 
 template< class T, class Allocator >					/* 2 */
-ft::vector<T, Allocator>::vector( const Allocator& alloc )
+vector<T, Allocator>::vector( const Allocator& alloc )
 {
 	_size = 0;
 	_capacity = 0;
@@ -38,7 +38,7 @@ ft::vector<T, Allocator>::vector( const Allocator& alloc )
 }
 
 template< class T, class Allocator >					/* 3 */
-ft::vector<T, Allocator>::vector( size_type count,
+vector<T, Allocator>::vector( size_type count,
 			const T& value,
 			const Allocator& alloc)
 {
@@ -52,7 +52,7 @@ ft::vector<T, Allocator>::vector( size_type count,
 }
 
 template< class T, class Allocator >					/* 4 */
-ft::vector<T, Allocator>::vector( size_type count )
+vector<T, Allocator>::vector( size_type count )
 {
 	_size = count;
 	_capacity = count;
@@ -61,7 +61,7 @@ ft::vector<T, Allocator>::vector( size_type count )
 
 template< class T, class Allocator >					/* 5 */
 template< class InputIt >
-ft::vector<T, Allocator>::vector( InputIt first, InputIt last,
+vector<T, Allocator>::vector( InputIt first, InputIt last,
         	const Allocator& alloc)
 {
 	size_type	count = 0;
@@ -79,7 +79,7 @@ ft::vector<T, Allocator>::vector( InputIt first, InputIt last,
 }
 
 template< class T, class Allocator >					/* 6 */
-ft::vector<T, Allocator>::vector( const ft::vector<T, Allocator>& other )
+vector<T, Allocator>::vector( const vector<T, Allocator>& other )
 {
 	*this = other;
 }
@@ -89,7 +89,7 @@ ft::vector<T, Allocator>::vector( const ft::vector<T, Allocator>& other )
 */
 
 template< class T, class Allocator >
-ft::vector<T, Allocator>::~vector()
+vector<T, Allocator>::~vector()
 {
 	if (_array)
 		delete [] _array;
@@ -101,7 +101,7 @@ ft::vector<T, Allocator>::~vector()
 */
 
 template< class T, class Allocator >
-ft::vector<T, Allocator> &	ft::vector<T, Allocator>::operator=( const vector& other )
+vector<T, Allocator> &	vector<T, Allocator>::operator=( const vector& other )
 {
 	if (*this != other) {
 		if (_array)
@@ -117,7 +117,7 @@ ft::vector<T, Allocator> &	ft::vector<T, Allocator>::operator=( const vector& ot
 }
 
 template< class T, class Allocator >
-void ft::vector<T, Allocator>::assign( size_type count, const T& value )
+void vector<T, Allocator>::assign( size_type count, const T& value )
 {
 	if (_array)
 		delete [] _array;
@@ -129,7 +129,7 @@ void ft::vector<T, Allocator>::assign( size_type count, const T& value )
 
 template< class T, class Allocator >
 template< class InputIt>
-void ft::vector<T, Allocator>::assign( InputIt first, InputIt last )
+void vector<T, Allocator>::assign( InputIt first, InputIt last )
 {
 	if (_array)
 		delete [] _array;
@@ -146,7 +146,7 @@ void ft::vector<T, Allocator>::assign( InputIt first, InputIt last )
 }
 
 template< class T, class Allocator >
-Allocator ft::vector<T, Allocator>::get_allocator() const
+Allocator vector<T, Allocator>::get_allocator() const
 {
 	return (_allocator);
 }
@@ -156,7 +156,7 @@ Allocator ft::vector<T, Allocator>::get_allocator() const
 */
 
 template< class T, class Allocator >
-T&	ft::vector<T, Allocator>::at( size_type pos )
+T&	vector<T, Allocator>::at( size_type pos )
 {
 	if (!(pos < size()))
 		throw std::out_of_range("Specified position is out of range");
@@ -164,7 +164,7 @@ T&	ft::vector<T, Allocator>::at( size_type pos )
 }
 
 template< class T, class Allocator >
-const T&	ft::vector<T, Allocator>::at( size_type pos ) const
+const T&	vector<T, Allocator>::at( size_type pos ) const
 {
 	if (!(pos < size()))
 		throw std::out_of_range("Specified position is out of range");
@@ -172,99 +172,146 @@ const T&	ft::vector<T, Allocator>::at( size_type pos ) const
 }
 
 template< class T, class Allocator >
-T&	ft::vector<T, Allocator>::operator[]( size_type pos )
+T&	vector<T, Allocator>::operator[]( size_type pos )
 {
 	return (_array[pos]);
 }
 
 template< class T, class Allocator >
-const T&	ft::vector<T, Allocator>::operator[]( size_type pos ) const
+const T&	vector<T, Allocator>::operator[]( size_type pos ) const
 {
 	return (_array[pos]);
 }
 
 template< class T, class Allocator >
-T&	ft::vector<T, Allocator>::front()
+T&	vector<T, Allocator>::front()
 {
 	return ((*this)[0]);
 }
 
 template< class T, class Allocator >
-const T&	ft::vector<T, Allocator>::front() const
+const T&	vector<T, Allocator>::front() const
 {
 	return ((*this)[0]);
 }
 
 template< class T, class Allocator >
-T&	ft::vector<T, Allocator>::back()
+T&	vector<T, Allocator>::back()
 {
 	return ((*this)[this->size() - 1]);
 }
 
 template< class T, class Allocator >
-const T&	ft::vector<T, Allocator>::back() const
+const T&	vector<T, Allocator>::back() const
 {
 	return ((*this)[this->size() - 1]);
 }
 
 template< class T, class Allocator >
-T*	ft::vector<T, Allocator>::data()
+T*	vector<T, Allocator>::data()
 {
 	return (_array);
 }
 
 template< class T, class Allocator >
-const T*	ft::vector<T, Allocator>::data() const
+const T*	vector<T, Allocator>::data() const
 {
 	return (_array);
 }
 
 /*
-** -------------------------------- ELEMENT ACCESS ----------------------------
+** -------------------------------- ITERATORS ---------------------------------
 */
 
 template< class T, class Allocator >
-typename ft::vector<T, Allocator>::iterator ft::vector<T, Allocator>::begin()
+typename vector<T, Allocator>::iterator vector<T, Allocator>::begin()
 {
-	typename ft::vector<T, Allocator>::iterator it(_array);
+	typename vector<T, Allocator>::iterator it(_array);
 
 	return (it);
 }
 
 template< class T, class Allocator >
-typename ft::vector<T, Allocator>::iterator ft::vector<T, Allocator>::end()
+typename vector<T, Allocator>::const_iterator vector<T, Allocator>::begin() const
 {
-	ft::vector<T, Allocator>::iterator it = begin();
+	typename vector<T, Allocator>::const_iterator it(_array);
+
+	return (it);
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::iterator vector<T, Allocator>::end()
+{
+	typename vector<T, Allocator>::iterator it = begin();
 	for (size_type i = 0; i < _size; i++)
 		it++;
 	return (it);
 }
 
+template< class T, class Allocator >
+typename vector<T, Allocator>::const_iterator vector<T, Allocator>::end() const
+{
+	typename vector<T, Allocator>::const_iterator it = begin();
+	for (size_type i = 0; i < _size; i++)
+		it++;
+	return (it);
+}
 
+template< class T, class Allocator >
+typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rbegin()
+{
+	typename vector<T, Allocator>::reverse_iterator it(_array + _size - 1);
+
+	return (it);
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbegin() const
+{
+	typename vector<T, Allocator>::const_reverse_iterator it(_array + _size - 1);
+
+	return (it);
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend()
+{
+	typename vector<T, Allocator>::reverse_iterator it(_array - 1);
+
+	return (it);
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const
+{
+	typename vector<T, Allocator>::const_reverse_iterator it(_array - 1);
+
+	return (it);
+}
 /*
 ** --------------------------------- CAPACITY ---------------------------------
 */
 
 template< class T, class Allocator >
-bool ft::vector<T, Allocator>::empty() const
+bool vector<T, Allocator>::empty() const
 {
 	return (_size == 0);
 }
 
 template< class T, class Allocator >
-size_type ft::vector<T, Allocator>::size() const
+size_type vector<T, Allocator>::size() const
 {
 	return (_size);
 }
 
 template< class T, class Allocator >
-size_type ft::vector<T, Allocator>::max_size() const
+size_type vector<T, Allocator>::max_size() const
 {
 	return (std::distance(begin(), end()));
 }
 
 template< class T, class Allocator >
-void ft::vector<T, Allocator>::reserve( size_type new_cap )
+void vector<T, Allocator>::reserve( size_type new_cap )
 {
 	if (new_cap <= capacity())
 		return ;
@@ -283,14 +330,54 @@ void ft::vector<T, Allocator>::reserve( size_type new_cap )
 	_array = _allocator.allocate(_capacity);
 	for (size_type i = 0; i < _size; i++)
 		_array[i] = tmp_array[i];
+	
+	if (tmp_array)
+		delete [] tmp_array;
 }
 
 template< class T, class Allocator >
-size_type ft::vector<T, Allocator>::capacity() const
+size_type vector<T, Allocator>::capacity() const
 {
 	return (_capacity);
 }
 
+/*
+** -------------------------------- MODIFIERS ---------------------------------
+*/
+
+template< class T, class Allocator >
+void vector<T, Allocator>::clear()
+{
+	if (_array)
+		delete [] _array;
+	_size = 0;
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( 
+	typename vector<T, Allocator>::iterator pos, 
+	const T& value )
+{
+	if (_capacity == 0)
+		reserve(1);
+	if (_size == _capacity)
+		reserve(_size * 2);
+	
+	size_type i = 0;
+	while ( i < _size) {
+		if (*pos == _array[i++])
+			break ;
+	}
+	size_type anchor = i;
+	i = _size;
+	while ( i != anchor ) {
+		_array[i] = _array[i - 1];
+		i--;
+	}
+	_array[anchor] = value;
+	vector<T, Allocator>::iterator it(_array + anchor);
+	return (it);
+}
 
 /* ************************************************************************** */
 } // namespace ft

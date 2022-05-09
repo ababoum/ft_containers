@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 22:12:11 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 17:30:50 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "iterators/iterators_traits.hpp"
 # include "iterators/reverse_iterator.hpp"
 # include "iterators/random_access_iterator.hpp"
+# include "iterators/const_random_access_iterator.hpp"
 
 namespace ft {
 
@@ -37,8 +38,8 @@ class vector
 		typedef typename Allocator::const_pointer			const_pointer;
 		typedef ft::random_access_iterator<T>				iterator;
 		typedef ft::random_access_iterator<const T>			const_iterator;
-		typedef ft::reverse_iterator<iterator>				reverse_iterator;
-		typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
+		typedef ft::reverse_iterator<T>						reverse_iterator;
+		typedef	ft::reverse_iterator<const T>				const_reverse_iterator;
 		
 		/* CONSTRUCTORS */
 		vector(); 									/* 1 */
@@ -91,6 +92,19 @@ class vector
 		void reserve( size_type new_cap );
 		size_type capacity() const;
 
+		/* MODIFIERS */
+		void clear();
+		iterator insert( iterator pos, const T& value );
+		void insert( iterator pos, size_type count, const T& value );
+		template< class InputIt >
+		void insert( iterator pos, InputIt first, InputIt last );
+		iterator erase( iterator pos );
+		iterator erase( iterator first, iterator last );
+		void push_back( const T& value );
+		void pop_back();
+		void resize( size_type count, T value = T() );
+		void swap( vector& other );
+		
 	private:
 		size_type			_size;
 		value_type*			_array;
@@ -99,12 +113,32 @@ class vector
 		size_type			_capacity;
 };
 
-template<class T, class Allocator>
-bool operator==(const vector<T, Allocator>& x,
-	const vector<T, Allocator>& y);
+template<class T, class Alloc>
+bool operator==(const vector<T, Alloc>& x,
+	const vector<T, Alloc>& y);
 
-template<class T, class Allocator>
-void swap(vector<T, Allocator>& x, vector<T, Allocator>& y);
+template< class T, class Alloc >
+bool operator!=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator<( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator<=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator>( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator>=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs );
+
+template<class T, class Alloc>
+void swap(vector<T, Alloc>& x, vector<T, Alloc>& y);
 
 } // namespace ft
 

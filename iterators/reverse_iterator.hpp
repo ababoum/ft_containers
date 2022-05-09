@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 23:05:51 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 17:08:51 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ namespace ft {
 			reverse_iterator& operator+=( difference_type n );
 			reverse_iterator& operator-=( difference_type n );
 
-			
 		protected:
 			pointer	current_;
 	};

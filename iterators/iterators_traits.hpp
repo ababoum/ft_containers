@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 22:38:45 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 17:08:07 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 # include <string>
 
 namespace ft {
-
-	// template< class Iter > struct iterator_traits;
-	// template< class T > struct iterator_traits<T*>;
-	// template< class T > struct iterator_traits<const T*>;
 
 	template< class T >
 	struct iterator_traits
