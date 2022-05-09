@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/09 17:30:50 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 19:01:05 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class vector
 		explicit vector( const Allocator& alloc );	/* 2 */
 		explicit vector( size_type count,
 			const T& value,
-			const Allocator& alloc);	/* 3 */
+			const Allocator& alloc);				/* 3 */
 		explicit vector( size_type count );			/* 4 */
 		template< class InputIt >
 		vector( InputIt first, InputIt last,
@@ -107,7 +107,7 @@ class vector
 		
 	private:
 		size_type			_size;
-		value_type*			_array;
+		pointer				_array;
 		
 		allocator_type		_allocator;
 		size_type			_capacity;
@@ -118,27 +118,27 @@ bool operator==(const vector<T, Alloc>& x,
 	const vector<T, Alloc>& y);
 
 template< class T, class Alloc >
-bool operator!=( const std::vector<T,Alloc>& lhs,
-	const std::vector<T,Alloc>& rhs );
+bool operator!=( const ft::vector<T,Alloc>& lhs,
+	const ft::vector<T,Alloc>& rhs );
 
 template< class T, class Alloc >
-bool operator<( const std::vector<T,Alloc>& lhs,
-	const std::vector<T,Alloc>& rhs );
+bool operator<( const ft::vector<T,Alloc>& lhs,
+	const ft::vector<T,Alloc>& rhs );
 
 template< class T, class Alloc >
-bool operator<=( const std::vector<T,Alloc>& lhs,
-	const std::vector<T,Alloc>& rhs );
+bool operator<=( const ft::vector<T,Alloc>& lhs,
+	const ft::vector<T,Alloc>& rhs );
 
 template< class T, class Alloc >
-bool operator>( const std::vector<T,Alloc>& lhs,
-	const std::vector<T,Alloc>& rhs );
+bool operator>( const ft::vector<T,Alloc>& lhs,
+	const ft::vector<T,Alloc>& rhs );
 
 template< class T, class Alloc >
-bool operator>=( const std::vector<T,Alloc>& lhs,
-	const std::vector<T,Alloc>& rhs );
+bool operator>=( const ft::vector<T,Alloc>& lhs,
+	const ft::vector<T,Alloc>& rhs );
 
 template<class T, class Alloc>
-void swap(vector<T, Alloc>& x, vector<T, Alloc>& y);
+void swap(vector<T, Alloc>& lhs, vector<T, Alloc>& rhs);
 
 } // namespace ft
 

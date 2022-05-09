@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/09 17:05:26 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 18:51:01 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(void)
 	{
 		try
 		{
-			std::vector<int> test_v(10, 10);
+			ft::vector<int> test_v(10, 10);
 			
 			ft::vector<int> test;
 

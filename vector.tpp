@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/09 17:03:55 by mababou          ###   ########.fr       */
+/*   Updated: 2022/05/09 19:15:52 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,8 @@ typedef std::size_t		size_type;
 */
 
 template< class T, class Allocator >					/* 1 */
-vector<T, Allocator>::vector()
+vector<T, Allocator>::vector():_size(0), _array(NULL), _capacity(0)
 {
-	_size = 0;
-	_capacity = 0;
-	_array = NULL;
 }
 
 template< class T, class Allocator >					/* 2 */
@@ -139,7 +136,8 @@ void vector<T, Allocator>::assign( InputIt first, InputIt last )
 	for (InputIt it = first; it != last; ++it)
 		count++;
 	_size = count;
-	_array = _allocator.allocate(_size);
+	_capacity = count;
+	_array = _allocator.allocate(_capacity);
 	count = 0;
 	for (InputIt it = first; it != last; ++it)
 		_array[count++] = *it;
@@ -307,13 +305,13 @@ size_type vector<T, Allocator>::size() const
 template< class T, class Allocator >
 size_type vector<T, Allocator>::max_size() const
 {
-	return (std::distance(begin(), end()));
+	return (_allocator.max_size());
 }
 
 template< class T, class Allocator >
 void vector<T, Allocator>::reserve( size_type new_cap )
 {
-	if (new_cap <= capacity())
+	if (new_cap <= _capacity)
 		return ;
 	if (new_cap > max_size())
 		throw std::length_error("Maximum possible size is exceeded");
@@ -378,6 +376,106 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(
 	vector<T, Allocator>::iterator it(_array + anchor);
 	return (it);
 }
+
+// INSERT
+
+// ERASE
+
+template< class T, class Allocator >
+void vector<T, Allocator>::push_back( const T& value )
+{
+	if (_capacity == 0)
+		reserve(1);
+	if (_size == _capacity)
+		reserve(_size * 2);
+
+	_alloc.construct(&_array[_size], value);
+	_size++;
+}
+
+template< class T, class Allocator >
+void vector<T, Allocator>::pop_back()
+{
+	_alloc.destroy(&_array[_size - 1]);
+	_size--;
+}
+
+template< class T, class Allocator >
+void vector<T, Allocator>::resize( size_type count, T value )
+{
+	if (_size > count) {
+		for (size_type i = count; i < _size; i++) {
+			pop_back();
+		}
+	}
+	else {
+		for (size_type i = _size; i < count; i++) {
+			push_back(value);
+	}
+}
+
+template< class T, class Allocator >
+void vector<T, Allocator>::swap( vector& other )
+{
+	std::swap(_array, other._array);
+	std::swap(_size, other._size);
+	std::swap(_capacity, other._capacity);
+}
+
+/*
+** ----------------------------- NON-MEMBER FUNCTIONS -----------------------------
+*/
+
+template<class T, class Alloc>
+bool operator==(const vector<T, Alloc>& x,
+	const vector<T, Alloc>& y)
+{
+	if (lhs.size() != rhs.size())
+		return false;
+	return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template< class T, class Alloc >
+bool operator!=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs )
+{
+	return !(lhs == rhs);
+}
+
+template< class T, class Alloc >
+bool operator<( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs )
+{
+	return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template< class T, class Alloc >
+bool operator<=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs )
+{
+	return !(lhs > rhs);
+}
+
+template< class T, class Alloc >
+bool operator>( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs )
+{
+	return (rhs < lhs);
+}
+
+template< class T, class Alloc >
+bool operator>=( const std::vector<T,Alloc>& lhs,
+	const std::vector<T,Alloc>& rhs )
+{
+	return !(lhs < rhs);
+}
+
+template< class T, class Alloc >
+void swap(vector<T, Alloc>& lhs, vector<T, Alloc>& rhs)
+{
+	lhs.swap(rhs);
+}
+
 
 /* ************************************************************************** */
 } // namespace ft
