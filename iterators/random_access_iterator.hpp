@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 22:02:28 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/07 22:50:55 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:43:59 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,20 @@
 # include <iostream>
 # include <string>
 
+
 namespace ft {
 
 	template< class T >
-	class random_access_iterator: public std::iterator < std::random_access_iterator_tag, T >
+	class random_access_iterator
 	{
 		public:
 			
 			typedef	T				iterator_type;
 			typedef T*				pointer;
 			typedef T&				reference;
-			typedef typename std::iterator<std::random_access_iterator_tag, T>::iterator_category     iterator_category;
-			typedef typename std::iterator<std::random_access_iterator_tag, T>::value_type            value_type;
-			typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type       difference_type;
-
+			typedef typename ft::iterator_traits<T>::iterator_category	iterator_category;
+			typedef typename ft::iterator_traits<T>::value_type			value_type;
+			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
 
 
 			/* CONSTRUCTORS */

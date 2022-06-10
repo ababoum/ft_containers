@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/09 19:15:52 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/10 14:59:25 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,21 @@ typedef std::size_t		size_type;
 */
 
 template< class T, class Allocator >					/* 1 */
-vector<T, Allocator>::vector():_size(0), _array(NULL), _capacity(0)
+vector<T, Allocator>::vector()
 {
+	_size = 0;
+	_array = (NULL);
+	_allocator = Allocator();
+	_capacity = 0;
 }
 
 template< class T, class Allocator >					/* 2 */
 vector<T, Allocator>::vector( const Allocator& alloc )
 {
 	_size = 0;
-	_capacity = 0;
 	_array = NULL;
 	_allocator = alloc;
+	_capacity = 0;
 }
 
 template< class T, class Allocator >					/* 3 */
@@ -44,7 +48,7 @@ vector<T, Allocator>::vector( size_type count,
 	_allocator = alloc;
 	_array = _allocator.allocate(count);
 	for (size_type i = 0; i < _size; i++) {
-		_array[i] = value;
+		_allocator.constuct(&_array[i], value);
 	}
 }
 
@@ -53,7 +57,11 @@ vector<T, Allocator>::vector( size_type count )
 {
 	_size = count;
 	_capacity = count;
+	_allocator = alloc;
 	_array = _allocator.allocate(count);
+	for (size_type i = 0; i < _size; i++) {
+		_allocator.constuct(&_array[i], T());
+	}
 }
 
 template< class T, class Allocator >					/* 5 */
@@ -61,18 +69,12 @@ template< class InputIt >
 vector<T, Allocator>::vector( InputIt first, InputIt last,
         	const Allocator& alloc)
 {
-	size_type	count = 0;
-	
-	for (InputIt it = first; it != last; ++it)
-		count++;
-	_size = count;
+	_size = 0;
 	_capacity = 0;
 	_allocator = alloc;
-	_array = _allocator.allocate(_capacity);
-
-	count = 0;
+	_array = NULL;
 	for (InputIt it = first; it != last; ++it)
-		_array[count++] = *it;
+		push_back(*it);
 }
 
 template< class T, class Allocator >					/* 6 */
@@ -106,7 +108,7 @@ vector<T, Allocator> &	vector<T, Allocator>::operator=( const vector& other )
 		_size = other.size();
 		_capacity = other.capacity();
 		_allocator = other.get_allocator();
-		_array = _allocator.allocate(_size);
+		_array = _allocator.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			_array[i] = other[i];
 	}	
@@ -119,9 +121,10 @@ void vector<T, Allocator>::assign( size_type count, const T& value )
 	if (_array)
 		delete [] _array;
 	_size = count;
-	_array = _allocator.allocate(_size);
+	_capacity = count;
+	_array = _allocator.allocate(_capacity);
 	for (size_type i = 0; i < _size; i++)
-		_array[i] = value;
+		_allocator.constuct(&_array[i], value);
 }
 
 template< class T, class Allocator >
@@ -131,16 +134,11 @@ void vector<T, Allocator>::assign( InputIt first, InputIt last )
 	if (_array)
 		delete [] _array;
 
-	size_type	count = 0;
-	
+	_size = 0;
+	_capacity = 0;
+	_array = NULL;
 	for (InputIt it = first; it != last; ++it)
-		count++;
-	_size = count;
-	_capacity = count;
-	_array = _allocator.allocate(_capacity);
-	count = 0;
-	for (InputIt it = first; it != last; ++it)
-		_array[count++] = *it;
+		push_back(*it);
 }
 
 template< class T, class Allocator >
@@ -184,25 +182,25 @@ const T&	vector<T, Allocator>::operator[]( size_type pos ) const
 template< class T, class Allocator >
 T&	vector<T, Allocator>::front()
 {
-	return ((*this)[0]);
+	return (*this->begin());
 }
 
 template< class T, class Allocator >
 const T&	vector<T, Allocator>::front() const
 {
-	return ((*this)[0]);
+	return (*this->begin());
 }
 
 template< class T, class Allocator >
 T&	vector<T, Allocator>::back()
 {
-	return ((*this)[this->size() - 1]);
+	return (*std::prev(this->end()));
 }
 
 template< class T, class Allocator >
 const T&	vector<T, Allocator>::back() const
 {
-	return ((*this)[this->size() - 1]);
+	return (*std::prev(this->end()));
 }
 
 template< class T, class Allocator >
@@ -411,6 +409,7 @@ void vector<T, Allocator>::resize( size_type count, T value )
 	else {
 		for (size_type i = _size; i < count; i++) {
 			push_back(value);
+		}
 	}
 }
 

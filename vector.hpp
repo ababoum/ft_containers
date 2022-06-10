@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/09 19:01:05 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:02:02 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 namespace ft {
 
+template< std::iterator >
 template< class T, class Allocator = std::allocator<T> >
 class vector
 {
@@ -66,7 +67,7 @@ class vector
 		/* ELEMENT ACCESS  */
 		reference 		at( size_type pos );
 		const_reference at( size_type pos ) const;
-		reference operator[]( size_type pos );
+		reference 		operator[]( size_type pos );
 		const_reference operator[]( size_type pos ) const;
 		reference 		front();
 		const_reference front() const;
@@ -76,34 +77,34 @@ class vector
 		const T* data() const;
 		
 		/* ITERATORS */
-		iterator begin();
-		const_iterator begin() const;
-		iterator end();
-		const_iterator end() const;
-		reverse_iterator rbegin();
-		const_reverse_iterator rbegin() const;
-		reverse_iterator rend();
-		const_reverse_iterator rend() const;
+		iterator 		begin();
+		const_iterator	begin() const;
+		iterator		end();
+		const_iterator	end() const;
+		reverse_iterator		rbegin();
+		const_reverse_iterator	rbegin() const;
+		reverse_iterator		rend();
+		const_reverse_iterator	rend() const;
 
 		/* CAPACITY */
-		bool empty() const;
-		size_type size() const;
-		size_type max_size() const;
-		void reserve( size_type new_cap );
-		size_type capacity() const;
+		bool		empty() const;
+		size_type	size() const;
+		size_type	max_size() const;
+		void		reserve( size_type new_cap );
+		size_type	capacity() const;
 
 		/* MODIFIERS */
-		void clear();
-		iterator insert( iterator pos, const T& value );
-		void insert( iterator pos, size_type count, const T& value );
+		void		clear();
+		iterator	insert( iterator pos, const T& value );
+		void		insert( iterator pos, size_type count, const T& value );
 		template< class InputIt >
-		void insert( iterator pos, InputIt first, InputIt last );
-		iterator erase( iterator pos );
-		iterator erase( iterator first, iterator last );
-		void push_back( const T& value );
-		void pop_back();
-		void resize( size_type count, T value = T() );
-		void swap( vector& other );
+		void		insert( iterator pos, InputIt first, InputIt last );
+		iterator	erase( iterator pos );
+		iterator	erase( iterator first, iterator last );
+		void		push_back( const T& value );
+		void		pop_back();
+		void		resize( size_type count, T value = T() );
+		void		swap( vector& other );
 		
 	private:
 		size_type			_size;
