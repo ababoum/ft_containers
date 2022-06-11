@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/10 15:02:02 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/11 17:56:13 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@
 # include "iterators/reverse_iterator.hpp"
 # include "iterators/random_access_iterator.hpp"
 # include "iterators/const_random_access_iterator.hpp"
+# include "utils/equal.hpp"
+# include "utils/lexicographical_compare.hpp"
 
 namespace ft {
 
-template< std::iterator >
 template< class T, class Allocator = std::allocator<T> >
 class vector
 {
@@ -37,10 +38,10 @@ class vector
 		typedef const value_type&							const_reference;
 		typedef typename Allocator::pointer					pointer;
 		typedef typename Allocator::const_pointer			const_pointer;
-		typedef ft::random_access_iterator<T>				iterator;
-		typedef ft::random_access_iterator<const T>			const_iterator;
-		typedef ft::reverse_iterator<T>						reverse_iterator;
-		typedef	ft::reverse_iterator<const T>				const_reverse_iterator;
+		typedef random_access_iterator<T>				iterator;
+		typedef random_access_iterator<const T>			const_iterator;
+		typedef reverse_iterator<T>						reverse_iterator;
+		typedef	reverse_iterator<const T>				const_reverse_iterator;
 		
 		/* CONSTRUCTORS */
 		vector(); 									/* 1 */

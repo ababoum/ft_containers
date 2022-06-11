@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/10 14:59:25 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/11 17:33:29 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ vector<T, Allocator>::vector( size_type count,
 	_allocator = alloc;
 	_array = _allocator.allocate(count);
 	for (size_type i = 0; i < _size; i++) {
-		_allocator.constuct(&_array[i], value);
+		_allocator.construct(&_array[i], value);
 	}
 }
 
@@ -57,10 +57,10 @@ vector<T, Allocator>::vector( size_type count )
 {
 	_size = count;
 	_capacity = count;
-	_allocator = alloc;
+	_allocator = Allocator();
 	_array = _allocator.allocate(count);
 	for (size_type i = 0; i < _size; i++) {
-		_allocator.constuct(&_array[i], T());
+		_allocator.construct(&_array[i], T());
 	}
 }
 
@@ -124,7 +124,7 @@ void vector<T, Allocator>::assign( size_type count, const T& value )
 	_capacity = count;
 	_array = _allocator.allocate(_capacity);
 	for (size_type i = 0; i < _size; i++)
-		_allocator.constuct(&_array[i], value);
+		_allocator.construct(&_array[i], value);
 }
 
 template< class T, class Allocator >
@@ -194,13 +194,13 @@ const T&	vector<T, Allocator>::front() const
 template< class T, class Allocator >
 T&	vector<T, Allocator>::back()
 {
-	return (*std::prev(this->end()));
+	return (_array[_size]);
 }
 
 template< class T, class Allocator >
 const T&	vector<T, Allocator>::back() const
 {
-	return (*std::prev(this->end()));
+	return (_array[_size]);
 }
 
 template< class T, class Allocator >
@@ -387,14 +387,14 @@ void vector<T, Allocator>::push_back( const T& value )
 	if (_size == _capacity)
 		reserve(_size * 2);
 
-	_alloc.construct(&_array[_size], value);
+	_allocator.construct(&_array[_size], value);
 	_size++;
 }
 
 template< class T, class Allocator >
 void vector<T, Allocator>::pop_back()
 {
-	_alloc.destroy(&_array[_size - 1]);
+	_allocator.destroy(&_array[_size - 1]);
 	_size--;
 }
 
@@ -426,8 +426,8 @@ void vector<T, Allocator>::swap( vector& other )
 */
 
 template<class T, class Alloc>
-bool operator==(const vector<T, Alloc>& x,
-	const vector<T, Alloc>& y)
+bool operator==(const vector<T, Alloc>& lhs,
+	const vector<T, Alloc>& rhs)
 {
 	if (lhs.size() != rhs.size())
 		return false;
