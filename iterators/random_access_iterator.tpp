@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:49:07 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/11 18:13:53 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:07:39 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,20 @@ namespace ft {
 
 template< typename Iter, typename Container >					/* 1 */
 random_access_iterator<Iter, Container>::random_access_iterator()
-{
-	_current = Iter();
-}
+: _current(Iter()) {}
 
 template< typename Iter, typename Container >					/* 2 */
-random_access_iterator<Iter, Container>::random_access_iterator(typename random_access_iterator<Iter, Container>::pointer x)
-{
-	_current = x;
-}
+random_access_iterator<Iter, Container>::random_access_iterator
+(typename random_access_iterator<Iter, Container>::pointer x)
+: _current(x) {}
+
+
 
 template< typename Iter, typename Container >					/* 3 */
-template< class U >
-random_access_iterator<Iter, Container>::random_access_iterator(const random_access_iterator<U, Container>& other)
-{
-	*this = other;
-}
+template< typename U >
+random_access_iterator<Iter, Container>::random_access_iterator
+(const random_access_iterator<U, Container>& other)
+: _current(other.base()) {}
 
 /*
 ** ----------------------------- MEMBER FUNCTIONS -----------------------------
@@ -43,54 +41,61 @@ random_access_iterator<Iter, Container>::random_access_iterator(const random_acc
 
 
 template< typename Iter, typename Container >	
-template< class U >
+template< typename U >
 random_access_iterator<Iter, Container>&
-	random_access_iterator<Iter, Container>::operator=( const random_access_iterator<U, Container>& other )
+random_access_iterator<Iter, Container>::operator=( const random_access_iterator<U, Container>& other )
 {
 	this->base() = other->base();
 	return (*this);
 }
 
 template< typename Iter, typename Container >
-typename random_access_iterator<Iter, Container>::pointer random_access_iterator<Iter, Container>::base() const
+typename random_access_iterator<Iter, Container>::pointer
+random_access_iterator<Iter, Container>::base() const
 {
 	return (_current);
 }
 
 template< typename Iter, typename Container >
-typename random_access_iterator<Iter, Container>::reference random_access_iterator<Iter, Container>::operator*() const
+typename random_access_iterator<Iter, Container>::reference
+random_access_iterator<Iter, Container>::operator*() const
 {
 	return (*_current);
 }
 
 template< typename Iter, typename Container >
-typename random_access_iterator<Iter, Container>::pointer random_access_iterator<Iter, Container>::operator->() const
+typename random_access_iterator<Iter, Container>::pointer
+random_access_iterator<Iter, Container>::operator->() const
 {
 	return (&(operator*()));
 }
 
 template< typename Iter, typename Container >
-typename random_access_iterator<Iter, Container>::value_type random_access_iterator<Iter, Container>::operator[]( difference_type n ) const
+typename random_access_iterator<Iter, Container>::value_type
+random_access_iterator<Iter, Container>::operator[]( difference_type n ) const
 {
-	return (base()[n]);
+	return (_current[n]);
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container>& random_access_iterator<Iter, Container>::operator++()
+random_access_iterator<Iter, Container>&
+random_access_iterator<Iter, Container>::operator++()
 {
 	++_current;
 	return (*this);
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container>& random_access_iterator<Iter, Container>::operator--()
+random_access_iterator<Iter, Container>&
+random_access_iterator<Iter, Container>::operator--()
 {
 	--_current;
 	return (*this);
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>::operator++(int)
+random_access_iterator<Iter, Container>
+random_access_iterator<Iter, Container>::operator++(int)
 {
 	random_access_iterator<Iter, Container> tmp = *this;
 
@@ -99,7 +104,8 @@ random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>:
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>::operator--(int)
+random_access_iterator<Iter, Container>
+random_access_iterator<Iter, Container>::operator--(int)
 {
 	random_access_iterator<Iter, Container> tmp = *this;
 
@@ -108,26 +114,30 @@ random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>:
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>::operator+( difference_type n ) const
+random_access_iterator<Iter, Container>
+random_access_iterator<Iter, Container>::operator+( difference_type n ) const
 {
 	return (random_access_iterator(base() + n));
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container> random_access_iterator<Iter, Container>::operator-( difference_type n ) const
+random_access_iterator<Iter, Container>
+random_access_iterator<Iter, Container>::operator-( difference_type n ) const
 {
 	return (random_access_iterator(base() - n));
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container>& random_access_iterator<Iter, Container>::operator+=( difference_type n )
+random_access_iterator<Iter, Container>&
+random_access_iterator<Iter, Container>::operator+=( difference_type n )
 {
 	_current += n;
 	return (*this);
 }
 
 template< typename Iter, typename Container >
-random_access_iterator<Iter, Container>& random_access_iterator<Iter, Container>::operator-=( difference_type n )
+random_access_iterator<Iter, Container>&
+random_access_iterator<Iter, Container>::operator-=( difference_type n )
 {
 	_current -= n;
 	return (*this);
@@ -137,44 +147,44 @@ random_access_iterator<Iter, Container>& random_access_iterator<Iter, Container>
 ** ----------------------------- NON-MEMBER FUNCTIONS -----------------------------
 */
 
-template< class Iter1, class Iter2 >
-bool operator==( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator==( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() == rhs.base());
 }
 
-template< class Iter1, class Iter2 >
-bool operator!=( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator!=( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() != rhs.base());
 }
 
-template< class Iter1, class Iter2 >
-bool operator<( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator<( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() < rhs.base());
 }
 
-template< class Iter1, class Iter2 >
-bool operator<=( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator<=( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() <= rhs.base());
 }
 
-template< class Iter1, class Iter2 >
-bool operator>( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator>( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() > rhs.base());
 }
 
-template< class Iter1, class Iter2 >
-bool operator>=( const random_access_iterator<Iter1>& lhs,
-	const random_access_iterator<Iter2>& rhs )
+template< typename Iter1, typename Iter2, typename Container >
+bool operator>=( const random_access_iterator<Iter1, Container>& lhs,
+	const random_access_iterator<Iter2, Container>& rhs )
 {
 	return (lhs.base() >= rhs.base());
 }

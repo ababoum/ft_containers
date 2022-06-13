@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:49:07 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/10 16:27:42 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:36:15 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,16 @@ namespace ft {
 
 template< class Iter >					/* 1 */
 reverse_iterator<Iter>::reverse_iterator()
-{
-	current_ = Iter();
-}
+: current_() {}
 
 template< class Iter >					/* 2 */
 reverse_iterator<Iter>::reverse_iterator(reverse_iterator<Iter>::iterator_type	x)
-{
-	current_ = x;
-}
+: current_(x) {}
 
 template< class Iter >					/* 3 */
 template< class U >
 reverse_iterator<Iter>::reverse_iterator( const reverse_iterator<U>& other )
-{
-	*this = other;
-}
+: current_(other.current_) {}
 
 /*
 ** ----------------------------- MEMBER FUNCTIONS -----------------------------

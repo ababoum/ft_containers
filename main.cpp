@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/11 17:46:08 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:52:47 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include <vector>
 #include "vector.hpp"
 #include "pairs/pair.hpp"
-#include "utils/is_integral.hpp"
-#include "utils/equal.hpp"
 
 #define SHOW(...) std::cout << std::setw(35) << #__VA_ARGS__ << " == " << __VA_ARGS__ << std::endl;
 
@@ -94,27 +92,27 @@ int	main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
-	std::cout << "\e[7m=========REVERSE ITERATOR============\e[0m" << std::endl;
-	{
-		try
-		{
-			ft::vector<int> test(10);
+	// std::cout << "\e[7m=========REVERSE ITERATOR============\e[0m" << std::endl;
+	// {
+	// 	try
+	// 	{
+	// 		ft::vector<int> test(10);
 
-			int i = 0;
-			for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it) {
-				*it = i++;
-			}
-			i = 0;
-			for (ft::vector<int>::reverse_iterator it = test.rbegin(); it != test.rend(); ++it) {
-				std::cout << i << ": " << test[i] << std::endl;
-				i++;
-			}
-		}
-		catch (std::exception & e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-	}
+	// 		int i = 0;
+	// 		for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it) {
+	// 			*it = i++;
+	// 		}
+	// 		i = 0;
+	// 		for (ft::vector<int>::reverse_iterator it = test.rbegin(); it != test.rend(); ++it) {
+	// 			std::cout << i << ": " << test[i] << std::endl;
+	// 			i++;
+	// 		}
+	// 	}
+	// 	catch (std::exception & e)
+	// 	{
+	// 		std::cout << e.what() << std::endl;
+	// 	}
+	// }
 	std::cout << "\e[7m============VECTOR INSERT============\e[0m" << std::endl;
 	{
 		try
@@ -122,12 +120,12 @@ int	main(void)
 			ft::vector<int> c1(3, 100);
 			print_vector(1, c1);
 		
-			ft::vector<int>::iterator it = c1.begin();
-			it = c1.insert(it, 200);
-			print_vector(2, c1);
+			// ft::vector<int>::iterator it = c1.begin();
+			// it = c1.insert(it, 200);
+			// print_vector(2, c1);
 		
-			c1.insert(it, 2, 300);
-			print_vector(3, c1);
+			// c1.insert(it, 2, 300);
+			// print_vector(3, c1);
 		}
 		catch (std::exception & e)
 		{

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/10 16:14:59 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:41:28 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,22 @@ namespace ft {
 
 	template< class Iter >
 	class reverse_iterator
+	: public std::iterator<typename iterator_traits<Iter>::iterator_category,
+		typename iterator_traits<Iter>::value_type,
+		typename iterator_traits<Iter>::difference_type,
+		typename iterator_traits<Iter>::pointer,
+		typename iterator_traits<Iter>::reference>
 	{
-		typedef	Iter												iterator_type;
-		typedef	typename iterator_traits<Iter>::iterator_category	iterator_category;
-		typedef	typename iterator_traits<Iter>::value_type			value_type;
-		typedef	typename iterator_traits<Iter>::difference_type		difference_type;
-		typedef	typename iterator_traits<Iter>::pointer				pointer;
-		typedef	typename iterator_traits<Iter>::reference			reference;
-		
 		public:
+			typedef iterator_traits<Iter>		traits_type;
+			
+			typedef	Iter												iterator_type;
+			typedef	typename traits_type::iterator_category		iterator_category;
+			typedef	typename traits_type::value_type			value_type;
+			typedef	typename traits_type::difference_type		difference_type;
+			typedef	typename traits_type::pointer				pointer;
+			typedef	typename traits_type::reference				reference;
+		
 			/* CONSTRUCTORS */
 			reverse_iterator();										/* 1 */
 			explicit reverse_iterator( iterator_type x );			/* 2 */

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 22:02:28 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/11 18:17:03 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:03:20 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <iostream>
 # include <string>
-
+# include "../utils/enable_if.hpp"
 
 namespace ft {
 
@@ -29,11 +29,11 @@ namespace ft {
 		public:
 
 			
-			typedef	Iter				iterator_type;
-			typedef Iter*				pointer;
-			typedef Iter&				reference;
+			typedef	Iter									iterator_type;
+			typedef typename traits_type::pointer			pointer;
+			typedef typename traits_type::reference			reference;
 			typedef typename traits_type::iterator_category	iterator_category;
-			typedef typename traits_type::value_type			value_type;
+			typedef typename traits_type::value_type		value_type;
 			typedef typename traits_type::difference_type	difference_type;
 
 

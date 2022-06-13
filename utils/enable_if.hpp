@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/08 17:30:30 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/08 18:34:01 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 17:33:16 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 
 namespace ft {
 
-template< bool B, class T = void >
-struct enable_if {
-	
-	public:
-		if (B)
-			typedef T	type;
-}
+	template< bool, typename >
+	struct enable_if 
+	{ };
+
+	template< typename T >
+	struct enable_if< true, T >
+	{ typedef T type; };
 
 } // namespace ft
 

@@ -6,7 +6,18 @@ NAME 		= container_test
 
 SRCS		= main.cpp
 
-INCL		= vector.hpp
+INCL		= vector.hpp \
+				vector.tpp \
+				iterators/iterators_traits.hpp \
+				iterators/random_access_iterator.hpp \
+				iterators/random_access_iterator.tpp \
+				iterators/reverse_iterator.hpp \
+				iterators/reverse_iterator.tpp \
+				utils/enable_if.hpp \
+				utils/equal.hpp \
+				utils/integral_constant.hpp \
+				utils/is_integral.hpp \
+				utils/lexicographical_compare.hpp
 
 OBJS		= $(SRCS:.cpp=.o)
 

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/11 17:33:29 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:57:18 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,20 +52,10 @@ vector<T, Allocator>::vector( size_type count,
 	}
 }
 
-template< class T, class Allocator >					/* 4 */
-vector<T, Allocator>::vector( size_type count )
-{
-	_size = count;
-	_capacity = count;
-	_allocator = Allocator();
-	_array = _allocator.allocate(count);
-	for (size_type i = 0; i < _size; i++) {
-		_allocator.construct(&_array[i], T());
-	}
-}
-
 template< class T, class Allocator >					/* 5 */
-template< class InputIt >
+template< class InputIt,
+enable_if<is_integral<InputIt>::value, bool>
+>
 vector<T, Allocator>::vector( InputIt first, InputIt last,
         	const Allocator& alloc)
 {
@@ -106,7 +96,7 @@ vector<T, Allocator> &	vector<T, Allocator>::operator=( const vector& other )
 		if (_array)
 			delete [] _array;
 		_size = other.size();
-		_capacity = other.capacity();
+		_capacity = other.size();
 		_allocator = other.get_allocator();
 		_array = _allocator.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)

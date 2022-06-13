@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/11 17:56:13 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:28:53 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@
 # include "iterators/iterators_traits.hpp"
 # include "iterators/reverse_iterator.hpp"
 # include "iterators/random_access_iterator.hpp"
-# include "iterators/const_random_access_iterator.hpp"
 # include "utils/equal.hpp"
 # include "utils/lexicographical_compare.hpp"
+# include "utils/is_integral.hpp"
+
 
 namespace ft {
 
@@ -38,19 +39,20 @@ class vector
 		typedef const value_type&							const_reference;
 		typedef typename Allocator::pointer					pointer;
 		typedef typename Allocator::const_pointer			const_pointer;
-		typedef random_access_iterator<T>				iterator;
-		typedef random_access_iterator<const T>			const_iterator;
-		typedef reverse_iterator<T>						reverse_iterator;
-		typedef	reverse_iterator<const T>				const_reverse_iterator;
+		typedef random_access_iterator<pointer, vector>			iterator;
+		typedef random_access_iterator<const_pointer, vector>	const_iterator;
+		typedef	reverse_iterator<const_iterator>				const_reverse_iterator;
+		typedef reverse_iterator<iterator>						reverse_iterator;
 		
 		/* CONSTRUCTORS */
 		vector(); 									/* 1 */
 		explicit vector( const Allocator& alloc );	/* 2 */
 		explicit vector( size_type count,
-			const T& value,
-			const Allocator& alloc);				/* 3 */
-		explicit vector( size_type count );			/* 4 */
-		template< class InputIt >
+			const T& value = T(),
+			const Allocator& alloc = Allocator());				/* 3 */
+		template< class InputIt,
+		enable_if<is_integral<InputIt>::value, bool>
+		>
 		vector( InputIt first, InputIt last,
         	const Allocator& alloc = Allocator());	/* 5 */
 		vector( const vector& other );				/* 6 */
