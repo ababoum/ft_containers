@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/13 18:28:53 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/14 09:06:21 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,9 @@ class vector
 		/* GENERAL MEMBER FUNCTIONS */
 		vector& operator=( const vector& other );
 		void assign( size_type count, const T& value );	/* 1 */
-		template< class InputIt >
+		template< class InputIt,
+		enable_if<is_integral<InputIt>::value, bool>
+		>
 		void assign( InputIt first, InputIt last );		/* 2 */
 		allocator_type get_allocator() const;
 
@@ -98,10 +100,10 @@ class vector
 
 		/* MODIFIERS */
 		void		clear();
-		iterator	insert( iterator pos, const T& value );
-		void		insert( iterator pos, size_type count, const T& value );
+		iterator	insert( iterator pos, const T& value );						/* 1 */
+		void		insert( iterator pos, size_type count, const T& value );	/* 3 */
 		template< class InputIt >
-		void		insert( iterator pos, InputIt first, InputIt last );
+		void		insert( iterator pos, InputIt first, InputIt last );		/* 4 */
 		iterator	erase( iterator pos );
 		iterator	erase( iterator first, iterator last );
 		void		push_back( const T& value );

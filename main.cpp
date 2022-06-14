@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/13 18:52:47 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/14 10:19:12 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ static void print_vector(int id, const ft::vector<int>& container)
          std::cout << container[x] << ' ';
     }
     std::cout << std::endl;
+}
+
+template<class Os, class Co> Os& operator<<(Os& os, const Co& co) {
+    os << "{";
+    for (std::size_t i = 0; i < co.size(); ++i) { os << ' ' << i; }
+    return os << " } ";
 }
 
 int	main(void)
@@ -132,6 +138,37 @@ int	main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	std::cout << "\e[7m==============ERASE==================\e[0m" << std::endl;
+	{
+		try
+		{
+			ft::vector<int> c;
+			for (int i = 0; i < 10; ++i)
+				c.push_back(i);
+			print_vector(0, c);
+
+			c.erase(c.begin());
+			print_vector(1, c);
+
+			c.erase(c.begin()+2, c.begin()+5);
+			print_vector(2, c);
+
+			// Erase all even numbers
+			for (ft::vector<int>::iterator it = c.begin(); it != c.end(); ) {
+				if (*it % 2 == 0) {
+				it = c.erase(it);
+				} else {
+				++it;
+				}
+			}
+			print_vector(3, c);
+			
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
 	std::cout << "\e[7m===========PAIRS==================\e[0m" << std::endl;
 	{
 		try
@@ -185,6 +222,30 @@ int	main(void)
 				<< (ft::equal(s.begin(), s.begin() + s.size()/2, s.rbegin()) ? "is" : "is not")
 				<< " a palindrome\n";
 			
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+	std::cout << "\e[7m==============SWAP VECTOR==================\e[0m" << std::endl;
+	{
+		try
+		{
+			ft::vector<int> a1, a2;
+		
+			a1.push_back(1);a1.push_back(2);a1.push_back(3);
+			a2.push_back(4);a2.push_back(5);
+			
+			ft::vector<int>::iterator it1 = 1 + a1.begin();
+			ft::vector<int>::iterator it2 = 1 + a2.begin();
+		
+			int& ref1 = a1.front();
+			int& ref2 = a2.front();
+		
+			std::cout << a1 << a2 << *it1 << ' ' << *it2 << ' ' << ref1 << ' ' << ref2 << '\n';
+			a1.swap(a2);
+			std::cout << a1 << a2 << *it1 << ' ' << *it2 << ' ' << ref1 << ' ' << ref2 << '\n';						
 		}
 		catch (std::exception & e)
 		{

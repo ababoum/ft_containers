@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/13 18:57:18 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/14 10:12:49 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,15 +110,18 @@ void vector<T, Allocator>::assign( size_type count, const T& value )
 {
 	if (_array)
 		delete [] _array;
+
 	_size = count;
 	_capacity = count;
 	_array = _allocator.allocate(_capacity);
-	for (size_type i = 0; i < _size; i++)
+	for (size_type i = 0; i < _size; ++i)
 		_allocator.construct(&_array[i], value);
 }
 
 template< class T, class Allocator >
-template< class InputIt>
+template< class InputIt,
+enable_if<is_integral<InputIt>::value, bool>
+>
 void vector<T, Allocator>::assign( InputIt first, InputIt last )
 {
 	if (_array)
@@ -172,25 +175,25 @@ const T&	vector<T, Allocator>::operator[]( size_type pos ) const
 template< class T, class Allocator >
 T&	vector<T, Allocator>::front()
 {
-	return (*this->begin());
+	return (*begin());
 }
 
 template< class T, class Allocator >
 const T&	vector<T, Allocator>::front() const
 {
-	return (*this->begin());
+	return (*begin());
 }
 
 template< class T, class Allocator >
 T&	vector<T, Allocator>::back()
 {
-	return (_array[_size]);
+	return (*(end() - 1));
 }
 
 template< class T, class Allocator >
 const T&	vector<T, Allocator>::back() const
 {
-	return (_array[_size]);
+	return (*(end() - 1));
 }
 
 template< class T, class Allocator >
@@ -228,25 +231,23 @@ typename vector<T, Allocator>::const_iterator vector<T, Allocator>::begin() cons
 template< class T, class Allocator >
 typename vector<T, Allocator>::iterator vector<T, Allocator>::end()
 {
-	typename vector<T, Allocator>::iterator it = begin();
-	for (size_type i = 0; i < _size; i++)
-		it++;
+	typename vector<T, Allocator>::iterator it = begin() + _size;
+
 	return (it);
 }
 
 template< class T, class Allocator >
 typename vector<T, Allocator>::const_iterator vector<T, Allocator>::end() const
 {
-	typename vector<T, Allocator>::const_iterator it = begin();
-	for (size_type i = 0; i < _size; i++)
-		it++;
+	typename vector<T, Allocator>::const_iterator it = begin() + _size;
+
 	return (it);
 }
 
 template< class T, class Allocator >
 typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rbegin()
 {
-	typename vector<T, Allocator>::reverse_iterator it(_array + _size - 1);
+	typename vector<T, Allocator>::reverse_iterator it(end());
 
 	return (it);
 }
@@ -254,7 +255,7 @@ typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rbegin()
 template< class T, class Allocator >
 typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbegin() const
 {
-	typename vector<T, Allocator>::const_reverse_iterator it(_array + _size - 1);
+	typename vector<T, Allocator>::const_reverse_iterator it(end());
 
 	return (it);
 }
@@ -262,7 +263,7 @@ typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbeg
 template< class T, class Allocator >
 typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend()
 {
-	typename vector<T, Allocator>::reverse_iterator it(_array - 1);
+	typename vector<T, Allocator>::reverse_iterator it(begin());
 
 	return (it);
 }
@@ -270,7 +271,7 @@ typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend()
 template< class T, class Allocator >
 typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const
 {
-	typename vector<T, Allocator>::const_reverse_iterator it(_array - 1);
+	typename vector<T, Allocator>::const_reverse_iterator it(begin());
 
 	return (it);
 }
@@ -334,40 +335,156 @@ size_type vector<T, Allocator>::capacity() const
 template< class T, class Allocator >
 void vector<T, Allocator>::clear()
 {
-	if (_array)
-		delete [] _array;
+	size_type	i = 0;
+	for (; i < _size; ++i) {
+		_allocator.destroy(&_array[i]);
+	}
 	_size = 0;
 }
 
 template< class T, class Allocator >
-typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( 
-	typename vector<T, Allocator>::iterator pos, 
-	const T& value )
+typename vector<T, Allocator>::iterator vector<T, Allocator>::insert
+( typename vector<T, Allocator>::iterator pos, const T& value )
 {
 	if (_capacity == 0)
 		reserve(1);
 	if (_size == _capacity)
-		reserve(_size * 2);
+		reserve(_capacity * 2);
 	
-	size_type i = 0;
-	while ( i < _size) {
-		if (*pos == _array[i++])
-			break ;
+	typename vector<T, Allocator>::iterator it = begin();
+	while ( it != pos && it != end()) {
+		++it;
 	}
-	size_type anchor = i;
-	i = _size;
-	while ( i != anchor ) {
-		_array[i] = _array[i - 1];
-		i--;
+	
+	typename vector<T, Allocator>::iterator new_slot = it;
+	it = end();
+	while ( it != new_slot ) {
+		*it = *(it - 1);
+		--it;
 	}
-	_array[anchor] = value;
-	vector<T, Allocator>::iterator it(_array + anchor);
-	return (it);
+	*new_slot = value;
+	++_size;
+	return (new_slot);
 }
 
-// INSERT
+template< class T, class Allocator >
+void	vector<T, Allocator>::insert
+( typename vector<T, Allocator>::iterator pos, size_type count, const T& value )
+{
+	if (count == 0)
+		return ;
+	if (_capacity == 0)
+		reserve(count);
+	size_type	target_capacity = _capacity;
+	while (_size + count > target_capacity)
+		target_capacity *= 2;
+	reserve(target_capacity);
+	
+	typename vector<T, Allocator>::iterator it = begin();
+	while ( it != pos && it != end()) {
+		++it;
+	}
+	
+	typename vector<T, Allocator>::iterator new_range_start = it;
+	it = end() + count - 1;
+	while ( it != new_range_start + count - 1 ) {
+		*it = *(it - count);
+		--it;
+	}
+	
+	for (size_type i = 0; i < count; ++i) {
+		*new_range_start = value;
+		++new_range_start;
+	}
+	_size += count;
+}
 
-// ERASE
+template< class T, class Allocator >
+template< class InputIt >
+void	vector<T, Allocator>::insert
+( typename vector<T, Allocator>::iterator pos, InputIt first, InputIt last )
+{
+	if (first >= last)
+		return ;
+
+	size_type count = 0;
+	for (InputIt countIt = first; countIt!= last; ++countIt) {
+		++count;
+	}
+	if (_capacity == 0)
+		reserve(count);
+	size_type	target_capacity = _capacity;
+	while (_size + count > target_capacity)
+		target_capacity *= 2;
+	reserve(target_capacity);
+	
+	typename vector<T, Allocator>::iterator it = begin();
+	while ( it != pos && it != end()) {
+		++it;
+	}
+	
+	typename vector<T, Allocator>::iterator new_range_start = it;
+	it = end() + count - 1;
+	while ( it != new_range_start + count - 1 ) {
+		*it = *(it - count);
+		--it;
+	}
+	
+	for (size_type i = 0; i < count; ++i) {
+		*new_range_start = *first;
+		++new_range_start;
+		++first;
+	}
+	_size += count;
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::iterator	vector<T, Allocator>::erase
+( typename vector<T, Allocator>::iterator pos )
+{
+	typename vector<T, Allocator>::iterator it = begin();
+	while ( it != pos && it != end()) {
+		++it;
+	}
+	if (it == end())
+		return (pos);
+	
+	while ( it != end() - 1 ) {
+		*it = *(it + 1);
+		++it;
+	}
+	--_size;
+	return (pos);
+}
+
+template< class T, class Allocator >
+typename vector<T, Allocator>::iterator	vector<T, Allocator>::erase
+( typename vector<T, Allocator>::iterator first, 
+	typename vector<T, Allocator>::iterator last )
+{
+	if (first >= last)
+		return (last);
+
+	size_type count = 0;
+	for (typename vector<T, Allocator>::iterator countIt = first; countIt!= last; ++countIt) {
+		++count;
+	}
+	
+	typename vector<T, Allocator>::iterator it = begin();
+	while ( it != first && it != end()) {
+		++it;
+	}
+	if (it == end())
+		return (last);
+	if (it + count < end()) {
+		while (it + count != end()) {
+			*it = *(it + count);
+			++it;
+		}
+	}
+	_size -= count;
+	return (end());
+}
 
 template< class T, class Allocator >
 void vector<T, Allocator>::push_back( const T& value )
@@ -396,7 +513,7 @@ void vector<T, Allocator>::resize( size_type count, T value )
 			pop_back();
 		}
 	}
-	else {
+	else if (_size < count) {
 		for (size_type i = _size; i < count; i++) {
 			push_back(value);
 		}
