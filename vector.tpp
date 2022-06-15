@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/14 10:12:49 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/15 17:02:37 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,20 +52,19 @@ vector<T, Allocator>::vector( size_type count,
 	}
 }
 
-template< class T, class Allocator >					/* 5 */
-template< class InputIt,
-enable_if<is_integral<InputIt>::value, bool>
->
-vector<T, Allocator>::vector( InputIt first, InputIt last,
-        	const Allocator& alloc)
-{
-	_size = 0;
-	_capacity = 0;
-	_allocator = alloc;
-	_array = NULL;
-	for (InputIt it = first; it != last; ++it)
-		push_back(*it);
-}
+// template< class T, class Allocator >					/* 5 */
+// template< class InputIt >
+// vector<T, Allocator>::vector( InputIt first, InputIt last,
+//         	const Allocator& alloc)
+// {
+
+// 	_size = 0;
+// 	_capacity = 0;
+// 	_allocator = alloc;
+// 	_array = NULL;
+// 	for (InputIt it = first; it != last; ++it)
+// 		push_back(*it);
+// }
 
 template< class T, class Allocator >					/* 6 */
 vector<T, Allocator>::vector( const vector<T, Allocator>& other )
@@ -118,21 +117,19 @@ void vector<T, Allocator>::assign( size_type count, const T& value )
 		_allocator.construct(&_array[i], value);
 }
 
-template< class T, class Allocator >
-template< class InputIt,
-enable_if<is_integral<InputIt>::value, bool>
->
-void vector<T, Allocator>::assign( InputIt first, InputIt last )
-{
-	if (_array)
-		delete [] _array;
+// template< class T, class Allocator >
+// template< class InputIt >
+// void vector<T, Allocator>::assign( InputIt first, InputIt last )
+// {
+// 	if (_array)
+// 		delete [] _array;
 
-	_size = 0;
-	_capacity = 0;
-	_array = NULL;
-	for (InputIt it = first; it != last; ++it)
-		push_back(*it);
-}
+// 	_size = 0;
+// 	_capacity = 0;
+// 	_array = NULL;
+// 	for (InputIt it = first; it != last; ++it)
+// 		push_back(*it);
+// }
 
 template< class T, class Allocator >
 Allocator vector<T, Allocator>::get_allocator() const

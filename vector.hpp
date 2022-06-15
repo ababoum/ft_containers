@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/14 09:06:21 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/15 17:15:05 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,19 @@ class vector
 		explicit vector( const Allocator& alloc );	/* 2 */
 		explicit vector( size_type count,
 			const T& value = T(),
-			const Allocator& alloc = Allocator());				/* 3 */
-		template< class InputIt,
-		enable_if<is_integral<InputIt>::value, bool>
-		>
+			const Allocator& alloc = Allocator());	/* 3 */
+		template< class InputIt >					/* 5 */
 		vector( InputIt first, InputIt last,
-        	const Allocator& alloc = Allocator());	/* 5 */
+        	const Allocator& alloc = Allocator(),
+				typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
+				{
+					_size = 0;
+					_capacity = 0;
+					_allocator = alloc;
+					_array = NULL;
+					for (InputIt it = first; it != last; ++it)
+						push_back(*it);
+				}
 		vector( const vector& other );				/* 6 */
 
 		/* DESTRUCTOR */
@@ -63,10 +70,19 @@ class vector
 		/* GENERAL MEMBER FUNCTIONS */
 		vector& operator=( const vector& other );
 		void assign( size_type count, const T& value );	/* 1 */
-		template< class InputIt,
-		enable_if<is_integral<InputIt>::value, bool>
-		>
-		void assign( InputIt first, InputIt last );		/* 2 */
+		template< class InputIt >						/* 2 */
+		void assign( InputIt first, InputIt last,
+			typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
+			{
+				if (_array)
+					delete [] _array;
+
+				_size = 0;
+				_capacity = 0;
+				_array = NULL;
+				for (InputIt it = first; it != last; ++it)
+					push_back(*it);
+			}
 		allocator_type get_allocator() const;
 
 		/* ELEMENT ACCESS  */
