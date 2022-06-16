@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/15 17:15:05 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/16 19:43:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define VECTOR_HPP
 
 # include <iostream>
-# include <string>
 
 # include "iterators/iterators_traits.hpp"
 # include "iterators/reverse_iterator.hpp"
