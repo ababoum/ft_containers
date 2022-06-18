@@ -1,2 +1,4 @@
 TODO
 mli42_tester/
+*.o
+commands

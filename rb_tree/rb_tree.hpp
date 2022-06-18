@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/18 16:59:41 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/18 18:19:03 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,6 +364,46 @@ namespace ft
 		}
 	};
 
+	// tree rotations
+
+	static void
+	local_Rb_tree_rotate_left(_Rb_tree_node_base *const __x,
+							  _Rb_tree_node_base *&__root)
+	{
+		_Rb_tree_node_base *const __y = __x->right;
+		__x->right = __y->left;
+		if (__y->left != 0)
+			__y->left->parent = __x;
+		__y->parent = __x->_M_parent;
+		if (__x == __root)
+			__root = __y;
+		else if (__x == __x->parent->left)
+			__x->parent->left = __y;
+		else
+			__x->parent->right = __y;
+		__y->left = __x;
+		__x->parent = __y;
+	}
+
+	static void
+	local_Rb_tree_rotate_right(_Rb_tree_node_base *const __x,
+							   _Rb_tree_node_base *&__root)
+	{
+		_Rb_tree_node_base *const __y = __x->left;
+		__x->left = __y->right;
+		if (__y->right != 0)
+			__y->right->parent = __x;
+		__y->parent = __x->_M_parent;
+		if (__x == __root)
+			__root = __y;
+		else if (__x == __x->parent->right)
+			__x->parent->right = __y;
+		else
+			__x->parent->left = __y;
+		__y->right = __x;
+		__x->parent = __y;
+	}
+
 	// insertion / deletion functions declaration
 
 	void
@@ -460,10 +500,10 @@ namespace ft
 		_Rb_tree_node_base *__y = __z;
 		_Rb_tree_node_base *__x = 0;
 		_Rb_tree_node_base *__x_parent = 0;
-		if (__y->left == 0)		 // __z has at most one non-null child. y == z.
-			__x = __y->right;	 // __x might be null.
+		if (__y->left == 0)		  // __z has at most one non-null child. y == z.
+			__x = __y->right;	  // __x might be null.
 		else if (__y->right == 0) // __z has exactly one non-null child. y == z.
-			__x = __y->left;		 // __x is not null.
+			__x = __y->left;	  // __x is not null.
 		else
 		{
 			// __z has two non-null children.  Set __y to
@@ -631,7 +671,7 @@ namespace ft
 		struct reuse_or_alloc_node
 		{
 			reuse_or_alloc_node(rb_tree &__t)
-				: _M_root(__t._M_root()), _M_nodes(__t._M_rightmost()), _M_t(__t)
+				: _M_root(__t._M_root()), _M_nodes(__t.rightmost()), _M_t(__t)
 			{
 				if (_M_root)
 				{
@@ -845,25 +885,25 @@ namespace ft
 		}
 
 		base_ptr &
-		_M_leftmost()
+		leftmost()
 		{
 			return this->_M_impl._M_header.left;
 		}
 
 		const_base_ptr
-		_M_leftmost() const
+		leftmost() const
 		{
 			return this->_M_impl._M_header.left;
 		}
 
 		base_ptr &
-		_M_rightmost()
+		rightmost()
 		{
 			return this->_M_impl._M_header.right;
 		}
 
 		const_base_ptr
-		_M_rightmost() const
+		rightmost() const
 		{
 			return this->_M_impl._M_header.right;
 		}
@@ -996,8 +1036,8 @@ namespace ft
 		_M_copy(const rb_tree &__x, _NodeGen &__gen)
 		{
 			link_type __root = _M_copy(__x._M_begin(), _M_end(), __gen);
-			_M_leftmost() = _S_minimum(__root);
-			_M_rightmost() = _S_maximum(__root);
+			leftmost() = _S_minimum(__root);
+			rightmost() = _S_maximum(__root);
 			_M_impl.node_count = __x._M_impl.node_count;
 			return __root;
 		}
@@ -1581,8 +1621,8 @@ namespace ft
 		else
 		{
 			std::swap(_M_root(), __t._M_root());
-			std::swap(_M_leftmost(), __t._M_leftmost());
-			std::swap(_M_rightmost(), __t._M_rightmost());
+			std::swap(leftmost(), __t._M_leftmost());
+			std::swap(rightmost(), __t._M_rightmost());
 
 			_M_root()->parent = _M_end();
 			__t._M_root()->parent = __t._M_end();
@@ -1697,8 +1737,8 @@ namespace ft
 		// end()
 		if (__pos._M_node == _M_end())
 		{
-			if (size() > 0 && _M_impl._M_key_compare(_S_key(_M_rightmost()), __k))
-				return _Res(0, _M_rightmost());
+			if (size() > 0 && _M_impl._M_key_compare(_S_key(rightmost()), __k))
+				return _Res(0, rightmost());
 			else
 				return _M_get_insert_unique_pos(__k);
 		}
@@ -1706,8 +1746,8 @@ namespace ft
 		{
 			// First, try before...
 			iterator __before = __pos;
-			if (__pos._M_node == _M_leftmost()) // begin()
-				return _Res(_M_leftmost(), _M_leftmost());
+			if (__pos._M_node == leftmost()) // begin()
+				return _Res(leftmost(), _M_leftmost());
 			else if (_M_impl._M_key_compare(_S_key((--__before)._M_node), __k))
 			{
 				if (_S_right(__before._M_node) == 0)
@@ -1722,8 +1762,8 @@ namespace ft
 		{
 			// ... then try after.
 			iterator __after = __pos;
-			if (__pos._M_node == _M_rightmost())
-				return _Res(0, _M_rightmost());
+			if (__pos._M_node == rightmost())
+				return _Res(0, rightmost());
 			else if (_M_impl._M_key_compare(__k, _S_key((++__after)._M_node)))
 			{
 				if (_S_right(__pos._M_node) == 0)
@@ -1772,8 +1812,8 @@ namespace ft
 		// end()
 		if (__pos._M_node == _M_end())
 		{
-			if (size() > 0 && !_M_impl._M_key_compare(__k, _S_key(_M_rightmost())))
-				return _Res(0, _M_rightmost());
+			if (size() > 0 && !_M_impl._M_key_compare(__k, _S_key(rightmost())))
+				return _Res(0, rightmost());
 			else
 				return _M_get_insert_equal_pos(__k);
 		}
@@ -1781,8 +1821,8 @@ namespace ft
 		{
 			// First, try before...
 			iterator __before = __pos;
-			if (__pos._M_node == _M_leftmost()) // begin()
-				return _Res(_M_leftmost(), _M_leftmost());
+			if (__pos._M_node == leftmost()) // begin()
+				return _Res(leftmost(), _M_leftmost());
 			else if (!_M_impl._M_key_compare(__k, _S_key((--__before)._M_node)))
 			{
 				if (_S_right(__before._M_node) == 0)
@@ -1797,8 +1837,8 @@ namespace ft
 		{
 			// ... then try after.
 			iterator __after = __pos;
-			if (__pos._M_node == _M_rightmost())
-				return _Res(0, _M_rightmost());
+			if (__pos._M_node == rightmost())
+				return _Res(0, rightmost());
 			else if (!_M_impl._M_key_compare(_S_key((++__after)._M_node), __k))
 			{
 				if (_S_right(__pos._M_node) == 0)
@@ -1919,7 +1959,7 @@ namespace ft
 		if (_M_impl.node_count == 0 || begin() == end())
 			return _M_impl.node_count == 0 && begin() == end() && this->_M_impl._M_header.left == _M_end() && this->_M_impl._M_header.right == _M_end();
 
-		unsigned int __len = _Rb_tree_black_count(_M_leftmost(), _M_root());
+		unsigned int __len = _Rb_tree_black_count(leftmost(), _M_root());
 		for (const_iterator __it = begin(); __it != end(); ++__it)
 		{
 			const_link_type __x = static_cast<const_link_type>(__it._M_node);
@@ -1939,9 +1979,9 @@ namespace ft
 				return false;
 		}
 
-		if (_M_leftmost() != rb_tree_node_base::_S_minimum(_M_root()))
+		if (leftmost() != rb_tree_node_base::_S_minimum(_M_root()))
 			return false;
-		if (_M_rightmost() != rb_tree_node_base::_S_maximum(_M_root()))
+		if (rightmost() != rb_tree_node_base::_S_maximum(_M_root()))
 			return false;
 		return true;
 	}
