@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 23:16:43 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/08 17:15:54 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/18 14:38:13 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@ namespace ft {
 			typedef	T1		first_type;
 			typedef	T2		second_type;
 
-		/* CONSTRUCTORS */
-		pair();									/* 1 */
-		pair( const T1& x, const T2& y );		/* 2 */
+			/* CONSTRUCTORS */
+			pair();									/* 1 */
+			pair( const T1& x, const T2& y );		/* 2 */
 
-		/* MEMBER FUNCTIONS */
-		pair& operator=( const pair& other );
-	
-		/* MEMBER OBJECTS */
-		first_type		first;
-		second_type		second;
+			/* MEMBER FUNCTIONS */
+			pair& operator=( const pair& other );
+		
+			/* MEMBER OBJECTS */
+			first_type		first;
+			second_type		second;
 	};
 
 	template< class T1, class T2 >
