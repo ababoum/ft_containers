@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/18 14:43:20 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/18 16:53:47 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define MAP_HPP
 
 #include "rb_tree/rb_tree.hpp"
+#include "rb_tree/tree_utils.hpp"
 
 namespace ft
 {
@@ -45,16 +46,18 @@ namespace ft
 	private:
 		// This turns a red-black tree into a map
 		typedef Allocator::value_type pair_alloc_type;
-
 		typedef _Rb_tree<key_type, value_type, _Select1st<value_type>,
 						 key_compare, _Pair_alloc_type>
-			_Rep_type;
-		rebind<value_type>::other _Pair_alloc_type;
-
-		typedef _Rb_tree<key_type, value_type, _Select1st<value_type>,
-						 key_compare, _Pair_alloc_type>
-			_Rep_type;
+			struct_type;
 		// The actual tree structure
+		struct_type _M_t;
+
+	public:
+		typedef typename struct_type::iterator iterator;
+		typedef typename struct_type::const_iterator const_iterator;
+		typedef typename struct_type::reverse_iterator	 reverse_iterator;
+		typedef typename struct_type::const_reverse_iterator const_reverse_iterator;
+		
 
 		/* MEMBER CLASSES */
 
@@ -91,4 +94,3 @@ namespace ft
 	};
 
 } // namespace ft
-
