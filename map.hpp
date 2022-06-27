@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/27 11:00:24 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/27 15:56:51 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ namespace ft
 		typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
 	private:
-		Rb_tree storage;
+		typedef Rb_tree<Key, T, key_compare, allocator_type> Rb_tree_map;
+
+		Rb_tree_map _storage;
 
 	public:
 		/* MEMBER CLASSES */
@@ -70,18 +72,25 @@ namespace ft
 
 		/* CONSTRUCTORS */
 
-		map() /* 1 */
-			: map(Compare())
-		{
-		}
+		/* 1 */
+		map()
+			: _storage(Rb_tree_map()) {}
+
+		/* 1 bis */
 		explicit map(const Compare &comp,
-					 const Allocator &alloc = Allocator()) /* 1 bis */
+					 const Allocator &alloc = Allocator())
+			: _storage(Rb_tree_map())
 		{
+			_storage.setAllocator(alloc);
+			_storage.setComp(comp);
 		}
-		template <class InputIt> /* 2 */
+
+		/* 2 */
+		template <class InputIt>
 		map(InputIt first, InputIt last,
 			const Compare &comp = Compare(),
 			const Allocator &alloc = Allocator())
+			: _storage(Rb_tree_map())
 		{
 		}
 		map(const map &other)
@@ -174,7 +183,7 @@ namespace ft
 
 		bool empty() const
 		{
-			return storage.empty();
+			return _storage.empty();
 		}
 
 		size_type size() const
@@ -184,14 +193,14 @@ namespace ft
 
 		size_type max_size() const
 		{
-			return storage.max_size();
+			return _storage.max_size();
 		}
 
 		/* MODIFIERS */
 
 		void clear()
 		{
-			storage.clear();
+			_storage.clear();
 		}
 
 		pair<iterator, bool> insert(const value_type &value) /* 1 */
@@ -319,12 +328,12 @@ namespace ft
 
 		key_compare key_comp() const
 		{
-			return storage.key_comp();
+			return _storage.key_comp();
 		}
 
 		value_compare value_comp() const
 		{
-			return value_compare(storage.key_comp());
+			return value_compare(_storage.key_comp());
 		}
 	};
 

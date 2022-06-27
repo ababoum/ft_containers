@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/27 12:14:52 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/27 16:30:21 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ namespace ft
 		base_ptr left;
 		base_ptr right;
 		T value;
-		size_t node_count;
 
 		static base_ptr
 		_S_minimum(base_ptr node_base)
@@ -355,11 +354,11 @@ namespace ft
 
 	void
 	Rb_tree_insert_and_rebalance(const bool insert_left,
-								  rb_tree_node *node_to_insert,
-								  rb_tree_node *node_to_attach_to,
-								  rb_tree_node &tree_root) throw()
+								 rb_tree_node *node_to_insert,
+								 rb_tree_node *node_to_attach_to,
+								 rb_tree_node &tree_root) throw()
 	{
-		_Rb_tree_node_base *&__root = tree_root.parent;
+		rb_tree_node *&__root = tree_root.parent;
 		// Initialize fields in new node to insert.
 		node_to_insert->parent = node_to_attach_to;
 		node_to_insert->left = 0;
@@ -385,19 +384,21 @@ namespace ft
 			if (node_to_attach_to == tree_root.right)
 				tree_root.right = node_to_insert; // maintain rightmost pointing to max node
 		}
+
 		// Rebalance
+
 		while (node_to_insert != __root && node_to_insert->parent->color == _S_red)
 		{
-			_Rb_tree_node_base *const __xpp = node_to_insert->parent->parent;
-			if (node_to_insert->parent == __xpp->left)
+			rb_tree_node *const grand_father = node_to_insert->parent->parent;
+			if (node_to_insert->parent == grand_father->left)
 			{
-				_Rb_tree_node_base *const __y = __xpp->right;
-				if (__y && __y->color == _S_red)
+				rb_tree_node *const uncle = grand_father->right;
+				if (uncle && uncle->color == _S_red)
 				{
 					node_to_insert->parent->color = _S_black;
-					__y->color = _S_black;
-					__xpp->color = _S_red;
-					node_to_insert = __xpp;
+					uncle->color = _S_black;
+					grand_father->color = _S_red;
+					node_to_insert = grand_father;
 				}
 				else
 				{
@@ -407,19 +408,19 @@ namespace ft
 						local_Rb_tree_rotate_left(node_to_insert, __root);
 					}
 					node_to_insert->parent->color = _S_black;
-					__xpp->color = _S_red;
-					local_Rb_tree_rotate_right(__xpp, __root);
+					grand_father->color = _S_red;
+					local_Rb_tree_rotate_right(grand_father, __root);
 				}
 			}
 			else
 			{
-				_Rb_tree_node_base *const __y = __xpp->left;
-				if (__y && __y->color == _S_red)
+				rb_tree_node *const uncle = grand_father->left;
+				if (uncle && uncle->color == _S_red)
 				{
 					node_to_insert->parent->color = _S_black;
-					__y->color = _S_black;
-					__xpp->color = _S_red;
-					node_to_insert = __xpp;
+					uncle->color = _S_black;
+					grand_father->color = _S_red;
+					node_to_insert = grand_father;
 				}
 				else
 				{
@@ -429,103 +430,103 @@ namespace ft
 						local_Rb_tree_rotate_right(node_to_insert, __root);
 					}
 					node_to_insert->parent->color = _S_black;
-					__xpp->color = _S_red;
-					local_Rb_tree_rotate_left(__xpp, __root);
+					grand_father->color = _S_red;
+					local_Rb_tree_rotate_left(grand_father, __root);
 				}
 			}
 		}
 		__root->color = _S_black;
 	}
-	
-	_Rb_tree_node_base *
-	_Rb_tree_rebalance_for_erase(_Rb_tree_node_base *const __z,
-								 _Rb_tree_node_base &tree_root) throw()
+
+	rb_tree_node *
+	Rb_tree_rebalance_for_erase(rb_tree_node *const node_to_be_deleted,
+								rb_tree_node &tree_root) throw()
 	{
-		_Rb_tree_node_base *&__root = tree_root.parent;
-		_Rb_tree_node_base *&__leftmost = tree_root.left;
-		_Rb_tree_node_base *&__rightmost = tree_root.right;
-		_Rb_tree_node_base *__y = __z;
-		_Rb_tree_node_base *node_to_insert = 0;
-		_Rb_tree_node_base *__x_parent = 0;
-		if (__y->left == 0)		  // __z has at most one non-null child. y == z.
-			node_to_insert = __y->right;	  // node_to_insert might be null.
-		else if (__y->right == 0) // __z has exactly one non-null child. y == z.
-			node_to_insert = __y->left;	  // node_to_insert is not null.
+		rb_tree_node *&__root = tree_root.parent;
+		rb_tree_node *&__leftmost = tree_root.left;
+		rb_tree_node *&__rightmost = tree_root.right;
+		rb_tree_node *y = node_to_be_deleted;
+		rb_tree_node *x = 0;
+		rb_tree_node *x_parent = 0;
+		if (y->left == 0)		// node_to_be_deleted has at most one non-null child. y == z.
+			x = y->right;		// x might be null.
+		else if (y->right == 0) // node_to_be_deleted has exactly one non-null child. y == z.
+			x = y->left;		// x is not null.
 		else
 		{
-			// __z has two non-null children.  Set __y to
-			__y = __y->right; //   __z's successor.  node_to_insert might be null.
-			while (__y->left != 0)
-				__y = __y->left;
-			node_to_insert = __y->right;
+			// node_to_be_deleted has two non-null children.  Set y to
+			y = y->right; //   node_to_be_deleted's successor.  x might be null.
+			while (y->left != 0)
+				y = y->left;
+			x = y->right;
 		}
-		if (__y != __z)
+		if (y != node_to_be_deleted)
 		{
 			// relink y in place of z.  y is z's successor
-			__z->left->parent = __y;
-			__y->left = __z->left;
-			if (__y != __z->right)
+			node_to_be_deleted->left->parent = y;
+			y->left = node_to_be_deleted->left;
+			if (y != node_to_be_deleted->right)
 			{
-				__x_parent = __y->parent;
-				if (node_to_insert)
-					node_to_insert->parent = __y->parent;
-				__y->parent->left = node_to_insert; // __y must be a child of left
-				__y->right = __z->right;
-				__z->right->parent = __y;
+				x_parent = y->parent;
+				if (x)
+					x->parent = y->parent;
+				y->parent->left = x; // y must be a child of left
+				y->right = node_to_be_deleted->right;
+				node_to_be_deleted->right->parent = y;
 			}
 			else
-				__x_parent = __y;
-			if (__root == __z)
-				__root = __y;
-			else if (__z->parent->left == __z)
-				__z->parent->left = __y;
+				x_parent = y;
+			if (__root == node_to_be_deleted)
+				__root = y;
+			else if (node_to_be_deleted->parent->left == node_to_be_deleted)
+				node_to_be_deleted->parent->left = y;
 			else
-				__z->parent->right = __y;
-			__y->parent = __z->parent;
-			std::swap(__y->color, __z->color);
-			__y = __z;
-			// __y now points to node to be actually deleted
+				node_to_be_deleted->parent->right = y;
+			y->parent = node_to_be_deleted->parent;
+			std::swap(y->color, node_to_be_deleted->color);
+			y = node_to_be_deleted;
+			// y now points to node to be actually deleted
 		}
 		else
-		{ // __y == __z
-			__x_parent = __y->parent;
-			if (node_to_insert)
-				node_to_insert->parent = __y->parent;
-			if (__root == __z)
-				__root = node_to_insert;
-			else if (__z->parent->left == __z)
-				__z->parent->left = node_to_insert;
+		{ // y == node_to_be_deleted
+			x_parent = y->parent;
+			if (x)
+				x->parent = y->parent;
+			if (__root == node_to_be_deleted)
+				__root = x;
+			else if (node_to_be_deleted->parent->left == node_to_be_deleted)
+				node_to_be_deleted->parent->left = x;
 			else
-				__z->parent->right = node_to_insert;
-			if (__leftmost == __z)
+				node_to_be_deleted->parent->right = x;
+			if (__leftmost == node_to_be_deleted)
 			{
-				if (__z->right == 0) // __z->left must be null also
-					__leftmost = __z->parent;
-				// makes __leftmost == _M_header if __z == __root
+				if (node_to_be_deleted->right == 0) // node_to_be_deleted->left must be null also
+					__leftmost = node_to_be_deleted->parent;
+				// makes __leftmost == _M_header if node_to_be_deleted == __root
 				else
-					__leftmost = _Rb_tree_node_base::_S_minimum(node_to_insert);
+					__leftmost = rb_tree_node::_S_minimum(x);
 			}
-			if (__rightmost == __z)
+			if (__rightmost == node_to_be_deleted)
 			{
-				if (__z->left == 0) // __z->right must be null also
-					__rightmost = __z->parent;
-				// makes __rightmost == _M_header if __z == __root
-				else // node_to_insert == __z->left
-					__rightmost = _Rb_tree_node_base::_S_maximum(node_to_insert);
+				if (node_to_be_deleted->left == 0) // node_to_be_deleted->right must be null also
+					__rightmost = node_to_be_deleted->parent;
+				// makes __rightmost == _M_header if node_to_be_deleted == __root
+				else // x == node_to_be_deleted->left
+					__rightmost = rb_tree_node::_S_maximum(x);
 			}
 		}
-		if (__y->color != _S_red)
+		if (y->color != _S_red)
 		{
-			while (node_to_insert != __root && (node_to_insert == 0 || node_to_insert->color == _S_black))
-				if (node_to_insert == __x_parent->left)
+			while (x != __root && (x == 0 || x->color == _S_black))
+				if (x == x_parent->left)
 				{
-					_Rb_tree_node_base *__w = __x_parent->right;
+					rb_tree_node *__w = x_parent->right;
 					if (__w->color == _S_red)
 					{
 						__w->color = _S_black;
-						__x_parent->color = _S_red;
-						local_Rb_tree_rotate_left(__x_parent, __root);
-						__w = __x_parent->right;
+						x_parent->color = _S_red;
+						local_Rb_tree_rotate_left(x_parent, __root);
+						__w = x_parent->right;
 					}
 					if ((__w->left == 0 ||
 						 __w->left->color == _S_black) &&
@@ -533,8 +534,8 @@ namespace ft
 						 __w->right->color == _S_black))
 					{
 						__w->color = _S_red;
-						node_to_insert = __x_parent;
-						__x_parent = __x_parent->parent;
+						x = x_parent;
+						x_parent = x_parent->parent;
 					}
 					else
 					{
@@ -543,26 +544,26 @@ namespace ft
 							__w->left->color = _S_black;
 							__w->color = _S_red;
 							local_Rb_tree_rotate_right(__w, __root);
-							__w = __x_parent->right;
+							__w = x_parent->right;
 						}
-						__w->color = __x_parent->color;
-						__x_parent->color = _S_black;
+						__w->color = x_parent->color;
+						x_parent->color = _S_black;
 						if (__w->right)
 							__w->right->color = _S_black;
-						local_Rb_tree_rotate_left(__x_parent, __root);
+						local_Rb_tree_rotate_left(x_parent, __root);
 						break;
 					}
 				}
 				else
 				{
-					// same as above, with right <-> left.
-					_Rb_tree_node_base *__w = __x_parent->left;
+					// same as above, with right <-> left
+					rb_tree_node *__w = x_parent->left;
 					if (__w->color == _S_red)
 					{
 						__w->color = _S_black;
-						__x_parent->color = _S_red;
-						local_Rb_tree_rotate_right(__x_parent, __root);
-						__w = __x_parent->left;
+						x_parent->color = _S_red;
+						local_Rb_tree_rotate_right(x_parent, __root);
+						__w = x_parent->left;
 					}
 					if ((__w->right == 0 ||
 						 __w->right->color == _S_black) &&
@@ -570,8 +571,8 @@ namespace ft
 						 __w->left->color == _S_black))
 					{
 						__w->color = _S_red;
-						node_to_insert = __x_parent;
-						__x_parent = __x_parent->parent;
+						x = x_parent;
+						x_parent = x_parent->parent;
 					}
 					else
 					{
@@ -580,20 +581,55 @@ namespace ft
 							__w->right->color = _S_black;
 							__w->color = _S_red;
 							local_Rb_tree_rotate_left(__w, __root);
-							__w = __x_parent->left;
+							__w = x_parent->left;
 						}
-						__w->color = __x_parent->color;
-						__x_parent->color = _S_black;
+						__w->color = x_parent->color;
+						x_parent->color = _S_black;
 						if (__w->left)
 							__w->left->color = _S_black;
-						local_Rb_tree_rotate_right(__x_parent, __root);
+						local_Rb_tree_rotate_right(x_parent, __root);
 						break;
 					}
 				}
-			if (node_to_insert)
-				node_to_insert->color = _S_black;
+			if (x)
+				x->color = _S_black;
 		}
-		return __y;
+		return y;
+	}
+
+	template <
+		class Key,
+		class T,
+		class Compare,
+		class Allocator>
+	class Rb_tree
+	{
+	private:
+		rb_tree_node *_root;
+		size_t _node_count;
+		Allocator _alloc;
+		Compare _comp;
+
+	public:
+		Rb_tree()
+			: root(0), node_count(0) {}
+
+		
+		/* ACCESSORS */
+		void setAllocator(Allocator alloc)
+		{
+			_alloc = alloc;
+		};
+		void setComp(Compare comp)
+		{
+			_comp = comp;
+		}
+
+		/* MODIFIERS */
+		void insert_node(rb_tree_node *new_node)
+		{
+			
+		}
 	}
 
 } // namespace ft
