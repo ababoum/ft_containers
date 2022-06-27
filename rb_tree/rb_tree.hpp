@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/27 16:30:21 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/27 16:53:38 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,7 +614,6 @@ namespace ft
 		Rb_tree()
 			: root(0), node_count(0) {}
 
-		
 		/* ACCESSORS */
 		void setAllocator(Allocator alloc)
 		{
@@ -628,7 +627,37 @@ namespace ft
 		/* MODIFIERS */
 		void insert_node(rb_tree_node *new_node)
 		{
-			
+			Key anchor = new_node->value.first;
+
+			// ...
+		}
+
+		typedef rb_tree_node *base_ptr;
+		typedef const rb_tree_node *const_base_ptr;
+		typedef rb_tree_iterator<T> iterator;
+		typedef rb_tree_const_iterator<T> const_iterator;
+		typedef reverse_iterator<iterator> reverse_iterator;
+		typedef reverse_iterator<const_iterator> const_reverse_iterator;
+
+		/* ITERATORS */
+		iterator begin(void)
+		{
+			return (rb_tree_iterator<T>(rb_tree_node::_S_minimum(_root)));
+		}
+
+		const_iterator begin() const
+		{
+			return (rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root)));
+		}
+
+		iterator end()
+		{
+			return (rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root)));
+		}
+
+		const_iterator end() const
+		{
+			return (rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root)));
 		}
 	}
 
