@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/27 15:56:51 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/28 10:17:14 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,34 +149,42 @@ namespace ft
 
 		iterator begin()
 		{
+			return _storage.begin();
 		}
 
 		const_iterator begin() const
 		{
+			return _storage.begin();
 		}
 
 		iterator end()
 		{
+			return _storage.end();
 		}
 
 		const_iterator end() const
 		{
+			return _storage.end();
 		}
 
-		iterator rbegin()
+		reverse_iterator rbegin()
 		{
+			return _storage.rbegin();
 		}
 
-		const_iterator rbegin() const
+		const_reverse_iterator rbegin() const
 		{
+			return _storage.rbegin();
 		}
 
-		iterator rend()
+		reverse_iterator rend()
 		{
+			return _storage.rend();
 		}
 
-		const_iterator rend() const
+		const_reverse_iterator rend() const
 		{
+			return _storage.rend();
 		}
 
 		/* CAPACITY */
@@ -188,7 +196,7 @@ namespace ft
 
 		size_type size() const
 		{
-			return std::distance(begin(), end());
+			return _storage.size();
 		}
 
 		size_type max_size() const

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/27 16:53:38 by mababou          ###   ########.fr       */
+/*   Updated: 2022/06/28 10:18:53 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -604,11 +604,16 @@ namespace ft
 		class Allocator>
 	class Rb_tree
 	{
+	public:
+		typedef std::size_t size_type;
+		typedef Compare key_compare;
+		typedef Allocator allocator_type;
+		
 	private:
 		rb_tree_node *_root;
-		size_t _node_count;
-		Allocator _alloc;
-		Compare _comp;
+		size_type _node_count;
+		allocator_type _alloc;
+		key_compare _comp;
 
 	public:
 		Rb_tree()
@@ -647,18 +652,51 @@ namespace ft
 
 		const_iterator begin() const
 		{
-			return (rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root)));
+			return rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root));
 		}
 
 		iterator end()
 		{
-			return (rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root)));
+			return rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root) + 1);
 		}
 
 		const_iterator end() const
 		{
-			return (rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root)));
+			return rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root) + 1);
 		}
+
+		reverse_iterator rbegin(void)
+		{
+			return rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root));
+		}
+
+		const_reverse_iterator rbegin() const
+		{
+			return rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root));
+		}
+
+		reverse_iterator rend()
+		{
+			return rb_tree_iterator<T>(rb_tree_node::_S_minimum(_root) - 1);
+		}
+
+		const_reverse_iterator rend() const
+		{
+			return rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root) - 1);
+		}
+	
+		/* CAPACITY */
+
+		bool empty() const
+		{
+			return _node_count == 0;
+		}
+
+		size_type size() const
+		{
+			return _node_count;
+		}
+		
 	}
 
 } // namespace ft
