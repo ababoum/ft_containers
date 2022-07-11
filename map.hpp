@@ -6,19 +6,17 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/28 10:17:14 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/11 20:13:42 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "rb_tree/rb_tree.hpp"
+#include "rb_tree/RBT.hpp"
 #include "rb_tree/tree_utils.hpp"
-#include "pairs/pair.hpp"
 
 namespace ft
-{
 
 	template <
 		class Key,
@@ -30,7 +28,7 @@ namespace ft
 	public:
 		typedef Key key_type;
 		typedef T mapped_type;
-		typedef Key value_type;
+		typedef pair<const key_type,mapped_type> value_type;
 		typedef std::size_t size_type;
 		typedef std::ptrdiff_t difference_type;
 		typedef Compare key_compare;
@@ -39,15 +37,15 @@ namespace ft
 		typedef const value_type &const_reference;
 		typedef Allocator::pointer pointer;
 		typedef Allocator::const_pointer const_pointer;
-		typedef rb_tree_iterator<T> iterator;
-		typedef rb_tree_const_iterator<T> const_iterator;
+		typedef RBT_iterator<T> iterator;
+		typedef RBT_const_iterator<T> const_iterator;
 		typedef reverse_iterator<iterator> reverse_iterator;
 		typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
 	private:
-		typedef Rb_tree<Key, T, key_compare, allocator_type> Rb_tree_map;
+		typedef RBT<Key, T, key_compare, allocator_type> RBT_map;
 
-		Rb_tree_map _storage;
+		RBT_map _storage;
 
 	public:
 		/* MEMBER CLASSES */
@@ -59,7 +57,6 @@ namespace ft
 		protected:
 			Compare comp;
 
-			/* Construtor */
 			value_compare(Compare _c)
 				: comp(_c) {}
 
@@ -74,12 +71,12 @@ namespace ft
 
 		/* 1 */
 		map()
-			: _storage(Rb_tree_map()) {}
+			: _storage() {}
 
 		/* 1 bis */
 		explicit map(const Compare &comp,
 					 const Allocator &alloc = Allocator())
-			: _storage(Rb_tree_map())
+			: _storage()
 		{
 			_storage.setAllocator(alloc);
 			_storage.setComp(comp);
@@ -90,11 +87,19 @@ namespace ft
 		map(InputIt first, InputIt last,
 			const Compare &comp = Compare(),
 			const Allocator &alloc = Allocator())
-			: _storage(Rb_tree_map())
+			: _storage()
 		{
+			for (InputIt it = first; it != last; ++it) {
+				insert(*it);
+			}			
 		}
+
+		/* 3 */
 		map(const map &other)
 		{
+			for (iterator it = other.begin(); it != other.end(); ++it) {
+				insert(*it);
+			}
 		}
 
 		/* DESTRUCTOR */
@@ -213,6 +218,21 @@ namespace ft
 
 		pair<iterator, bool> insert(const value_type &value) /* 1 */
 		{
+			pair<iterator, bool> ret;
+			iterator	searched_key;
+
+			searched_key = find(value.first);
+
+			// key found -> no duplicate allowed
+			if (find(value.second) != end())
+			{
+				ret.first = searched_key;
+				ret.second = false;
+			}
+			else
+			{
+				ret.first = 
+			}
 		}
 
 		iterator insert(iterator hint, const value_type &value) /* 2 */
@@ -238,6 +258,7 @@ namespace ft
 
 		void swap(map &other)
 		{
+			_storage.swap(other._storage);
 		}
 
 		/* LOOKUP */
@@ -276,60 +297,22 @@ namespace ft
 
 		iterator lower_bound(const Key &key)
 		{
-			iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					break;
-				++it;
-			}
-			return it;
+			return _storage.lower_bound(key);
 		}
 
 		const_iterator lower_bound(const Key &key) const
 		{
-			const_iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					break;
-				++it;
-			}
-			return it;
+			return _storage.lower_bound(key);
 		}
 
 		iterator upper_bound(const Key &key)
 		{
-			iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-				{
-					++it;
-					break;
-				}
-				++it;
-			}
-			return it;
+			return _storage.upper_bound(key);
 		}
 
 		const_iterator upper_bound(const Key &key)
 		{
-			const_iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-				{
-					++it;
-					break;
-				}
-				++it;
-			}
-			return it;
+			return _storage.upper_bound(key);
 		}
 
 		/* OBSERVERS */

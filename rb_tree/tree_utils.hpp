@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 14:39:41 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/18 14:41:27 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/11 20:15:24 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,15 @@ namespace ft
 		: public unary_function<pair, typename pair::first_type>
 	{
 		typename pair::first_type &
-		operator()(pair &__x) const
+		operator()(pair &key_val) const
 		{
-			return __x.first;
+			return key_val.first;
 		}
 
 		const typename pair::first_type &
-		operator()(const pair &__x) const
+		operator()(const pair &key_val) const
 		{
-			return __x.first;
+			return key_val.first;
 		}
 	}
 } // namespace ft

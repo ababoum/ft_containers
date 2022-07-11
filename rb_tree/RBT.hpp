@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rb_tree.hpp                                        :+:      :+:    :+:   */
+/*   RBT.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/28 10:18:53 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/11 20:13:22 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RB_TREE_HPP
-#define RB_TREE_HPP
+#ifndef RBT_HPP
+#define RBT_HPP
 
 #include <iostream>
+#include "../pairs/pair.hpp"
 
 namespace ft
 {
@@ -27,10 +28,10 @@ namespace ft
 
 	// structure of a node in the tree
 	template <typename T>
-	struct rb_tree_node
+	struct RBT_node
 	{
-		typedef rb_tree_node *base_ptr;
-		typedef const rb_tree_node *const_base_ptr;
+		typedef RBT_node *base_ptr;
+		typedef const RBT_node *const_base_ptr;
 
 		rb_tree_color color;
 		base_ptr parent;
@@ -83,8 +84,8 @@ namespace ft
 
 	// iterator increment/decrement
 
-	static rb_tree_node *
-	local_rb_tree_increment(rb_tree_node *node_ptr) throw()
+	static RBT_node *
+	local_rb_tree_increment(RBT_node *node_ptr) throw()
 	{
 		if (node_ptr->right != 0)
 		{
@@ -94,7 +95,7 @@ namespace ft
 		}
 		else
 		{
-			rb_tree_node *tmp_node = node_ptr->parent;
+			RBT_node *tmp_node = node_ptr->parent;
 			while (node_ptr == tmp_node->right)
 			{
 				node_ptr = tmp_node;
@@ -106,33 +107,33 @@ namespace ft
 		return node_ptr;
 	}
 
-	rb_tree_node *
-	rb_tree_increment(rb_tree_node *node_ptr) throw()
+	RBT_node *
+	rb_tree_increment(RBT_node *node_ptr) throw()
 	{
 		return local_rb_tree_increment(node_ptr);
 	}
 
-	const rb_tree_node *
-	rb_tree_increment(const rb_tree_node *node_ptr) throw()
+	const RBT_node *
+	rb_tree_increment(const RBT_node *node_ptr) throw()
 	{
-		return local_rb_tree_increment(const_cast<rb_tree_node *>(node_ptr));
+		return local_rb_tree_increment(const_cast<RBT_node *>(node_ptr));
 	}
 
-	static rb_tree_node *
-	local_rb_tree_decrement(rb_tree_node *left) throw()
+	static RBT_node *
+	local_rb_tree_decrement(RBT_node *left) throw()
 	{
 		if (node_ptr->color == _S_red && node_ptr->parent->parent == node_ptr)
 			node_ptr = node_ptr->right;
 		else if (node_ptr->left != 0)
 		{
-			rb_tree_node *tmp_node = node_ptr->left;
+			RBT_node *tmp_node = node_ptr->left;
 			while (tmp_node->right != 0)
 				tmp_node = tmp_node->right;
 			node_ptr = tmp_node;
 		}
 		else
 		{
-			rb_tree_node *tmp_node = node_ptr->parent;
+			RBT_node *tmp_node = node_ptr->parent;
 			while (node_ptr == tmp_node->left)
 			{
 				node_ptr = tmp_node;
@@ -143,21 +144,21 @@ namespace ft
 		return node_ptr;
 	}
 
-	rb_tree_node *
-	rb_tree_decrement(rb_tree_node *node_ptr) throw()
+	RBT_node *
+	rb_tree_decrement(RBT_node *node_ptr) throw()
 	{
 		return local_rb_tree_decrement(node_ptr);
 	}
 
-	const rb_tree_node *
-	rb_tree_decrement(const rb_tree_node *node_ptr) throw()
+	const RBT_node *
+	rb_tree_decrement(const RBT_node *node_ptr) throw()
 	{
-		return local_rb_tree_decrement(const_cast<rb_tree_node *>(node_ptr));
+		return local_rb_tree_decrement(const_cast<RBT_node *>(node_ptr));
 	}
 
 	// red-black tree iterator
 	template <typename T>
-	struct rb_tree_iterator
+	struct RBT_iterator
 	{
 		typedef T value_type;
 		typedef T &reference;
@@ -166,16 +167,16 @@ namespace ft
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef rb_tree_iterator<T> iterator;
-		typedef rb_tree_node::base_ptr base_ptr;
-		typedef rb_tree_node<T> *ptr_node;
+		typedef RBT_iterator<T> iterator;
+		typedef RBT_node::base_ptr base_ptr;
+		typedef RBT_node<T> *ptr_node;
 
 		base_ptr node_ptr;
 
-		rb_tree_iterator()
+		RBT_iterator()
 			: node_ptr() {}
 
-		explicit rb_tree_iterator(base_ptr node_ptr_input)
+		explicit RBT_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
 		reference
@@ -230,30 +231,30 @@ namespace ft
 	// red-black tree const iterator
 
 	template <typename T>
-	struct rb_tree_const_iterator
+	struct RBT_const_iterator
 	{
 		typedef T value_type;
 		typedef const T &reference;
 		typedef const T *pointer;
 
-		typedef rb_tree_iterator<T> iterator;
+		typedef RBT_iterator<T> iterator;
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef rb_tree_const_iterator<T> const_iterator;
-		typedef rb_tree_node::const_base_ptr base_ptr;
-		typedef const rb_tree_node<T> *ptr_node;
+		typedef RBT_const_iterator<T> const_iterator;
+		typedef RBT_node::const_base_ptr base_ptr;
+		typedef const RBT_node<T> *ptr_node;
 
 		base_ptr node_ptr;
 
-		rb_tree_const_iterator()
+		RBT_const_iterator()
 			: node_ptr() {}
 
-		explicit rb_tree_const_iterator(base_ptr node_ptr_input)
+		explicit RBT_const_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
-		rb_tree_const_iterator(const iterator &it)
+		RBT_const_iterator(const iterator &it)
 			: node_ptr(it.node_ptr) {}
 
 		iterator const_cast() const
@@ -313,10 +314,10 @@ namespace ft
 	// tree rotations (https://www.programiz.com/dsa/red-black-tree)
 
 	static void
-	local_Rb_tree_rotate_left(rb_tree_node *const x,
-							  rb_tree_node *&root)
+	local_Rb_tree_rotate_left(RBT_node *const x,
+							  RBT_node *&root)
 	{
-		rb_tree_node *const y = x->right;
+		RBT_node *const y = x->right;
 		x->right = y->left;
 		if (y->left != 0)
 			y->left->parent = x;
@@ -332,10 +333,10 @@ namespace ft
 	}
 
 	static void
-	local_Rb_tree_rotate_right(rb_tree_node *const x,
-							   rb_tree_node *&root)
+	local_Rb_tree_rotate_right(RBT_node *const x,
+							   RBT_node *&root)
 	{
-		rb_tree_node *const y = x->left;
+		RBT_node *const y = x->left;
 		x->left = y->right;
 		if (y->right != 0)
 			y->right->parent = x;
@@ -354,11 +355,11 @@ namespace ft
 
 	void
 	Rb_tree_insert_and_rebalance(const bool insert_left,
-								 rb_tree_node *node_to_insert,
-								 rb_tree_node *node_to_attach_to,
-								 rb_tree_node &tree_root) throw()
+								 RBT_node *node_to_insert,
+								 RBT_node *node_to_attach_to,
+								 RBT_node &tree_root) throw()
 	{
-		rb_tree_node *&__root = tree_root.parent;
+		RBT_node *&__root = tree_root.parent;
 		// Initialize fields in new node to insert.
 		node_to_insert->parent = node_to_attach_to;
 		node_to_insert->left = 0;
@@ -389,10 +390,10 @@ namespace ft
 
 		while (node_to_insert != __root && node_to_insert->parent->color == _S_red)
 		{
-			rb_tree_node *const grand_father = node_to_insert->parent->parent;
+			RBT_node *const grand_father = node_to_insert->parent->parent;
 			if (node_to_insert->parent == grand_father->left)
 			{
-				rb_tree_node *const uncle = grand_father->right;
+				RBT_node *const uncle = grand_father->right;
 				if (uncle && uncle->color == _S_red)
 				{
 					node_to_insert->parent->color = _S_black;
@@ -414,7 +415,7 @@ namespace ft
 			}
 			else
 			{
-				rb_tree_node *const uncle = grand_father->left;
+				RBT_node *const uncle = grand_father->left;
 				if (uncle && uncle->color == _S_red)
 				{
 					node_to_insert->parent->color = _S_black;
@@ -438,16 +439,16 @@ namespace ft
 		__root->color = _S_black;
 	}
 
-	rb_tree_node *
-	Rb_tree_rebalance_for_erase(rb_tree_node *const node_to_be_deleted,
-								rb_tree_node &tree_root) throw()
+	RBT_node *
+	Rb_tree_rebalance_for_erase(RBT_node *const node_to_be_deleted,
+								RBT_node &tree_root) throw()
 	{
-		rb_tree_node *&__root = tree_root.parent;
-		rb_tree_node *&__leftmost = tree_root.left;
-		rb_tree_node *&__rightmost = tree_root.right;
-		rb_tree_node *y = node_to_be_deleted;
-		rb_tree_node *x = 0;
-		rb_tree_node *x_parent = 0;
+		RBT_node *&__root = tree_root.parent;
+		RBT_node *&__leftmost = tree_root.left;
+		RBT_node *&__rightmost = tree_root.right;
+		RBT_node *y = node_to_be_deleted;
+		RBT_node *x = 0;
+		RBT_node *x_parent = 0;
 		if (y->left == 0)		// node_to_be_deleted has at most one non-null child. y == z.
 			x = y->right;		// x might be null.
 		else if (y->right == 0) // node_to_be_deleted has exactly one non-null child. y == z.
@@ -504,7 +505,7 @@ namespace ft
 					__leftmost = node_to_be_deleted->parent;
 				// makes __leftmost == _M_header if node_to_be_deleted == __root
 				else
-					__leftmost = rb_tree_node::_S_minimum(x);
+					__leftmost = RBT_node::_S_minimum(x);
 			}
 			if (__rightmost == node_to_be_deleted)
 			{
@@ -512,7 +513,7 @@ namespace ft
 					__rightmost = node_to_be_deleted->parent;
 				// makes __rightmost == _M_header if node_to_be_deleted == __root
 				else // x == node_to_be_deleted->left
-					__rightmost = rb_tree_node::_S_maximum(x);
+					__rightmost = RBT_node::_S_maximum(x);
 			}
 		}
 		if (y->color != _S_red)
@@ -520,7 +521,7 @@ namespace ft
 			while (x != __root && (x == 0 || x->color == _S_black))
 				if (x == x_parent->left)
 				{
-					rb_tree_node *__w = x_parent->right;
+					RBT_node *__w = x_parent->right;
 					if (__w->color == _S_red)
 					{
 						__w->color = _S_black;
@@ -557,7 +558,7 @@ namespace ft
 				else
 				{
 					// same as above, with right <-> left
-					rb_tree_node *__w = x_parent->left;
+					RBT_node *__w = x_parent->left;
 					if (__w->color == _S_red)
 					{
 						__w->color = _S_black;
@@ -602,27 +603,32 @@ namespace ft
 		class T,
 		class Compare,
 		class Allocator>
-	class Rb_tree
+	class RBT
 	{
 	public:
 		typedef std::size_t size_type;
 		typedef Compare key_compare;
-		typedef Allocator allocator_type;
-		
+		typedef Allocator pair_allocator;
+		typedef Allocator::rebind < RBT_node<pair<const Key, T>>::other node_allocator;
+		typedef Key key_type;
+		typedef T mapped_type;
+		typedef pair<const key_type,mapped_type> value_type;
+
 	private:
-		rb_tree_node *_root;
+		RBT_node<value_type> *_root;
 		size_type _node_count;
-		allocator_type _alloc;
+		pair_allocator _pair_alloc;
+		node_allocator _node_alloc;
 		key_compare _comp;
 
 	public:
-		Rb_tree()
+		RBT()
 			: root(0), node_count(0) {}
 
 		/* ACCESSORS */
 		void setAllocator(Allocator alloc)
 		{
-			_alloc = alloc;
+			_pair_alloc = alloc;
 		};
 		void setComp(Compare comp)
 		{
@@ -630,61 +636,91 @@ namespace ft
 		}
 
 		/* MODIFIERS */
-		void insert_node(rb_tree_node *new_node)
+		void insert_node(RBT_node *new_node)
 		{
 			Key anchor = new_node->value.first;
 
 			// ...
 		}
 
-		typedef rb_tree_node *base_ptr;
-		typedef const rb_tree_node *const_base_ptr;
-		typedef rb_tree_iterator<T> iterator;
-		typedef rb_tree_const_iterator<T> const_iterator;
+		// Is called only after checking if key doesn't exist already
+		iterator insert_node(const value_type &value)
+		{
+			RBT_node<value_type> *node_to_insert;
+			RBT_node<value_type> *node_to_attach_to;
+			
+			// prepare the new node
+			node_to_insert = _node_alloc.allocate(sizeof(RBT_node<value_type>));
+			_node_alloc.construct(node_to_insert, RBT_node<typename value_type>());
+
+			node_to_insert->color = _S_red;
+			node_to_insert->value = value;
+
+			// search for the node to attach to (the preceding key)
+			node_to_attach_to = 
+
+			Rb_tree_insert_and_rebalance(true, node_to_insert,  )
+
+			
+		}
+
+		void swap(RBT & other)
+		{
+			std::swap(_root, other._root);
+			std::swap(_node_count, other._node_count);
+			std::swap(_pair_alloc, other._pair_alloc);
+			std::swap(_node_alloc, other._node_alloc);
+			std::swap(_comp, other._comp);
+		}
+
+		typedef RBT_node *base_ptr;
+		typedef const RBT_node *const_base_ptr;
+		typedef RBT_iterator<T> iterator;
+		typedef RBT_const_iterator<T> const_iterator;
 		typedef reverse_iterator<iterator> reverse_iterator;
 		typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
 		/* ITERATORS */
 		iterator begin(void)
 		{
-			return (rb_tree_iterator<T>(rb_tree_node::_S_minimum(_root)));
+			return (RBT_iterator<T>(RBT_node::_S_minimum(_root)));
 		}
 
 		const_iterator begin() const
 		{
-			return rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root));
+			return RBT_const_iterator<T>(RBT_node::_S_minimum(_root));
 		}
 
 		iterator end()
 		{
-			return rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root) + 1);
+			return RBT_iterator<T>(RBT_node::_S_maximum(_root) + 1);
 		}
 
 		const_iterator end() const
 		{
-			return rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root) + 1);
+			return RBT_const_iterator<T>(RBT_node::_S_maximum(_root) + 1);
 		}
 
 		reverse_iterator rbegin(void)
 		{
-			return rb_tree_iterator<T>(rb_tree_node::_S_maximum(_root));
+			return RBT_iterator<T>(RBT_node::_S_maximum(_root));
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			return rb_tree_const_iterator<T>(rb_tree_node::_S_maximum(_root));
+			return RBT_const_iterator<T>(RBT_node::_S_maximum(_root));
 		}
 
 		reverse_iterator rend()
 		{
-			return rb_tree_iterator<T>(rb_tree_node::_S_minimum(_root) - 1);
+			return RBT_iterator<T>(RBT_node::_S_minimum(_root) - 1);
 		}
 
 		const_reverse_iterator rend() const
 		{
-			return rb_tree_const_iterator<T>(rb_tree_node::_S_minimum(_root) - 1);
+			return RBT_const_iterator<T>(RBT_node::_S_minimum(_root) - 1);
 		}
-	
+
 		/* CAPACITY */
 
 		bool empty() const
@@ -696,7 +732,66 @@ namespace ft
 		{
 			return _node_count;
 		}
-		
+
+		/* LOOKUP */
+
+		iterator lower_bound(const Key &key)
+		{
+			iterator it = begin();
+
+			while (it != end())
+			{
+				if (key == (*it).first)
+					break;
+				++it;
+			}
+			return it;
+		}
+
+		const_iterator lower_bound(const Key &key) const
+		{
+			const_iterator it = begin();
+
+			while (it != end())
+			{
+				if (key == (*it).first)
+					break;
+				++it;
+			}
+			return it;
+		}
+
+		iterator upper_bound(const Key &key)
+		{
+			iterator it = begin();
+
+			while (it != end())
+			{
+				if (key == (*it).first)
+				{
+					++it;
+					break;
+				}
+				++it;
+			}
+			return it;
+		}
+
+		const_iterator upper_bound(const Key &key)
+		{
+			const_iterator it = begin();
+
+			while (it != end())
+			{
+				if (key == (*it).first)
+				{
+					++it;
+					break;
+				}
+				++it;
+			}
+			return it;
+		}
 	}
 
 } // namespace ft
