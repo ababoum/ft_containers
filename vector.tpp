@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:58:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/15 17:02:37 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/13 16:07:12 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -535,7 +535,7 @@ bool operator==(const vector<T, Alloc>& lhs,
 {
 	if (lhs.size() != rhs.size())
 		return false;
-	return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	return equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template< class T, class Alloc >
@@ -549,7 +549,7 @@ template< class T, class Alloc >
 bool operator<( const std::vector<T,Alloc>& lhs,
 	const std::vector<T,Alloc>& rhs )
 {
-	return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template< class T, class Alloc >

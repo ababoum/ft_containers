@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/11 20:13:22 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/13 15:51:17 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ namespace ft
 		base_ptr right;
 		T value;
 
+		RBT_node(): color(_S_red), parent(NULL), left(NULL), 
+						right(NULL), value(T()) {} 
+		
 		static base_ptr
 		_S_minimum(base_ptr node_base)
 		{
@@ -623,7 +626,8 @@ namespace ft
 
 	public:
 		RBT()
-			: root(0), node_count(0) {}
+			: _root(0), _node_count(0), _pair_alloc(pair_allocator()),
+			_node_alloc(node_allocator()), _comp(key_compare()) {}
 
 		/* ACCESSORS */
 		void setAllocator(Allocator alloc)
@@ -636,12 +640,6 @@ namespace ft
 		}
 
 		/* MODIFIERS */
-		void insert_node(RBT_node *new_node)
-		{
-			Key anchor = new_node->value.first;
-
-			// ...
-		}
 
 		// Is called only after checking if key doesn't exist already
 		iterator insert_node(const value_type &value)
@@ -653,15 +651,51 @@ namespace ft
 			node_to_insert = _node_alloc.allocate(sizeof(RBT_node<value_type>));
 			_node_alloc.construct(node_to_insert, RBT_node<typename value_type>());
 
-			node_to_insert->color = _S_red;
 			node_to_insert->value = value;
 
 			// search for the node to attach to (the preceding key)
-			node_to_attach_to = 
+			node_to_attach_to = lower_bound(value.first);
 
-			Rb_tree_insert_and_rebalance(true, node_to_insert,  )
+			Rb_tree_insert_and_rebalance(true,
+				node_to_insert, node_to_attach_to, _root);
 
+			iterator ret(node_to_insert);
+
+			++_node_count;
 			
+			return ret;			
+		}
+
+		iterator insert_node_loc(iterator pos_to_attach, const value_type &value)
+		{
+			RBT_node<value_type> *node_to_insert;
+			RBT_node<value_type> *node_to_attach_to = pos_to_attach;
+			
+			// prepare the new node
+			node_to_insert = _node_alloc.allocate(sizeof(RBT_node<value_type>));
+			_node_alloc.construct(node_to_insert, RBT_node<typename value_type>());
+
+			node_to_insert->value = value;
+
+			Rb_tree_insert_and_rebalance(true,
+				node_to_insert, node_to_attach_to, _root);
+
+			iterator ret(node_to_insert);
+
+			++_node_count;
+			
+			return ret;				
+		}
+
+		void erase_node(iterator pos)
+		{
+			base_ptr	node_to_be_deleted = pos.node_ptr;	
+			
+			node_to_be_deleted = 
+				Rb_tree_rebalance_for_erase(node_to_be_deleted, _root);
+			_node_allocator.destroy(node_to_be_deleted);		
+			
+			--_node_count;
 		}
 
 		void swap(RBT & other)
@@ -793,6 +827,8 @@ namespace ft
 			return it;
 		}
 	}
+
+	
 
 } // namespace ft
 

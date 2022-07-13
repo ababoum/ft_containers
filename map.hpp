@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/11 20:13:42 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/13 16:14:03 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "rb_tree/tree_utils.hpp"
 
 namespace ft
-
+{
 	template <
 		class Key,
 		class T,
@@ -220,40 +220,117 @@ namespace ft
 		{
 			pair<iterator, bool> ret;
 			iterator	searched_key;
+			iterator searched_key = find(value.first);
 
-			searched_key = find(value.first);
-
+			// if map is empty, insert the node
+			if (empty())
+			{
+				ret.first = _storage.insert_node(value);
+				ret.second = true;
+			}
 			// key found -> no duplicate allowed
-			if (find(value.second) != end())
+			else if (searched_key != end())
 			{
 				ret.first = searched_key;
 				ret.second = false;
 			}
+			// no key found, proceed with inserting the node
 			else
 			{
-				ret.first = 
+				ret.first = _storage.insert_node(value);
+				ret.second = true;
 			}
+
+			return ret;
 		}
 
 		iterator insert(iterator hint, const value_type &value) /* 2 */
 		{
+			iterator tmp = hint;
+			iterator tmp_next = hint;
+
+			// is map is empty, insert the node
+			if (empty())
+			{
+				tmp = _storage.insert_node(value);
+				return tmp;
+			}
+			// use the hint to start searching for the spot where to insert the node
+			if (value.first > tmp->value.first)
+			{
+				while (tmp_next != end() && value.first > tmp_next->value.first)
+				{
+					++tmp_next;
+					if (tmp_next != end() && value.first > tmp_next->value.first)
+						tmp = tmp_next;
+					// check if we hit the same key as the one in the parameter
+					else if (tmp_next->value.first == value.first)
+						return tmp_next;
+				}
+			}
+			else if (value.first < tmp->value.first)
+			{
+				while (value.first < tmp->value.first)
+				{
+					--tmp_next;
+					if (tmp_next != rend() && value.first < tmp_next->value.first)
+						tmp = tmp_next;
+					// check if we hit the same key as the one in the parameter
+					else if (tmp_next->value.first == value.first)
+						return tmp_next;
+				}
+			}
+
+			iterator ret = _storage.insert_node(value);	
+			
+			return ret;
 		}
 
 		template <class InputIt>
 		void insert(InputIt first, InputIt last) /* 3 */
 		{
+			for (InputIt it = first; it != last; ++it) {
+				insert(*it);
+			}
 		}
 
 		void erase(iterator pos) /* 1 */
 		{
+			_storage.erase_node(pos);
 		}
 
 		void erase(iterator first, iterator last) /* 2 */
 		{
+			iterator tmp;
+			iterator it = first;
+			
+			while(it != last) {
+				tmp = ++it;
+				erase(it);
+				it = tmp;
+			}
 		}
 
 		size_type erase(const Key &key) /* 3 */
 		{
+			iterator	searched_key;
+			iterator searched_key = find(key);
+
+			// if map is empty, do nothing
+			if (empty())
+			{
+				return 0;
+			}
+			// key is found
+			else if (searched_key != end())
+			{
+				erase(searched_key);
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 
 		void swap(map &other)
@@ -329,33 +406,64 @@ namespace ft
 	};
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator==(const std::map<Key, T, Compare, Alloc> &lhs,
-					const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator==(const map<Key, T, Compare, Alloc> &lhs,
+					const map<Key, T, Compare, Alloc> &rhs)
+	{
+		if lhs.size() != rhs.size()
+			return false;
+		else
+		{
+			return equal(
+				lhs.begin(), lhs.end(), rhs.begin());
+		}
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator!=(const std::map<Key, T, Compare, Alloc> &lhs,
-					const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator!=(const map<Key, T, Compare, Alloc> &lhs,
+					const map<Key, T, Compare, Alloc> &rhs)
+	{
+		return !(lhs == rhs);
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator<(const std::map<Key, T, Compare, Alloc> &lhs,
-				   const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator<(const map<Key, T, Compare, Alloc> &lhs,
+				   const map<Key, T, Compare, Alloc> &rhs)
+	{
+		if lhs.size() != rhs.size()
+			return lhs.size() < rhs.size();
+		else
+		{
+			return lexicographical_compare(
+				lhs.begin(), lhs.end(), rhs.begin(), lhs.end());
+		}
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator<=(const std::map<Key, T, Compare, Alloc> &lhs,
-					const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator<=(const map<Key, T, Compare, Alloc> &lhs,
+					const map<Key, T, Compare, Alloc> &rhs)
+	{
+		return (lhs < rhs || lhs == rhs);
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator>(const std::map<Key, T, Compare, Alloc> &lhs,
-				   const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator>(const map<Key, T, Compare, Alloc> &lhs,
+				   const map<Key, T, Compare, Alloc> &rhs)
+	{
+		return !(lhs <= rhs);
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator>=(const std::map<Key, T, Compare, Alloc> &lhs,
-					const std::map<Key, T, Compare, Alloc> &rhs);
+	bool operator>=(const map<Key, T, Compare, Alloc> &lhs,
+					const map<Key, T, Compare, Alloc> &rhs)
+	{
+		return !(lhs < rhs);
+	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	void swap(std::map<Key, T, Compare, Alloc> &lhs,
-			  std::map<Key, T, Compare, Alloc> &rhs)
+	void swap(map<Key, T, Compare, Alloc> &lhs,
+			  map<Key, T, Compare, Alloc> &rhs)
 	{
 		lhs.swap(rhs);
 	}
+
 } // namespace ft

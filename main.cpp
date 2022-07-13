@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/11 19:36:31 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/13 12:12:47 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main(void)
 	// 		std::cout << e.what() << std::endl;
 	// 	}
 	// }
-	std::cout << "\e[7m============UPPER BOUND MAP==========\e[0m" << std::endl;
+	std::cout << "\e[7m========LOWER/UPPER BOUND MAP========\e[0m" << std::endl;
 	{
 		try
 		{
@@ -43,7 +43,7 @@ int main(void)
 			mymap['i'] = 100;
 
 			itlow = mymap.lower_bound('b'); // itlow points to b
-			itup = mymap.upper_bound('d');	// itup points to e (not d!)
+			itup = mymap.upper_bound('b');	// itup points to e (not d!)
 
 			itlow--;
 			
