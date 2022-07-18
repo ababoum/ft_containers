@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 23:18:01 by mababou           #+#    #+#             */
-/*   Updated: 2022/05/08 17:24:44 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/18 15:24:51 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ pair<T1, T2>::pair()
 {
 	first = first_type();
 	second = second_type();
-	// std::cout <<  first << std::endl;
-	// std::cout <<  second << std::endl;
 }
 
 template< class T1, class T2 >
@@ -33,8 +31,6 @@ pair<T1, T2>::pair(const T1& x, const T2& y)
 {
 	first = x;
 	second = y;
-	// std::cout << first << std::endl;
-	// std::cout << second << std::endl;
 }
 
 /*
@@ -47,8 +43,6 @@ pair<T1, T2>& pair<T1, T2>::operator=( const pair<T1, T2>& other )
 	first = other.first;
 	second = other.second;
 
-	// std::cout <<  first << std::endl;
-	// std::cout <<  second << std::endl;
 	return (*this);
 }
 

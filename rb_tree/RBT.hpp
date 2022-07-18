@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/13 15:51:17 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/18 20:00:34 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include "../pairs/pair.hpp"
+#include "../iterators/reverse_iterator.hpp"
 
 namespace ft
 {
@@ -27,152 +28,123 @@ namespace ft
 	};
 
 	// structure of a node in the tree
-	template <typename T>
+	template <class Key, class T>
 	struct RBT_node
 	{
-		typedef RBT_node *base_ptr;
-		typedef const RBT_node *const_base_ptr;
+		typedef pair<const Key, T> value_type;
 
 		rb_tree_color color;
-		base_ptr parent;
-		base_ptr left;
-		base_ptr right;
-		T value;
+		RBT_node *parent;
+		RBT_node *left;
+		RBT_node *right;
+		value_type pair;
+		bool is_nil;
 
-		RBT_node(): color(_S_red), parent(NULL), left(NULL), 
-						right(NULL), value(T()) {} 
+		RBT_node(value_type pair_init)
+		{
+			pair = pair_init;
+		}
 		
-		static base_ptr
-		_S_minimum(base_ptr node_base)
+		value_type *value_ptr()
 		{
-			while (node_base->left != 0)
-				node_base = node_base->left;
-			return node_base;
+			return &(pair);
 		}
 
-		static const_base_ptr
-		_S_minimum(const_base_ptr node_base)
+		const value_type *value_ptr() const
 		{
-			while (node_base->left != 0)
-				node_base = node_base->left;
-			return node_base;
-		}
-
-		static base_ptr
-		_S_maximum(base_ptr node_base)
-		{
-			while (node_base->right != 0)
-				node_base = node_base->right;
-			return node_base;
-		}
-
-		static const_base_ptr
-		_S_maximum(const_base_ptr node_base)
-		{
-			while (node_base->right != 0)
-				node_base = node_base->right;
-			return node_base;
-		}
-
-		T *value_ptr()
-		{
-			return &(value);
-		}
-
-		const T *value_ptr() const
-		{
-			return &(value);
+			return &(pair);
 		}
 	};
 
 	// iterator increment/decrement
 
-	static RBT_node *
-	local_rb_tree_increment(RBT_node *node_ptr) throw()
+	template <class Key, class T>
+	static RBT_node<Key, T> *
+	local_rb_tree_increment(RBT_node<Key, T> *node_ptr) throw()
 	{
-		if (node_ptr->right != 0)
+		if (!node_ptr->right->is_nil)
 		{
 			node_ptr = node_ptr->right;
-			while (node_ptr->left != 0)
+			while (!node_ptr->left->is_nil)
 				node_ptr = node_ptr->left;
+			return node_ptr;
 		}
 		else
 		{
-			RBT_node *tmp_node = node_ptr->parent;
-			while (node_ptr == tmp_node->right)
+			RBT_node<Key, T> *tmp_node = node_ptr->parent;
+			while (!tmp_node->is_nil && node_ptr == tmp_node->right)
 			{
 				node_ptr = tmp_node;
 				tmp_node = tmp_node->parent;
 			}
-			if (node_ptr->right != tmp_node)
-				node_ptr = tmp_node;
+			return tmp_node;
 		}
-		return node_ptr;
 	}
 
-	RBT_node *
-	rb_tree_increment(RBT_node *node_ptr) throw()
+	template <class Key, class T>
+	RBT_node<Key, T> *
+	rb_tree_increment(RBT_node<Key, T> *node_ptr) throw()
 	{
 		return local_rb_tree_increment(node_ptr);
 	}
 
-	const RBT_node *
-	rb_tree_increment(const RBT_node *node_ptr) throw()
+	template <class Key, class T>
+	const RBT_node<Key, T> *
+	rb_tree_increment(const RBT_node<Key, T> *node_ptr) throw()
 	{
-		return local_rb_tree_increment(const_cast<RBT_node *>(node_ptr));
+		return local_rb_tree_increment(const_cast<RBT_node<Key, T> *>(node_ptr));
 	}
 
-	static RBT_node *
-	local_rb_tree_decrement(RBT_node *left) throw()
+	template <class Key, class T>
+	static RBT_node<Key, T> *
+	local_rb_tree_decrement(RBT_node<Key, T> *node_ptr) throw()
 	{
-		if (node_ptr->color == _S_red && node_ptr->parent->parent == node_ptr)
-			node_ptr = node_ptr->right;
-		else if (node_ptr->left != 0)
+		if (!node_ptr->left->is_nil)
 		{
-			RBT_node *tmp_node = node_ptr->left;
-			while (tmp_node->right != 0)
-				tmp_node = tmp_node->right;
-			node_ptr = tmp_node;
+			node_ptr = node_ptr->left;
+			while (!node_ptr->right->is_nil)
+				node_ptr = node_ptr->right;
+			return node_ptr;
 		}
 		else
 		{
-			RBT_node *tmp_node = node_ptr->parent;
-			while (node_ptr == tmp_node->left)
+			RBT_node<Key, T> *tmp_node = node_ptr->parent;
+			while (!tmp_node->is_nil && node_ptr == tmp_node->left)
 			{
 				node_ptr = tmp_node;
 				tmp_node = tmp_node->parent;
 			}
-			node_ptr = tmp_node;
+			return tmp_node;
 		}
-		return node_ptr;
 	}
 
-	RBT_node *
-	rb_tree_decrement(RBT_node *node_ptr) throw()
+	template <class Key, class T>
+	RBT_node<Key, T> *
+	rb_tree_decrement(RBT_node<Key, T> *node_ptr) throw()
 	{
 		return local_rb_tree_decrement(node_ptr);
 	}
 
-	const RBT_node *
-	rb_tree_decrement(const RBT_node *node_ptr) throw()
+	template <class Key, class T>
+	const RBT_node<Key, T> *
+	rb_tree_decrement(const RBT_node<Key, T> *node_ptr) throw()
 	{
-		return local_rb_tree_decrement(const_cast<RBT_node *>(node_ptr));
+		return local_rb_tree_decrement(const_cast<RBT_node<Key, T> *>(node_ptr));
 	}
 
 	// red-black tree iterator
-	template <typename T>
+	template <class Key, class T>
 	struct RBT_iterator
 	{
-		typedef T value_type;
-		typedef T &reference;
-		typedef T *pointer;
+		typedef pair<const Key, T> value_type;
+		typedef value_type &reference;
+		typedef value_type *pointer;
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef RBT_iterator<T> iterator;
-		typedef RBT_node::base_ptr base_ptr;
-		typedef RBT_node<T> *ptr_node;
+		typedef RBT_iterator<Key, T> iterator;
+		typedef RBT_node<Key, T> *base_ptr;
 
 		base_ptr node_ptr;
 
@@ -182,16 +154,22 @@ namespace ft
 		explicit RBT_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
+		base_ptr
+		getNodePtr()
+		{
+			return node_ptr;
+		}
+
 		reference
 		operator*() const
 		{
-			return *static_cast<ptr_node>(node_ptr)->value_ptr();
+			return *static_cast<base_ptr>(node_ptr)->value_ptr();
 		}
 
 		pointer
 		operator->() const
 		{
-			return static_cast<ptr_node>(node_ptr)->value_ptr();
+			return static_cast<base_ptr>(node_ptr)->value_ptr();
 		}
 
 		iterator &
@@ -233,21 +211,20 @@ namespace ft
 
 	// red-black tree const iterator
 
-	template <typename T>
+	template <class Key, class T>
 	struct RBT_const_iterator
 	{
-		typedef T value_type;
-		typedef const T &reference;
-		typedef const T *pointer;
+		typedef pair<const Key, T> value_type;
+		typedef const value_type &reference;
+		typedef const value_type *pointer;
 
-		typedef RBT_iterator<T> iterator;
+		typedef RBT_iterator<Key, T> iterator;
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef RBT_const_iterator<T> const_iterator;
-		typedef RBT_node::const_base_ptr base_ptr;
-		typedef const RBT_node<T> *ptr_node;
+		typedef RBT_const_iterator<Key, T> const_iterator;
+		typedef const RBT_node<Key, T> *base_ptr;
 
 		base_ptr node_ptr;
 
@@ -260,21 +237,22 @@ namespace ft
 		RBT_const_iterator(const iterator &it)
 			: node_ptr(it.node_ptr) {}
 
-		iterator const_cast() const
+		base_ptr
+		getNodePtr()
 		{
-			return iterator(const_cast<typename iterator::base_ptr>(node_ptr));
+			return node_ptr;
 		}
 
 		reference
 		operator*() const
 		{
-			return *static_cast<ptr_node>(node_ptr)->value_ptr();
+			return *static_cast<base_ptr>(node_ptr)->value_ptr();
 		}
 
 		pointer
 		operator->() const
 		{
-			return static_cast<ptr_node>(node_ptr)->value_ptr();
+			return static_cast<base_ptr>(node_ptr)->value_ptr();
 		}
 
 		const_iterator &
@@ -314,292 +292,7 @@ namespace ft
 		}
 	};
 
-	// tree rotations (https://www.programiz.com/dsa/red-black-tree)
-
-	static void
-	local_Rb_tree_rotate_left(RBT_node *const x,
-							  RBT_node *&root)
-	{
-		RBT_node *const y = x->right;
-		x->right = y->left;
-		if (y->left != 0)
-			y->left->parent = x;
-		y->parent = x->_M_parent;
-		if (x == root)
-			root = y;
-		else if (x == x->parent->left)
-			x->parent->left = y;
-		else
-			x->parent->right = y;
-		y->left = x;
-		x->parent = y;
-	}
-
-	static void
-	local_Rb_tree_rotate_right(RBT_node *const x,
-							   RBT_node *&root)
-	{
-		RBT_node *const y = x->left;
-		x->left = y->right;
-		if (y->right != 0)
-			y->right->parent = x;
-		y->parent = x->_M_parent;
-		if (x == root)
-			root = y;
-		else if (x == x->parent->right)
-			x->parent->right = y;
-		else
-			x->parent->left = y;
-		y->right = x;
-		x->parent = y;
-	}
-
-	// insertion / deletion functions declaration
-
-	void
-	Rb_tree_insert_and_rebalance(const bool insert_left,
-								 RBT_node *node_to_insert,
-								 RBT_node *node_to_attach_to,
-								 RBT_node &tree_root) throw()
-	{
-		RBT_node *&__root = tree_root.parent;
-		// Initialize fields in new node to insert.
-		node_to_insert->parent = node_to_attach_to;
-		node_to_insert->left = 0;
-		node_to_insert->right = 0;
-		node_to_insert->color = _S_red;
-		// Insert.
-		// Make new node child of parent and maintain root, leftmost and rightmost nodes.
-		// N.B. First node is always inserted left.
-		if (insert_left)
-		{
-			node_to_attach_to->left = node_to_insert; // also makes leftmost = node_to_insert when node_to_attach_to == &tree_root
-			if (node_to_attach_to == &tree_root)
-			{
-				tree_root.parent = node_to_insert;
-				tree_root.right = node_to_insert;
-			}
-			else if (node_to_attach_to == tree_root.left)
-				tree_root.left = node_to_insert; // maintain leftmost pointing to min node
-		}
-		else
-		{
-			node_to_attach_to->right = node_to_insert;
-			if (node_to_attach_to == tree_root.right)
-				tree_root.right = node_to_insert; // maintain rightmost pointing to max node
-		}
-
-		// Rebalance
-
-		while (node_to_insert != __root && node_to_insert->parent->color == _S_red)
-		{
-			RBT_node *const grand_father = node_to_insert->parent->parent;
-			if (node_to_insert->parent == grand_father->left)
-			{
-				RBT_node *const uncle = grand_father->right;
-				if (uncle && uncle->color == _S_red)
-				{
-					node_to_insert->parent->color = _S_black;
-					uncle->color = _S_black;
-					grand_father->color = _S_red;
-					node_to_insert = grand_father;
-				}
-				else
-				{
-					if (node_to_insert == node_to_insert->parent->right)
-					{
-						node_to_insert = node_to_insert->parent;
-						local_Rb_tree_rotate_left(node_to_insert, __root);
-					}
-					node_to_insert->parent->color = _S_black;
-					grand_father->color = _S_red;
-					local_Rb_tree_rotate_right(grand_father, __root);
-				}
-			}
-			else
-			{
-				RBT_node *const uncle = grand_father->left;
-				if (uncle && uncle->color == _S_red)
-				{
-					node_to_insert->parent->color = _S_black;
-					uncle->color = _S_black;
-					grand_father->color = _S_red;
-					node_to_insert = grand_father;
-				}
-				else
-				{
-					if (node_to_insert == node_to_insert->parent->left)
-					{
-						node_to_insert = node_to_insert->parent;
-						local_Rb_tree_rotate_right(node_to_insert, __root);
-					}
-					node_to_insert->parent->color = _S_black;
-					grand_father->color = _S_red;
-					local_Rb_tree_rotate_left(grand_father, __root);
-				}
-			}
-		}
-		__root->color = _S_black;
-	}
-
-	RBT_node *
-	Rb_tree_rebalance_for_erase(RBT_node *const node_to_be_deleted,
-								RBT_node &tree_root) throw()
-	{
-		RBT_node *&__root = tree_root.parent;
-		RBT_node *&__leftmost = tree_root.left;
-		RBT_node *&__rightmost = tree_root.right;
-		RBT_node *y = node_to_be_deleted;
-		RBT_node *x = 0;
-		RBT_node *x_parent = 0;
-		if (y->left == 0)		// node_to_be_deleted has at most one non-null child. y == z.
-			x = y->right;		// x might be null.
-		else if (y->right == 0) // node_to_be_deleted has exactly one non-null child. y == z.
-			x = y->left;		// x is not null.
-		else
-		{
-			// node_to_be_deleted has two non-null children.  Set y to
-			y = y->right; //   node_to_be_deleted's successor.  x might be null.
-			while (y->left != 0)
-				y = y->left;
-			x = y->right;
-		}
-		if (y != node_to_be_deleted)
-		{
-			// relink y in place of z.  y is z's successor
-			node_to_be_deleted->left->parent = y;
-			y->left = node_to_be_deleted->left;
-			if (y != node_to_be_deleted->right)
-			{
-				x_parent = y->parent;
-				if (x)
-					x->parent = y->parent;
-				y->parent->left = x; // y must be a child of left
-				y->right = node_to_be_deleted->right;
-				node_to_be_deleted->right->parent = y;
-			}
-			else
-				x_parent = y;
-			if (__root == node_to_be_deleted)
-				__root = y;
-			else if (node_to_be_deleted->parent->left == node_to_be_deleted)
-				node_to_be_deleted->parent->left = y;
-			else
-				node_to_be_deleted->parent->right = y;
-			y->parent = node_to_be_deleted->parent;
-			std::swap(y->color, node_to_be_deleted->color);
-			y = node_to_be_deleted;
-			// y now points to node to be actually deleted
-		}
-		else
-		{ // y == node_to_be_deleted
-			x_parent = y->parent;
-			if (x)
-				x->parent = y->parent;
-			if (__root == node_to_be_deleted)
-				__root = x;
-			else if (node_to_be_deleted->parent->left == node_to_be_deleted)
-				node_to_be_deleted->parent->left = x;
-			else
-				node_to_be_deleted->parent->right = x;
-			if (__leftmost == node_to_be_deleted)
-			{
-				if (node_to_be_deleted->right == 0) // node_to_be_deleted->left must be null also
-					__leftmost = node_to_be_deleted->parent;
-				// makes __leftmost == _M_header if node_to_be_deleted == __root
-				else
-					__leftmost = RBT_node::_S_minimum(x);
-			}
-			if (__rightmost == node_to_be_deleted)
-			{
-				if (node_to_be_deleted->left == 0) // node_to_be_deleted->right must be null also
-					__rightmost = node_to_be_deleted->parent;
-				// makes __rightmost == _M_header if node_to_be_deleted == __root
-				else // x == node_to_be_deleted->left
-					__rightmost = RBT_node::_S_maximum(x);
-			}
-		}
-		if (y->color != _S_red)
-		{
-			while (x != __root && (x == 0 || x->color == _S_black))
-				if (x == x_parent->left)
-				{
-					RBT_node *__w = x_parent->right;
-					if (__w->color == _S_red)
-					{
-						__w->color = _S_black;
-						x_parent->color = _S_red;
-						local_Rb_tree_rotate_left(x_parent, __root);
-						__w = x_parent->right;
-					}
-					if ((__w->left == 0 ||
-						 __w->left->color == _S_black) &&
-						(__w->right == 0 ||
-						 __w->right->color == _S_black))
-					{
-						__w->color = _S_red;
-						x = x_parent;
-						x_parent = x_parent->parent;
-					}
-					else
-					{
-						if (__w->right == 0 || __w->right->color == _S_black)
-						{
-							__w->left->color = _S_black;
-							__w->color = _S_red;
-							local_Rb_tree_rotate_right(__w, __root);
-							__w = x_parent->right;
-						}
-						__w->color = x_parent->color;
-						x_parent->color = _S_black;
-						if (__w->right)
-							__w->right->color = _S_black;
-						local_Rb_tree_rotate_left(x_parent, __root);
-						break;
-					}
-				}
-				else
-				{
-					// same as above, with right <-> left
-					RBT_node *__w = x_parent->left;
-					if (__w->color == _S_red)
-					{
-						__w->color = _S_black;
-						x_parent->color = _S_red;
-						local_Rb_tree_rotate_right(x_parent, __root);
-						__w = x_parent->left;
-					}
-					if ((__w->right == 0 ||
-						 __w->right->color == _S_black) &&
-						(__w->left == 0 ||
-						 __w->left->color == _S_black))
-					{
-						__w->color = _S_red;
-						x = x_parent;
-						x_parent = x_parent->parent;
-					}
-					else
-					{
-						if (__w->left == 0 || __w->left->color == _S_black)
-						{
-							__w->right->color = _S_black;
-							__w->color = _S_red;
-							local_Rb_tree_rotate_left(__w, __root);
-							__w = x_parent->left;
-						}
-						__w->color = x_parent->color;
-						x_parent->color = _S_black;
-						if (__w->left)
-							__w->left->color = _S_black;
-						local_Rb_tree_rotate_right(x_parent, __root);
-						break;
-					}
-				}
-			if (x)
-				x->color = _S_black;
-		}
-		return y;
-	}
+	// RBT reference: https://www.programiz.com/dsa/red-black-tree
 
 	template <
 		class Key,
@@ -612,31 +305,473 @@ namespace ft
 		typedef std::size_t size_type;
 		typedef Compare key_compare;
 		typedef Allocator pair_allocator;
-		typedef Allocator::rebind < RBT_node<pair<const Key, T>>::other node_allocator;
+		typedef typename Allocator::template rebind<RBT_node<Key, T> >::other node_allocator;
 		typedef Key key_type;
 		typedef T mapped_type;
-		typedef pair<const key_type,mapped_type> value_type;
+		typedef pair<const key_type, mapped_type> value_type;
+		typedef RBT_node<Key, T> *base_ptr;
+
+		typedef RBT_iterator<Key, T> iterator;
+		typedef RBT_const_iterator<Key, T> const_iterator;
+		typedef reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef reverse_iterator<iterator> reverse_iterator;
 
 	private:
-		RBT_node<value_type> *_root;
+		base_ptr _root;
+		base_ptr _null_node;
 		size_type _node_count;
 		pair_allocator _pair_alloc;
 		node_allocator _node_alloc;
 		key_compare _comp;
 
+		void _initializeNULLNode(base_ptr node, base_ptr parent)
+		{
+			_pair_alloc.construct(&node->pair, value_type());
+			node->parent = parent;
+			node->left = NULL;
+			node->right = NULL;
+			node->color = _S_black;
+			node->is_nil = true;
+		}
+
+		// helper functions
+
+		base_ptr _searchTreeHelper(base_ptr node, Key key)
+		{
+			if (node == _null_node || key == node->pair.first)
+			{
+				return node;
+			}
+
+			if (key < node->pair.first)
+			{
+				return _searchTreeHelper(node->left, key);
+			}
+			return _searchTreeHelper(node->right, key);
+		}
+
+		// For balancing the tree after deletion
+		void _deleteRebalance(base_ptr x)
+		{
+			base_ptr s;
+
+			while (x != _root && x->color == _S_black)
+			{
+				if (x == x->parent->left)
+				{
+					s = x->parent->right;
+					if (s->color == _S_red)
+					{
+						s->color = _S_black;
+						x->parent->color = _S_red;
+						_leftRotate(x->parent);
+						s = x->parent->right;
+					}
+
+					if (s->left->color == _S_black && s->right->color == _S_black)
+					{
+						s->color = _S_red;
+						x = x->parent;
+					}
+					else
+					{
+						if (s->right->color == _S_black)
+						{
+							s->left->color = _S_black;
+							s->color = _S_red;
+							_rightRotate(s);
+							s = x->parent->right;
+						}
+
+						s->color = x->parent->color;
+						x->parent->color = _S_black;
+						s->right->color = _S_black;
+						_leftRotate(x->parent);
+						x = _root;
+					}
+				}
+				else
+				{
+					s = x->parent->left;
+					if (s->color == _S_red)
+					{
+						s->color = _S_black;
+						x->parent->color = _S_red;
+						_rightRotate(x->parent);
+						s = x->parent->left;
+					}
+
+					if (s->right->color == _S_black && s->right->color == _S_black)
+					{
+						s->color = _S_red;
+						x = x->parent;
+					}
+					else
+					{
+						if (s->left->color == _S_black)
+						{
+							s->right->color = _S_black;
+							s->color = _S_red;
+							_leftRotate(s);
+							s = x->parent->left;
+						}
+
+						s->color = x->parent->color;
+						x->parent->color = _S_black;
+						s->left->color = _S_black;
+						_rightRotate(x->parent);
+						x = _root;
+					}
+				}
+			}
+			x->color = _S_black;
+		}
+
+		void _rbTransplant(base_ptr u, base_ptr v)
+		{
+			if (u->parent == NULL)
+				_root = v;
+			else if (u == u->parent->left)
+				u->parent->left = v;
+			else
+				u->parent->right = v;
+			v->parent = u->parent;
+		}
+
+		void _deleteNodeHelper(base_ptr node, Key key)
+		{
+			base_ptr z = _null_node;
+			base_ptr x;
+			base_ptr y;
+
+			while (node != _null_node)
+			{
+				if (node->pair.first == key)
+					z = node;
+
+				if (node->pair.first <= key)
+					node = node->right;
+				else
+					node = node->left;
+			}
+
+			if (z == _null_node)
+			{
+				return;
+			}
+
+			y = z;
+			bool y_original_color = y->color;
+
+			if (z->left == _null_node)
+			{
+				x = z->right;
+				_rbTransplant(z, z->right);
+			}
+			else if (z->right == _null_node)
+			{
+				x = z->left;
+				_rbTransplant(z, z->left);
+			}
+			else
+			{
+				y = _minimum(z->right);
+				y_original_color = y->color;
+				x = y->right;
+				if (y->parent == z)
+					x->parent = y;
+				else
+				{
+					_rbTransplant(y, y->right);
+					y->right = z->right;
+					y->right->parent = y;
+				}
+
+				_rbTransplant(z, y);
+				y->left = z->left;
+				y->left->parent = y;
+				y->color = z->color;
+			}
+
+			delete z;
+			if (y_original_color == _S_black)
+				_deleteRebalance(x);
+		}
+
+		// For balancing the tree after insertion
+		void _insertRebalance(base_ptr k)
+		{
+			base_ptr u;
+
+			while (k->parent->color == _S_red)
+			{
+				if (k->parent == k->parent->parent->right)
+				{
+					u = k->parent->parent->left;
+					if (u->color == _S_red)
+					{
+						u->color = _S_black;
+						k->parent->color = _S_black;
+						k->parent->parent->color = _S_red;
+						k = k->parent->parent;
+					}
+					else
+					{
+						if (k == k->parent->left)
+						{
+							k = k->parent;
+							_rightRotate(k);
+						}
+						k->parent->color = _S_black;
+						k->parent->parent->color = _S_red;
+						_leftRotate(k->parent->parent);
+					}
+				}
+				else
+				{
+					u = k->parent->parent->right;
+
+					if (u->color == _S_red)
+					{
+						u->color = _S_black;
+						k->parent->color = _S_black;
+						k->parent->parent->color = _S_red;
+						k = k->parent->parent;
+					}
+					else
+					{
+						if (k == k->parent->right)
+						{
+							k = k->parent;
+							_leftRotate(k);
+						}
+						k->parent->color = _S_black;
+						k->parent->parent->color = _S_red;
+						_rightRotate(k->parent->parent);
+					}
+				}
+				if (k == _root)
+				{
+					break;
+				}
+			}
+			_root->color = _S_black;
+		}
+
+		base_ptr _minimum(base_ptr node)
+		{
+			while (node->left != _null_node)
+				node = node->left;
+			return node;
+		}
+
+		base_ptr _maximum(base_ptr node)
+		{
+			while (node->right != _null_node)
+				node = node->right;
+			return node;
+		}
+
+		void _leftRotate(base_ptr x)
+		{
+			base_ptr y = x->right;
+			x->right = y->left;
+			if (y->left != _null_node)
+				y->left->parent = x;
+			y->parent = x->parent;
+			if (x->parent == NULL)
+				this->_root = y;
+			else if (x == x->parent->left)
+				x->parent->left = y;
+			else
+				x->parent->right = y;
+			y->left = x;
+			x->parent = y;
+		}
+
+		void _rightRotate(base_ptr x)
+		{
+			base_ptr y = x->left;
+			x->left = y->right;
+			if (y->right != _null_node)
+				y->right->parent = x;
+			y->parent = x->parent;
+			if (x->parent == NULL)
+				this->_root = y;
+			else if (x == x->parent->right)
+				x->parent->right = y;
+			else
+				x->parent->left = y;
+			y->right = x;
+			x->parent = y;
+		}
+
 	public:
 		RBT()
-			: _root(0), _node_count(0), _pair_alloc(pair_allocator()),
-			_node_alloc(node_allocator()), _comp(key_compare()) {}
+		{
+			_null_node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+
+			_node_count = 0;
+			_pair_alloc = pair_allocator();
+			_node_alloc = node_allocator();
+			_comp = key_compare();
+			_root = _null_node;
+
+			// null node initialization
+			_null_node->color = _S_black;
+			_null_node->left = NULL;
+			_null_node->right = NULL;
+		}
+
+		// Inserting a node
+		base_ptr insert(value_type pair_to_add)
+		{
+			base_ptr node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+			_node_alloc.construct(node, 0);
+			node->parent = NULL;
+			node->pair.first = pair_to_add.first;
+			node->left = _null_node;
+			node->right = _null_node;
+			node->color = _S_red;
+			node->is_nil = false;
+
+			base_ptr y = NULL;
+			base_ptr x = this->_root;
+
+			while (x != _null_node)
+			{
+				y = x;
+				if (node->pair.first < x->pair.first)
+					x = x->left;
+				else
+					x = x->right;
+			}
+
+			node->parent = y;
+			if (y == NULL)
+				_root = node;
+			else if (node->pair.first < y->pair.first)
+				y->left = node;
+			else
+				y->right = node;
+
+			if (node->parent == NULL)
+			{
+				node->color = 0;
+				return;
+			}
+
+			if (node->parent->parent == NULL)
+				return;
+
+			_insertRebalance(node);
+			++_node_count;
+
+			return node;
+		}
+
+		base_ptr insert_hint(value_type pair_to_add, iterator hint)
+		{
+			base_ptr node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+			_node_alloc.construct(node, 0);
+			node->parent = NULL;
+			node->pair.first = pair_to_add.first;
+			node->left = _null_node;
+			node->right = _null_node;
+			node->color = _S_red;
+			node->is_nil = false;
+
+			base_ptr y = NULL;
+			base_ptr x = hint.getNodePtr();
+
+			while (x != _null_node)
+			{
+				y = x;
+				if (node->pair.first < x->pair.first)
+					x = x->left;
+				else
+					x = x->right;
+			}
+
+			node->parent = y;
+			if (y == NULL)
+				_root = node;
+			else if (node->pair.first < y->pair.first)
+				y->left = node;
+			else
+				y->right = node;
+
+			if (node->parent == NULL)
+			{
+				node->color = 0;
+				return;
+			}
+
+			if (node->parent->parent == NULL)
+				return;
+
+			_insertRebalance(node);
+			++_node_count;
+
+			return node;
+		}
+
+		void deleteNode(Key key)
+		{
+			_deleteNodeHelper(this->_root, key);
+		}
 
 		/* ACCESSORS */
 		void setAllocator(Allocator alloc)
 		{
 			_pair_alloc = alloc;
-		};
+		}
+
+		void getAllocator(void)
+		{
+			return _pair_alloc;
+		}
+
 		void setComp(Compare comp)
 		{
 			_comp = comp;
+		}
+
+		/* ELEMENT ACCESS */
+
+		base_ptr searchTree(Key k)
+		{
+			return _searchTreeHelper(_root, k);
+		}
+
+		mapped_type &at(const key_type &key)
+		{
+			base_ptr searched_node = searchTree(key);
+
+			if (searched_node == _null_node)
+				throw std::out_of_range("Specified key is out of range");
+			else
+				return searched_node->pair.second;
+		}
+
+		const mapped_type &at(const key_type &key) const
+		{
+			base_ptr searched_node = searchTree(key);
+
+			if (searched_node == _null_node)
+				throw std::out_of_range("Specified key is out of range");
+			else
+				return searched_node->pair.second;
+		}
+
+		mapped_type &getRef_or_insert(const key_type &key)
+		{
+			base_ptr searched_node = searchTree(key);
+
+			if (searched_node == _null_node)
+				searched_node = insert(make_pair(key, mapped_type()));
+			else
+				return searched_node->pair.second;
 		}
 
 		/* MODIFIERS */
@@ -644,61 +779,53 @@ namespace ft
 		// Is called only after checking if key doesn't exist already
 		iterator insert_node(const value_type &value)
 		{
-			RBT_node<value_type> *node_to_insert;
-			RBT_node<value_type> *node_to_attach_to;
-			
-			// prepare the new node
-			node_to_insert = _node_alloc.allocate(sizeof(RBT_node<value_type>));
-			_node_alloc.construct(node_to_insert, RBT_node<typename value_type>());
+			base_ptr *node_inserted;
 
-			node_to_insert->value = value;
+			node_inserted = insert(value);
+			iterator ret(node_inserted);
 
-			// search for the node to attach to (the preceding key)
-			node_to_attach_to = lower_bound(value.first);
-
-			Rb_tree_insert_and_rebalance(true,
-				node_to_insert, node_to_attach_to, _root);
-
-			iterator ret(node_to_insert);
-
-			++_node_count;
-			
-			return ret;			
+			return ret;
 		}
 
 		iterator insert_node_loc(iterator pos_to_attach, const value_type &value)
 		{
-			RBT_node<value_type> *node_to_insert;
-			RBT_node<value_type> *node_to_attach_to = pos_to_attach;
-			
-			// prepare the new node
-			node_to_insert = _node_alloc.allocate(sizeof(RBT_node<value_type>));
-			_node_alloc.construct(node_to_insert, RBT_node<typename value_type>());
+			base_ptr *node_inserted;
 
-			node_to_insert->value = value;
+			node_inserted = insert_hint(value, pos_to_attach);
+			iterator ret(node_inserted);
 
-			Rb_tree_insert_and_rebalance(true,
-				node_to_insert, node_to_attach_to, _root);
-
-			iterator ret(node_to_insert);
-
-			++_node_count;
-			
-			return ret;				
+			return ret;
 		}
 
 		void erase_node(iterator pos)
 		{
-			base_ptr	node_to_be_deleted = pos.node_ptr;	
-			
-			node_to_be_deleted = 
+			base_ptr node_to_be_deleted = pos.node_ptr;
+
+			node_to_be_deleted =
 				Rb_tree_rebalance_for_erase(node_to_be_deleted, _root);
-			_node_allocator.destroy(node_to_be_deleted);		
-			
+			_node_alloc.destroy(node_to_be_deleted);
+
 			--_node_count;
 		}
 
-		void swap(RBT & other)
+		void clear(void)
+		{
+			iterator tmp = begin();
+			iterator tmp_next = tmp + 1;
+
+			while (!tmp->is_nil)
+			{
+				base_ptr node_to_destroy = tmp.getNodePtr();
+
+				_node_alloc.destroy(node_to_destroy);
+				_node_alloc.deallocate(node_to_destroy);
+
+				tmp = tmp_next;
+				++tmp_next;
+			}
+		}
+
+		void swap(RBT &other)
 		{
 			std::swap(_root, other._root);
 			std::swap(_node_count, other._node_count);
@@ -707,52 +834,49 @@ namespace ft
 			std::swap(_comp, other._comp);
 		}
 
-		typedef RBT_node *base_ptr;
-		typedef const RBT_node *const_base_ptr;
-		typedef RBT_iterator<T> iterator;
-		typedef RBT_const_iterator<T> const_iterator;
-		typedef reverse_iterator<iterator> reverse_iterator;
-		typedef reverse_iterator<const_iterator> const_reverse_iterator;
-
 		/* ITERATORS */
 		iterator begin(void)
 		{
-			return (RBT_iterator<T>(RBT_node::_S_minimum(_root)));
+			base_ptr node = _minimum(_root);
+			return RBT_iterator<Key, T>(node);
 		}
 
 		const_iterator begin() const
 		{
-			return RBT_const_iterator<T>(RBT_node::_S_minimum(_root));
+			base_ptr node = _minimum(_root);
+			return RBT_const_iterator<Key, T>(node);
 		}
 
 		iterator end()
 		{
-			return RBT_iterator<T>(RBT_node::_S_maximum(_root) + 1);
+			return RBT_iterator<Key, T>(_null_node);
 		}
 
 		const_iterator end() const
 		{
-			return RBT_const_iterator<T>(RBT_node::_S_maximum(_root) + 1);
+			return RBT_const_iterator<Key, T>(_null_node);
 		}
 
 		reverse_iterator rbegin(void)
 		{
-			return RBT_iterator<T>(RBT_node::_S_maximum(_root));
+			base_ptr node = _maximum(_root);
+			return RBT_iterator<Key, T>(node);
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			return RBT_const_iterator<T>(RBT_node::_S_maximum(_root));
+			base_ptr node = _maximum(_root);
+			return RBT_const_iterator<Key, T>(node);
 		}
 
 		reverse_iterator rend()
 		{
-			return RBT_iterator<T>(RBT_node::_S_minimum(_root) - 1);
+			return RBT_iterator<Key, T>(_null_node);
 		}
 
 		const_reverse_iterator rend() const
 		{
-			return RBT_const_iterator<T>(RBT_node::_S_minimum(_root) - 1);
+			return RBT_const_iterator<Key, T>(_null_node);
 		}
 
 		/* CAPACITY */
@@ -767,7 +891,29 @@ namespace ft
 			return _node_count;
 		}
 
+		size_type max_size() const
+		{
+			return _node_alloc.max_size();
+		}
 		/* LOOKUP */
+
+		iterator find(const Key &key)
+		{
+			base_ptr node_to_find = searchTree(key);
+
+			iterator ret(node_to_find);
+
+			return (ret);
+		}
+
+		const_iterator find(const Key &key) const
+		{
+			base_ptr node_to_find = searchTree(key);
+
+			const_iterator ret(node_to_find);
+
+			return (ret);
+		}
 
 		iterator lower_bound(const Key &key)
 		{
@@ -811,7 +957,7 @@ namespace ft
 			return it;
 		}
 
-		const_iterator upper_bound(const Key &key)
+		const_iterator upper_bound(const Key &key) const
 		{
 			const_iterator it = begin();
 
@@ -826,9 +972,7 @@ namespace ft
 			}
 			return it;
 		}
-	}
-
-	
+	};
 
 } // namespace ft
 

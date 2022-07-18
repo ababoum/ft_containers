@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/13 16:14:03 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/18 20:04:55 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include "rb_tree/RBT.hpp"
 #include "rb_tree/tree_utils.hpp"
+#include "utils/enable_if.hpp"
+#include "utils/is_integral.hpp"
 
 namespace ft
 {
@@ -22,7 +24,7 @@ namespace ft
 		class Key,
 		class T,
 		class Compare = std::less<Key>,
-		class Allocator = std::allocator<pair<const Key, T>>>
+		class Allocator = std::allocator<pair<const Key, T> > >
 	class map
 	{
 	public:
@@ -35,12 +37,12 @@ namespace ft
 		typedef Allocator allocator_type;
 		typedef value_type &reference;
 		typedef const value_type &const_reference;
-		typedef Allocator::pointer pointer;
-		typedef Allocator::const_pointer const_pointer;
-		typedef RBT_iterator<T> iterator;
-		typedef RBT_const_iterator<T> const_iterator;
-		typedef reverse_iterator<iterator> reverse_iterator;
+		typedef typename Allocator::pointer pointer;
+		typedef typename Allocator::const_pointer const_pointer;
+		typedef RBT_iterator<Key, T> iterator;
+		typedef RBT_const_iterator<Key, T> const_iterator;
 		typedef reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef reverse_iterator<iterator> reverse_iterator;
 
 	private:
 		typedef RBT<Key, T, key_compare, allocator_type> RBT_map;
@@ -86,9 +88,12 @@ namespace ft
 		template <class InputIt>
 		map(InputIt first, InputIt last,
 			const Compare &comp = Compare(),
-			const Allocator &alloc = Allocator())
+			const Allocator &alloc = Allocator(),
+			typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
 			: _storage()
 		{
+			_storage.setAllocator(alloc);
+			_storage.setComp(comp);
 			for (InputIt it = first; it != last; ++it) {
 				insert(*it);
 			}			
@@ -106,48 +111,37 @@ namespace ft
 
 		~map();
 
+		/* MEMBER FUNCTIONS */
+
+		map& operator=( const map& other )
+		{
+			clear();
+			
+			for (iterator it = other.begin(); it != other.end(); ++it) {
+				insert(*it);
+			}
+		}
+		
+		allocator_type get_allocator() const
+		{
+			return _storage.getAllocator();
+		}
+
 		/* ELEMENT ACCESS */
 
 		T &at(const Key &key) /* 1 */
 		{
-			iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					return (*it).second;
-				++it;
-			}
-			if (it == end())
-				throw std::out_of_range("Specified key is out of range");
+			return _storage.at(key);
 		}
 
 		const T &at(const Key &key) const /* 2 */
 		{
-			const_iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					return (*it).second;
-				++it;
-			}
-			if (it == end())
-				throw std::out_of_range("Specified key is out of range");
+			return _storage.at(key);
 		}
 
 		T &operator[](const Key &key)
 		{
-			iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					return (*it).second;
-				++it;
-			}
-			if (it == end())
-				return insert(make_pair(key, T())).first->second;
+			return _storage.getRef_or_insert(key);
 		}
 
 		/* ITERATORS */
@@ -219,7 +213,6 @@ namespace ft
 		pair<iterator, bool> insert(const value_type &value) /* 1 */
 		{
 			pair<iterator, bool> ret;
-			iterator	searched_key;
 			iterator searched_key = find(value.first);
 
 			// if map is empty, insert the node
@@ -246,44 +239,23 @@ namespace ft
 
 		iterator insert(iterator hint, const value_type &value) /* 2 */
 		{
-			iterator tmp = hint;
-			iterator tmp_next = hint;
+			iterator searched_key = find(value.first);
 
 			// is map is empty, insert the node
 			if (empty())
 			{
-				tmp = _storage.insert_node(value);
-				return tmp;
+				return _storage.insert_node(value);
 			}
-			// use the hint to start searching for the spot where to insert the node
-			if (value.first > tmp->value.first)
+			// key found -> no duplicate allowed
+			else if (searched_key != end())
 			{
-				while (tmp_next != end() && value.first > tmp_next->value.first)
-				{
-					++tmp_next;
-					if (tmp_next != end() && value.first > tmp_next->value.first)
-						tmp = tmp_next;
-					// check if we hit the same key as the one in the parameter
-					else if (tmp_next->value.first == value.first)
-						return tmp_next;
-				}
+				return searched_key;
 			}
-			else if (value.first < tmp->value.first)
+			// no key found, proceed with inserting the node
+			else
 			{
-				while (value.first < tmp->value.first)
-				{
-					--tmp_next;
-					if (tmp_next != rend() && value.first < tmp_next->value.first)
-						tmp = tmp_next;
-					// check if we hit the same key as the one in the parameter
-					else if (tmp_next->value.first == value.first)
-						return tmp_next;
-				}
+				return _storage.insert_node_loc(hint, value);
 			}
-
-			iterator ret = _storage.insert_node(value);	
-			
-			return ret;
 		}
 
 		template <class InputIt>
@@ -313,7 +285,6 @@ namespace ft
 
 		size_type erase(const Key &key) /* 3 */
 		{
-			iterator	searched_key;
 			iterator searched_key = find(key);
 
 			// if map is empty, do nothing
@@ -356,20 +327,17 @@ namespace ft
 
 		iterator find(const Key &key)
 		{
-			iterator it = begin();
-
-			while (it != end())
-			{
-				if (key == (*it).first)
-					break;
-				++it;
-			}
-			return it;
+			return _storage.find(key);
 		}
 
+		const_iterator find( const Key& key ) const
+		{
+			return _storage.find(key);
+		}
+		
 		pair<iterator, iterator> equal_range(const Key &key)
 		{
-			return make_pair<iterator, iteraotr>(lower_bound(), upper_bound());
+			return make_pair<iterator, iterator>(lower_bound(key), upper_bound(key));
 		}
 
 		iterator lower_bound(const Key &key)
@@ -387,7 +355,7 @@ namespace ft
 			return _storage.upper_bound(key);
 		}
 
-		const_iterator upper_bound(const Key &key)
+		const_iterator upper_bound(const Key &key) const
 		{
 			return _storage.upper_bound(key);
 		}
@@ -409,7 +377,7 @@ namespace ft
 	bool operator==(const map<Key, T, Compare, Alloc> &lhs,
 					const map<Key, T, Compare, Alloc> &rhs)
 	{
-		if lhs.size() != rhs.size()
+		if (lhs.size() != rhs.size())
 			return false;
 		else
 		{
@@ -429,7 +397,7 @@ namespace ft
 	bool operator<(const map<Key, T, Compare, Alloc> &lhs,
 				   const map<Key, T, Compare, Alloc> &rhs)
 	{
-		if lhs.size() != rhs.size()
+		if (lhs.size() != rhs.size())
 			return lhs.size() < rhs.size();
 		else
 		{
@@ -467,3 +435,5 @@ namespace ft
 	}
 
 } // namespace ft
+
+#endif /* ************************************************************* MAP_H */
