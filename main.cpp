@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 16:15:26 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 18:43:24 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int main(void)
 	// 		std::cout << e.what() << std::endl;
 	// 	}
 	// }
+	
 	// std::cout << "\e[7m=============SIZED MAP============\e[0m" << std::endl;
 	// {
 	// 	try
@@ -58,7 +59,6 @@ int main(void)
 	// 		mymap.push_back(ft::pair<char, int>('e', 150));
 	// 		mymap.push_back(ft::pair<char, int>('f', 175));
 	// 		mymap.push_back(ft::pair<char, int>('z', 200));
-
 	// 		ft::map<char, int> test(mymap.begin(), mymap.end());
 	// 		std::cout << test.size() << std::endl;			
 	// 	}
@@ -67,6 +67,7 @@ int main(void)
 	// 		std::cout << e.what() << std::endl;
 	// 	}
 	// }
+	
 	// std::cout << "\e[7m=============SIZED MAP 2============\e[0m" << std::endl;
 	// {
 	// 	try
@@ -76,7 +77,6 @@ int main(void)
 	// 		mymap.insert(ft::pair<const char, int>('e', 150));
 	// 		mymap.insert(ft::pair<const char, int>('f', 175));
 	// 		mymap.insert(ft::pair<const char, int>('z', 200));
-
 	// 		ft::map<char, int> test(mymap);
 	// 		std::cout << test.size() << std::endl;			
 	// 	}
@@ -86,6 +86,7 @@ int main(void)
 	// 	}
 	// }
 	// return (0);
+	
 	std::cout << "\e[7m=============EMPTY VECTOR============\e[0m" << std::endl;
 	{
 		try
@@ -98,6 +99,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	
 	std::cout << "\e[7m=============SIZED VECTOR============\e[0m" << std::endl;
 	{
 		try
@@ -110,6 +112,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+
 	std::cout << "\e[7m===========ASSIGN====================\e[0m" << std::endl;
 	{
 		try
@@ -129,6 +132,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	
 	std::cout << "\e[7m===========ITERATOR==================\e[0m" << std::endl;
 	{
 		try
@@ -141,7 +145,7 @@ int main(void)
 			}
 			i = 0;
 			for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it) {
-				std::cout << i << ": " << test[i] << std::endl;
+				std::cout << i << ": " << *it << std::endl;
 				i++;
 			}
 		}
@@ -150,6 +154,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+
 	std::cout << "\e[7m=========REVERSE ITERATOR============\e[0m" << std::endl;
 	{
 		try
@@ -162,7 +167,7 @@ int main(void)
 			}
 			i = 0;
 			for (ft::vector<int>::reverse_iterator it = test.rbegin(); it != test.rend(); ++it) {
-				std::cout << i << ": " << test[i] << std::endl;
+				std::cout << i << ": " << *it << std::endl;
 				i++;
 			}
 		}
@@ -171,6 +176,29 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	
+	std::cout << "\e[7m===========VECTOR PUSH_BACK==========\e[0m" << std::endl;
+	{
+		try
+		{
+			ft::vector<int> c1;
+
+			c1.push_back(1);
+			c1.push_back(2);
+			c1.push_back(3);
+			c1.push_back(4);
+
+			print_vector(1, c1);
+
+			std::cout << "front: " << c1.front() << std::endl;
+			std::cout << "back: " << c1.back() << std::endl;
+		}
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+
 	std::cout << "\e[7m============VECTOR INSERT============\e[0m" << std::endl;
 	{
 		try
@@ -178,11 +206,10 @@ int main(void)
 			ft::vector<int> c1(3, 100);
 			print_vector(1, c1);
 		
-			ft::vector<int>::iterator it = c1.begin();
-			it = c1.insert(it, 200);
+			c1.insert(c1.begin(), 200);
 			print_vector(2, c1);
 		
-			c1.insert(it, 2, 300);
+			c1.insert(c1.begin() + 2, 2, 300);
 			print_vector(3, c1);
 		}
 		catch (std::exception & e)
@@ -190,6 +217,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
+	
 	std::cout << "\e[7m==============ERASE==================\e[0m" << std::endl;
 	{
 		try
@@ -202,7 +230,7 @@ int main(void)
 			c.erase(c.begin());
 			print_vector(1, c);
 
-			c.erase(c.begin()+2, c.begin()+5);
+			c.erase(c.begin() + 2, c.begin() + 4);
 			print_vector(2, c);
 
 			// Erase all even numbers
@@ -221,25 +249,7 @@ int main(void)
 			std::cout << e.what() << std::endl;
 		}
 	}
-	std::cout << "\e[7m===========PAIRS==================\e[0m" << std::endl;
-	{
-		try
-		{
-			std::cout << std::boolalpha;
-			
-			ft::pair<int, int>	pair_test;
-			ft::pair<int, int>	pair_test2(-10, 20);
 
-			pair_test = pair_test2;
-			std::cout << "test is equal to test2? " << (pair_test == pair_test2) <<std::endl;
-			pair_test2 = ft::make_pair<int, int>(-50, 100);
-			std::cout << "test is equal to test2? " << (pair_test == pair_test2) <<std::endl;
-		}
-		catch (std::exception & e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-	}
 	std::cout << "\e[7m==============SWAP VECTOR==================\e[0m" << std::endl;
 	{
 		try
@@ -248,16 +258,14 @@ int main(void)
 		
 			a1.push_back(1);a1.push_back(2);a1.push_back(3);
 			a2.push_back(4);a2.push_back(5);
-			
-			ft::vector<int>::iterator it1 = 1 + a1.begin();
-			ft::vector<int>::iterator it2 = 1 + a2.begin();
+
 		
-			int& ref1 = a1.front();
-			int& ref2 = a2.front();
-		
-			std::cout << a1 << a2 << *it1 << ' ' << *it2 << ' ' << ref1 << ' ' << ref2 << '\n';
-			a1.swap(a2);
-			std::cout << a1 << a2 << *it1 << ' ' << *it2 << ' ' << ref1 << ' ' << ref2 << '\n';						
+			print_vector(1, a1);
+			print_vector(2, a2);					
+			std::cout << "After swap:" << std::endl;
+			ft::swap(a1, a2);
+			print_vector(1, a1);
+			print_vector(2, a2);			
 		}
 		catch (std::exception & e)
 		{

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 16:17:48 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 19:04:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,26 +236,26 @@ class vector
 		
 		reverse_iterator rbegin()
 		{
-			reverse_iterator it = end() - 1;
+			reverse_iterator it(end() - 1);
 			return it;
 			
 		}
 		
 		const_reverse_iterator rbegin() const
 		{
-			const_reverse_iterator it = end() - 1;
+			const_reverse_iterator it(end() - 1);
 			return it;
 		}
 		
 		reverse_iterator rend()
 		{
-			reverse_iterator it = begin() - 1;
+			reverse_iterator it(begin() - 1);
 			return it;
 		}
 		
 		const_reverse_iterator rend() const
 		{
-			const_reverse_iterator it = begin() - 1;
+			const_reverse_iterator it(begin() - 1);
 			return it;
 		}
 
@@ -312,13 +312,17 @@ class vector
 		/* 1 */
 		iterator	insert( iterator pos, const T& value )
 		{
+			size_t pos_index = std::distance(begin(), pos);
+			
 			if (_capacity == 0)
 				reserve(1);
 			if (_size == _capacity)
 				reserve(_capacity * 2);
 			
 			iterator it = begin();
-			while ( it != pos && it != end()) {
+			iterator pos_after_resize(begin() + pos_index);
+			
+			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
 			
@@ -336,6 +340,8 @@ class vector
 		/* 2 */
 		void		insert( iterator pos, size_type count, const T& value )
 		{
+			size_t pos_index = std::distance(begin(), pos);
+			
 			if (count == 0)
 				return ;
 			if (_capacity == 0)
@@ -347,7 +353,9 @@ class vector
 			reserve(target_capacity);
 			
 			iterator it = begin();
-			while ( it != pos && it != end()) {
+			iterator pos_after_resize(begin() + pos_index);
+			
+			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
 			
@@ -370,6 +378,8 @@ class vector
 		void		insert(iterator pos, InputIt first, InputIt last,
 			typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
 		{
+			size_t pos_index = std::distance(begin(), pos);
+			
 			if (first >= last)
 				return ;
 
@@ -383,7 +393,9 @@ class vector
 			reserve(target_capacity);
 			
 			iterator it = begin();
-			while ( it != pos && it != end()) {
+			iterator pos_after_resize(begin() + pos_index);
+
+			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
 			
@@ -405,17 +417,19 @@ class vector
 		iterator	erase( iterator pos )
 		{
 			iterator it = begin();
+			iterator initial_end(end());
+			
 			while ( it != pos && it != end()) {
 				++it;
 			}
 			if (it == end())
 				return (pos);
 			
-			while ( it != end() - 1 ) {
-				_allocator.destroy(&(*it));
-				_allocator.construct(&(*it), *(it + 1));
+			while ( it != initial_end - 1) {
+				*it = *(it + 1);
 				++it;
 			}
+			_allocator.destroy(&(*it));
 			--_size;
 			return (pos);
 		}
@@ -423,26 +437,14 @@ class vector
 		iterator	erase( iterator first, iterator last )
 		{
 			if (first >= last)
-				return (last);
-
-			size_type count = std::distance(first, last);
+				return last;
 			
-			iterator it = begin();
-			while ( it != first && it != end()) {
-				++it;
-			}
-			if (it == end())
-				return (last);
-			
-			
-			while (it + count != end()) {
-				_allocator.destroy(&(*it));
-				_allocator.construct(&(*it), *(it + count));
-				++it;
-			}
-			
-			_size -= count;
-			return (end());
+			difference_type	range = std::distance(first, last);
+			if (range < 0)
+				range *= -1;
+			for (difference_type i = 0; i < range; i++)
+				erase(first);
+			return first;
 		}
 
 		void		push_back( const T& value )

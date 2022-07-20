@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/18 20:00:34 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 16:33:39 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ namespace ft
 			: node_ptr(node_ptr_input) {}
 
 		base_ptr
-		getNodePtr()
+		base()
 		{
 			return node_ptr;
 		}
@@ -238,7 +238,7 @@ namespace ft
 			: node_ptr(it.node_ptr) {}
 
 		base_ptr
-		getNodePtr()
+		base()
 		{
 			return node_ptr;
 		}
@@ -682,7 +682,7 @@ namespace ft
 			node->is_nil = false;
 
 			base_ptr y = NULL;
-			base_ptr x = hint.getNodePtr();
+			base_ptr x = hint.base();
 
 			while (x != _null_node)
 			{
@@ -815,7 +815,7 @@ namespace ft
 
 			while (!tmp->is_nil)
 			{
-				base_ptr node_to_destroy = tmp.getNodePtr();
+				base_ptr node_to_destroy = tmp.base();
 
 				_node_alloc.destroy(node_to_destroy);
 				_node_alloc.deallocate(node_to_destroy);

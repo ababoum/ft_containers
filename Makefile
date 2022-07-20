@@ -7,12 +7,12 @@ NAME 		= container_test
 SRCS		= main.cpp
 
 INCL		= vector.hpp \
-				vector.tpp \
+				map.hpp \
+				stack.hpp \
 				iterators/iterators_traits.hpp \
 				iterators/random_access_iterator.hpp \
-				iterators/random_access_iterator.tpp \
 				iterators/reverse_iterator.hpp \
-				iterators/reverse_iterator.tpp \
+				pairs/pair.hpp \
 				utils/enable_if.hpp \
 				utils/equal.hpp \
 				utils/integral_constant.hpp \

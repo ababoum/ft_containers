@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 22:02:28 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 16:17:15 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 16:46:44 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ namespace ft {
 
 	template< typename Iter >
 	class random_access_iterator
+	: public std::iterator<typename iterator_traits<Iter>::iterator_category,
+		typename iterator_traits<Iter>::value_type,
+		typename iterator_traits<Iter>::difference_type,
+		typename iterator_traits<Iter>::pointer,
+		typename iterator_traits<Iter>::reference>
 	{
 		
 		public:
