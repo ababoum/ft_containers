@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/18 20:04:55 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 14:30:58 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft
 	public:
 		typedef Key key_type;
 		typedef T mapped_type;
-		typedef pair<const key_type,mapped_type> value_type;
+		typedef pair<const key_type, mapped_type> value_type;
 		typedef std::size_t size_type;
 		typedef std::ptrdiff_t difference_type;
 		typedef Compare key_compare;

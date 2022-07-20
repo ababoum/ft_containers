@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/18 19:09:11 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/20 15:03:15 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft {
 		public:
 			typedef iterator_traits<Iter>		traits_type;
 			
-			typedef	Iter												iterator_type;
+			typedef	Iter										iterator_type;
 			typedef	typename traits_type::iterator_category		iterator_category;
 			typedef	typename traits_type::value_type			value_type;
 			typedef	typename traits_type::difference_type		difference_type;
