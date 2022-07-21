@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 16:33:39 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/21 19:30:40 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,12 @@ namespace ft
 		{
 			return lhs.node_ptr == rhs.node_ptr;
 		}
+
+		friend bool
+		operator!=(const iterator &lhs, const iterator &rhs)
+		{
+			return !(lhs == rhs);
+		}
 	};
 
 	// red-black tree const iterator
@@ -290,6 +296,12 @@ namespace ft
 		{
 			return lhs.node_ptr == rhs.node_ptr;
 		}
+
+		friend bool
+		operator!=(const const_iterator &lhs, const const_iterator &rhs)
+		{
+			return !(lhs == rhs);
+		}
 	};
 
 	// RBT reference: https://www.programiz.com/dsa/red-black-tree
@@ -309,6 +321,7 @@ namespace ft
 		typedef Key key_type;
 		typedef T mapped_type;
 		typedef pair<const key_type, mapped_type> value_type;
+		typedef	RBT_node<Key, T> node_type;
 		typedef RBT_node<Key, T> *base_ptr;
 
 		typedef RBT_iterator<Key, T> iterator;
@@ -609,7 +622,7 @@ namespace ft
 	public:
 		RBT()
 		{
-			_null_node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+			_null_node = _node_alloc.allocate(sizeof(node_type));
 
 			_node_count = 0;
 			_pair_alloc = pair_allocator();
@@ -626,7 +639,7 @@ namespace ft
 		// Inserting a node
 		base_ptr insert(value_type pair_to_add)
 		{
-			base_ptr node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+			base_ptr node = _node_alloc.allocate(sizeof(node_type));
 			_node_alloc.construct(node, 0);
 			node->parent = NULL;
 			node->pair.first = pair_to_add.first;
@@ -672,7 +685,7 @@ namespace ft
 
 		base_ptr insert_hint(value_type pair_to_add, iterator hint)
 		{
-			base_ptr node = _node_alloc.allocate(sizeof(RBT_node<Key, T>));
+			base_ptr node = _node_alloc.allocate(sizeof(node_type));
 			_node_alloc.construct(node, 0);
 			node->parent = NULL;
 			node->pair.first = pair_to_add.first;
@@ -813,12 +826,12 @@ namespace ft
 			iterator tmp = begin();
 			iterator tmp_next = tmp + 1;
 
-			while (!tmp->is_nil)
+			while (!tmp.base()->is_nil)
 			{
 				base_ptr node_to_destroy = tmp.base();
 
 				_node_alloc.destroy(node_to_destroy);
-				_node_alloc.deallocate(node_to_destroy);
+				_node_alloc.deallocate(node_to_destroy, sizeof(node_type));
 
 				tmp = tmp_next;
 				++tmp_next;
