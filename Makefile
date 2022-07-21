@@ -2,7 +2,7 @@ CXX			= @c++
 
 CXXFLAGS	= -Wall -Werror -Wextra -g -std=c++98
 
-NAME 		= container_test
+NAME 		= test_containers
 
 SRCS		= main.cpp
 

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 19:04:56 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/21 17:08:21 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class vector
 		typedef typename Allocator::pointer						pointer;
 		typedef typename Allocator::const_pointer				const_pointer;
 		typedef random_access_iterator<pointer>					iterator;
-		typedef const_random_access_iterator<const_pointer>		const_iterator;
+		typedef random_access_iterator<const_pointer>			const_iterator;
 		typedef	reverse_iterator<const_iterator>				const_reverse_iterator;
 		typedef reverse_iterator<iterator>						reverse_iterator;
 		
@@ -47,12 +47,14 @@ class vector
 	private:
 		void _reset_array()
 		{
-			if (_array)
+			if (_size > 0)
 			{
 				for (size_type i = 0; i < _size; i++)
 					_allocator.destroy(&_array[i]);
-				_allocator.deallocate(_array, _capacity);
 			}
+
+			if (_size == 0 && _capacity > 0)
+				_allocator.deallocate(_array, _capacity);
 		}
 
 	public:
@@ -157,14 +159,14 @@ class vector
 		reference at( size_type pos )
 		{
 			if (!(pos < _size))
-				throw std::out_of_range("Specified position is out of range");
+				throw std::out_of_range("Catch out_of_range exception!");
 			return ((*this)[pos]);
 		}
 
 		const_reference at( size_type pos ) const
 		{
 			if (!(pos < size()))
-				throw std::out_of_range("Specified position is out of range");
+				throw std::out_of_range("Catch out_of_range exception!");
 			return ((*this)[pos]);
 		}
 		
@@ -224,38 +226,38 @@ class vector
 		
 		iterator end()
 		{
-			iterator it = begin() + _size;
+			iterator it(_array + _size);
 			return it;
 		}
 		
 		const_iterator end() const
 		{
-			const_iterator it = begin() + _size;
+			const_iterator it(_array + _size);
 			return it;
 		}
 		
 		reverse_iterator rbegin()
 		{
-			reverse_iterator it(end() - 1);
+			reverse_iterator it(end());
 			return it;
 			
 		}
 		
 		const_reverse_iterator rbegin() const
 		{
-			const_reverse_iterator it(end() - 1);
+			const_reverse_iterator it(end());
 			return it;
 		}
 		
 		reverse_iterator rend()
 		{
-			reverse_iterator it(begin() - 1);
+			reverse_iterator it(begin());
 			return it;
 		}
 		
 		const_reverse_iterator rend() const
 		{
-			const_reverse_iterator it(begin() - 1);
+			const_reverse_iterator it(begin());
 			return it;
 		}
 
@@ -380,7 +382,7 @@ class vector
 		{
 			size_t pos_index = std::distance(begin(), pos);
 			
-			if (first >= last)
+			if (std::distance(first, last) <= 0)
 				return ;
 
 			size_type count = std::distance(first, last);
@@ -436,12 +438,10 @@ class vector
 		
 		iterator	erase( iterator first, iterator last )
 		{
-			if (first >= last)
+			if (std::distance(first, last) <= 0)
 				return last;
 			
 			difference_type	range = std::distance(first, last);
-			if (range < 0)
-				range *= -1;
 			for (difference_type i = 0; i < range; i++)
 				erase(first);
 			return first;
@@ -461,18 +461,20 @@ class vector
 		void		pop_back()
 		{
 			_allocator.destroy(&_array[_size - 1]);
-			_size--;
+			--_size;
 		}
 		
 		void		resize( size_type count, T value = T() )
 		{
 			if (_size > count) {
-				for (size_type i = count; i < _size; i++) {
+				size_type diff = _size - count;
+				for (size_type i = 0; i < diff; ++i) {
 					pop_back();
 				}
 			}
 			else if (_size < count) {
-				for (size_type i = _size; i < count; i++) {
+				size_type diff = count - _size;
+				for (size_type i = 0; i < diff; ++i) {
 					push_back(value);
 				}
 			}
@@ -500,7 +502,7 @@ bool operator==(const vector<T, Alloc>& lhs,
 	{
 		if (lhs.size() != rhs.size())
 			return false;
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
 template< class T, class Alloc >
@@ -514,7 +516,7 @@ template< class T, class Alloc >
 bool operator<( const vector<T,Alloc>& lhs,
 	const vector<T,Alloc>& rhs )
 	{
-		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 template< class T, class Alloc >
