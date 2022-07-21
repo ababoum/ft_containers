@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 16:16:39 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 17:00:58 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/21 18:28:36 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,31 +145,31 @@ namespace ft {
 	bool operator!=( const reverse_iterator<Iterator1>& lhs,
 		const reverse_iterator<Iterator2>& rhs )
 		{
-			return (lhs.base() != rhs.base());
+			return !(lhs == rhs);
 		}
 	template< class Iterator1, class Iterator2 >
 	bool operator<( const reverse_iterator<Iterator1>& lhs,
 		const reverse_iterator<Iterator2>& rhs )
 		{
-			return (lhs.base() < rhs.base());
+			return (rhs.base() < lhs.base());
 		}
 	template< class Iterator1, class Iterator2 >
 	bool operator<=( const reverse_iterator<Iterator1>& lhs,
 		const reverse_iterator<Iterator2>& rhs )
 		{
-			return (lhs.base() <= rhs.base());
+			return (lhs < rhs || lhs == rhs);
 		}
 	template< class Iterator1, class Iterator2 >
 	bool operator>( const reverse_iterator<Iterator1>& lhs,
 		const reverse_iterator<Iterator2>& rhs )
 		{
-			return (lhs.base() > rhs.base());
+			return !(lhs <= rhs);
 		}
 	template< class Iterator1, class Iterator2 >
 	bool operator>=( const reverse_iterator<Iterator1>& lhs,
 		const reverse_iterator<Iterator2>& rhs )
 		{
-			return (lhs.base() >= rhs.base());
+			return !(lhs < rhs);
 		}
 
 	template< class Iter >

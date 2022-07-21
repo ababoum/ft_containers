@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 16:02:22 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/21 18:57:48 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 #include <iostream>
 #include "map.hpp"
 #include "vector.hpp"
-#include <map>
-#include <vector>
-
+#include "stack.hpp"
 
 #define SHOW(...) std::cout << std::setw(35) << #__VA_ARGS__ << " == " << __VA_ARGS__ << std::endl;
 
@@ -53,6 +51,21 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
+template <typename T_STACK>
+void	printSize_stk(T_STACK &stck, bool print_content = 1)
+{
+	std::cout << "size: " << stck.size() << std::endl;
+	if (print_content)
+	{
+		std::cout << std::endl << "Content was:" << std::endl;
+		while (stck.size() != 0) {
+			std::cout << "- " << stck.top() << std::endl;
+			stck.pop();
+		}
 	}
 	std::cout << "###############################################" << std::endl;
 }
@@ -291,31 +304,31 @@ int main(void)
 	std::cout << "\e[7m==============TESTER AREA==================\e[0m" << std::endl;
 	{
 
-		const int size = 5;
-		ft::vector<int> vct(size);
-		ft::vector<int>::reverse_iterator it = vct.rbegin();
-		ft::vector<int>::const_reverse_iterator ite = vct.rbegin();
+		ft::vector<int>	ctnr;
 
-		for (int i = 0; i < size; ++i)
-			it[i] = (size - i) * 5;
+		ctnr.push_back(21);
+		ctnr.push_back(42);
+		ctnr.push_back(1337);
+		ctnr.push_back(19);
+		ctnr.push_back(0);
+		ctnr.push_back(183792);
 
-		it = it + 5;
-		it = 1 + it;
-		it = it - 4;
-		std::cout << *(it += 2) << std::endl;
-		std::cout << *(it -= 1) << std::endl;
+		ft::stack<int>	stck(ctnr);
 
-		*(it -= 2) = 42;
-		*(it += 2) = 21;
+		std::cout << "empty: " << stck.empty() << std::endl;
+		std::cout << "size: " << stck.size() << std::endl;
 
-		std::cout << "const_ite +=/-=: " << *(ite += 2) << " | " << *(ite -= 2) << std::endl;
+		stck.push(1);
+		stck.push(2);
+		stck.push(3);
+		stck.push(4);
+		stck.push(5);
+		stck.push(6);
 
-		std::cout << "(it == const_it): " << (ite == it) << std::endl;
-		std::cout << "(const_ite - it): " << (ite - it) << std::endl;
-		std::cout << "(ite + 3 == it): " << (ite + 3 == it) << std::endl;
+		std::cout << "Added some elements" << std::endl;
 
-		printSize(vct, true);
-		return (0);
+		std::cout << "empty: " << stck.empty() << std::endl;
+		printSize_stk(stck);
 		
 	}
 }
