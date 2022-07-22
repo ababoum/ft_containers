@@ -6,17 +6,22 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 18:57:48 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/22 19:06:20 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include "map.hpp"
 #include "vector.hpp"
 #include "stack.hpp"
 
 #define SHOW(...) std::cout << std::setw(35) << #__VA_ARGS__ << " == " << __VA_ARGS__ << std::endl;
+
+#define T1 char
+#define T2 int
+typedef ft::pair<const T1, T2> T3;
 
 void print_vector(int id, const ft::vector<int>& container)
 {
@@ -70,6 +75,30 @@ void	printSize_stk(T_STACK &stck, bool print_content = 1)
 	std::cout << "###############################################" << std::endl;
 }
 
+template <typename T>
+std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
+{
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
+}
+
+template <typename T_MAP>
+void	printSize_map(T_MAP const &mp, bool print_content = 1)
+{
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
+	if (print_content)
+	{
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << printPair(it, false) << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
 template <class T>
 void	checkErase(ft::vector<T> const &vct,
 					typename ft::vector<T>::const_iterator const &it)
@@ -77,6 +106,12 @@ void	checkErase(ft::vector<T> const &vct,
 	static int i = 0;
 	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
 	printSize(vct);
+}
+
+template <class T>
+void	is_empty(T const &mp)
+{
+	std::cout << "is_empty: " << mp.empty() << std::endl;
 }
 
 int main(void)
@@ -301,34 +336,36 @@ int main(void)
 	// 	}
 	// }
 
+
+
 	std::cout << "\e[7m==============TESTER AREA==================\e[0m" << std::endl;
 	{
+		std::list<T3> lst;
+		unsigned int lst_size = 7;
+		for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3('a' + i, lst_size - i));
 
-		ft::vector<int>	ctnr;
+		ft::map<T1, T2> mp(lst.begin(), lst.end()), mp2;
+		ft::map<T1, T2>::iterator it;
 
-		ctnr.push_back(21);
-		ctnr.push_back(42);
-		ctnr.push_back(1337);
-		ctnr.push_back(19);
-		ctnr.push_back(0);
-		ctnr.push_back(183792);
+		lst.clear();
+		is_empty(mp);
+		printSize_map(mp);
 
-		ft::stack<int>	stck(ctnr);
+		is_empty(mp2);
+		mp2 = mp;
+		is_empty(mp2);
 
-		std::cout << "empty: " << stck.empty() << std::endl;
-		std::cout << "size: " << stck.size() << std::endl;
+		it = mp.begin();
+		for (unsigned long int i = 3; i < mp.size(); ++i)
+		it++->second = i * 7;
 
-		stck.push(1);
-		stck.push(2);
-		stck.push(3);
-		stck.push(4);
-		stck.push(5);
-		stck.push(6);
+		printSize_map(mp);
+		printSize_map(mp2);
 
-		std::cout << "Added some elements" << std::endl;
-
-		std::cout << "empty: " << stck.empty() << std::endl;
-		printSize_stk(stck);
+		mp2.clear();
+		is_empty(mp2);
+		printSize_map(mp2);
 		
 	}
 }

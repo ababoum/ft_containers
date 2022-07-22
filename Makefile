@@ -13,6 +13,7 @@ INCL		= vector.hpp \
 				iterators/random_access_iterator.hpp \
 				iterators/reverse_iterator.hpp \
 				pairs/pair.hpp \
+				rb_tree/RBT.hpp \
 				utils/enable_if.hpp \
 				utils/equal.hpp \
 				utils/integral_constant.hpp \

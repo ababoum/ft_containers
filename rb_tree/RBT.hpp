@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 19:30:40 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/22 19:50:04 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@
 
 namespace ft
 {
+	template <class Key, class T>
+	struct RBT_iterator;
+	
+	template <class Key, class T>
+	struct RBT_const_iterator;
 
 	// definition of red and black colors
 	enum rb_tree_color
@@ -40,10 +45,9 @@ namespace ft
 		value_type pair;
 		bool is_nil;
 
-		RBT_node(value_type pair_init)
-		{
-			pair = pair_init;
-		}
+		RBT_node(): pair(Key(), T()) {}
+		
+		RBT_node(value_type pair_init):pair(pair_init) {}
 		
 		value_type *value_ptr()
 		{
@@ -145,17 +149,42 @@ namespace ft
 
 		typedef RBT_iterator<Key, T> iterator;
 		typedef RBT_node<Key, T> *base_ptr;
+		typedef const base_ptr	const_base_ptr;
+		typedef RBT_const_iterator<Key, T> const_iterator;
 
 		base_ptr node_ptr;
 
 		RBT_iterator()
 			: node_ptr() {}
 
-		explicit RBT_iterator(base_ptr node_ptr_input)
+		RBT_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
+		RBT_iterator(const RBT_iterator & other)
+		{
+			*this = other;
+		}
+
+		RBT_iterator & operator=( const RBT_iterator & other )
+		{
+			node_ptr = other.base();
+			return *this;
+		}
+
+		RBT_iterator(const const_iterator & other)
+		{
+			*this = other;
+		}
+
+		RBT_iterator & operator=( const_iterator & other )
+		{
+			node_ptr = other.base();
+			return *this;
+		}
+
+
 		base_ptr
-		base()
+		base() const
 		{
 			return node_ptr;
 		}
@@ -200,6 +229,26 @@ namespace ft
 			iterator tmp = *this;
 			node_ptr = rb_tree_decrement(node_ptr);
 			return tmp;
+		}
+
+		iterator operator+( difference_type n ) const
+		{
+			iterator tmp(base());
+
+			for (difference_type i = 0; i != n; ++i)
+				++tmp;
+				
+			return (tmp);
+		}
+
+		iterator operator-( difference_type n ) const
+		{
+			iterator tmp(base());
+
+			for (difference_type i = 0; i != n; ++i)
+				--tmp;
+				
+			return (tmp);
 		}
 
 		friend bool
@@ -237,11 +286,16 @@ namespace ft
 		RBT_const_iterator()
 			: node_ptr() {}
 
-		explicit RBT_const_iterator(base_ptr node_ptr_input)
+		RBT_const_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
-		RBT_const_iterator(const iterator &it)
+		RBT_const_iterator(const const_iterator &it)
 			: node_ptr(it.node_ptr) {}
+
+		const_iterator & operator=( const const_iterator & other )
+		{
+			node_ptr = other.base();
+		}		
 
 		base_ptr
 		base()
@@ -291,6 +345,26 @@ namespace ft
 			return tmp;
 		}
 
+		const_iterator operator+( difference_type n ) const
+		{
+			const_iterator tmp(base());
+
+			for (difference_type i = 0; i != n; ++i)
+				++tmp;
+				
+			return (tmp);
+		}
+
+		const_iterator operator-( difference_type n ) const
+		{
+			const_iterator tmp(base());
+
+			for (difference_type i = 0; i != n; ++i)
+				--tmp;
+				
+			return (tmp);
+		}
+
 		friend bool
 		operator==(const const_iterator &lhs, const const_iterator &rhs)
 		{
@@ -302,6 +376,8 @@ namespace ft
 		{
 			return !(lhs == rhs);
 		}
+
+		
 	};
 
 	// RBT reference: https://www.programiz.com/dsa/red-black-tree
@@ -323,6 +399,7 @@ namespace ft
 		typedef pair<const key_type, mapped_type> value_type;
 		typedef	RBT_node<Key, T> node_type;
 		typedef RBT_node<Key, T> *base_ptr;
+		typedef const base_ptr	const_base_ptr;
 
 		typedef RBT_iterator<Key, T> iterator;
 		typedef RBT_const_iterator<Key, T> const_iterator;
@@ -578,6 +655,13 @@ namespace ft
 			return node;
 		}
 
+		const_base_ptr _minimum(base_ptr node) const
+		{
+			while (node->left != _null_node)
+				node = node->left;
+			return node;
+		}
+
 		base_ptr _maximum(base_ptr node)
 		{
 			while (node->right != _null_node)
@@ -634,15 +718,17 @@ namespace ft
 			_null_node->color = _S_black;
 			_null_node->left = NULL;
 			_null_node->right = NULL;
+			_null_node->is_nil = true;
+			_null_node->parent = _null_node;
 		}
 
 		// Inserting a node
 		base_ptr insert(value_type pair_to_add)
 		{
 			base_ptr node = _node_alloc.allocate(sizeof(node_type));
-			_node_alloc.construct(node, 0);
+			
+			_node_alloc.construct(node, pair_to_add);
 			node->parent = NULL;
-			node->pair.first = pair_to_add.first;
 			node->left = _null_node;
 			node->right = _null_node;
 			node->color = _S_red;
@@ -670,12 +756,12 @@ namespace ft
 
 			if (node->parent == NULL)
 			{
-				node->color = 0;
-				return;
+				node->color = _S_black;
+				return node;
 			}
 
 			if (node->parent->parent == NULL)
-				return;
+				return node;
 
 			_insertRebalance(node);
 			++_node_count;
@@ -792,7 +878,7 @@ namespace ft
 		// Is called only after checking if key doesn't exist already
 		iterator insert_node(const value_type &value)
 		{
-			base_ptr *node_inserted;
+			base_ptr node_inserted;
 
 			node_inserted = insert(value);
 			iterator ret(node_inserted);

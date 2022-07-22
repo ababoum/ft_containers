@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/20 14:30:58 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/22 18:52:15 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,10 @@ namespace ft
 
 		/* DESTRUCTOR */
 
-		~map();
+		~map()
+		{
+			clear();
+		}
 
 		/* MEMBER FUNCTIONS */
 
@@ -120,6 +123,8 @@ namespace ft
 			for (iterator it = other.begin(); it != other.end(); ++it) {
 				insert(*it);
 			}
+			
+			return (*this);
 		}
 		
 		allocator_type get_allocator() const
