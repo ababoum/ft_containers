@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 12:16:32 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/25 19:12:21 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,16 @@ namespace ft
 	static RBT_node<Key, T> *
 	local_rb_tree_increment(RBT_node<Key, T> *node_ptr) throw()
 	{
+		RBT_node<Key, T> *initial_node = node_ptr;
+		
+		// do nothing if a leaf is atteigned
+		if (node_ptr->is_nil)
+		{
+			if (node_ptr->parent)
+				return node_ptr->parent;
+			return node_ptr;
+		}
+		
 		if (!node_ptr->right->is_nil)
 		{
 			node_ptr = node_ptr->right;
@@ -76,11 +86,15 @@ namespace ft
 		else
 		{
 			RBT_node<Key, T> *tmp_node = node_ptr->parent;
-			while (!tmp_node->is_nil && node_ptr == tmp_node->right)
+			while (tmp_node &&
+				!tmp_node->is_nil && 
+				node_ptr == tmp_node->right)
 			{
 				node_ptr = tmp_node;
 				tmp_node = tmp_node->parent;
 			}
+			if (tmp_node == NULL)
+				return initial_node->right;
 			return tmp_node;
 		}
 	}
@@ -103,6 +117,16 @@ namespace ft
 	static RBT_node<Key, T> *
 	local_rb_tree_decrement(RBT_node<Key, T> *node_ptr) throw()
 	{
+		RBT_node<Key, T> *initial_node = node_ptr;
+
+		// do nothing if a leaf is atteigned, except for end
+		if (node_ptr->is_nil)
+		{
+			if (node_ptr->parent)
+				return node_ptr->parent;
+			return node_ptr;
+		}
+		
 		if (!node_ptr->left->is_nil)
 		{
 			node_ptr = node_ptr->left;
@@ -113,11 +137,13 @@ namespace ft
 		else
 		{
 			RBT_node<Key, T> *tmp_node = node_ptr->parent;
-			while (!tmp_node->is_nil && node_ptr == tmp_node->left)
+			while (tmp_node && !tmp_node->is_nil && node_ptr == tmp_node->left)
 			{
 				node_ptr = tmp_node;
 				tmp_node = tmp_node->parent;
 			}
+			if (tmp_node == NULL)
+				return initial_node->left;
 			return tmp_node;
 		}
 	}
@@ -162,7 +188,7 @@ namespace ft
 
 		RBT_iterator(const RBT_iterator & other)
 		{
-			*this = other;
+			node_ptr = other.base();
 		}
 
 		RBT_iterator & operator=( const RBT_iterator & other )
@@ -171,16 +197,16 @@ namespace ft
 			return *this;
 		}
 
-		RBT_iterator(const const_iterator & other)
-		{
-			*this = other;
-		}
+		// RBT_iterator(const const_iterator & other)
+		// {
+		// 	node_ptr = const_cast<base_ptr>(other.base());
+		// }
 
-		RBT_iterator & operator=( const_iterator & other )
-		{
-			node_ptr = other.base();
-			return *this;
-		}
+		// RBT_iterator & operator=( const_iterator & other )
+		// {
+		// 	node_ptr = other.base();
+		// 	return *this;
+		// }
 
 
 		base_ptr
@@ -258,7 +284,19 @@ namespace ft
 		}
 
 		friend bool
+		operator==(const iterator &lhs, const const_iterator &rhs)
+		{
+			return lhs.node_ptr == rhs.node_ptr;
+		}
+
+		friend bool
 		operator!=(const iterator &lhs, const iterator &rhs)
+		{
+			return !(lhs == rhs);
+		}
+
+		friend bool
+		operator!=(const iterator &lhs, const const_iterator &rhs)
 		{
 			return !(lhs == rhs);
 		}
@@ -289,16 +327,26 @@ namespace ft
 		RBT_const_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
-		RBT_const_iterator(const const_iterator &it)
-			: node_ptr(it.node_ptr) {}
+		RBT_const_iterator(const RBT_const_iterator & other)
+			: node_ptr(other.node_ptr) {}
 
 		const_iterator & operator=( const const_iterator & other )
 		{
 			node_ptr = other.base();
-		}		
+			return *this;
+		}
+
+		RBT_const_iterator(const iterator & other)
+			: node_ptr(other.node_ptr) {}
+
+		const_iterator & operator=( const iterator & other )
+		{
+			node_ptr = other.base();
+			return *this;
+		}	
 
 		base_ptr
-		base()
+		base() const
 		{
 			return node_ptr;
 		}
@@ -371,8 +419,20 @@ namespace ft
 			return lhs.node_ptr == rhs.node_ptr;
 		}
 
+				friend bool
+		operator==(const const_iterator &lhs, const iterator &rhs)
+		{
+			return lhs.node_ptr == rhs.node_ptr;
+		}
+
 		friend bool
 		operator!=(const const_iterator &lhs, const const_iterator &rhs)
+		{
+			return !(lhs == rhs);
+		}
+
+		friend bool
+		operator!=(const const_iterator &lhs, const iterator &rhs)
 		{
 			return !(lhs == rhs);
 		}
@@ -409,6 +469,8 @@ namespace ft
 	private:
 		base_ptr _root;
 		base_ptr _null_node;
+		base_ptr _null_begin;
+		base_ptr _null_end;
 		size_type _node_count;
 		pair_allocator _pair_alloc;
 		node_allocator _node_alloc;
@@ -428,7 +490,21 @@ namespace ft
 
 		base_ptr _searchTreeHelper(base_ptr node, Key key)
 		{
-			if (node == _null_node || key == node->pair.first)
+			if (node->is_nil || key == node->pair.first)
+			{
+				return node;
+			}
+
+			if (key < node->pair.first)
+			{
+				return _searchTreeHelper(node->left, key);
+			}
+			return _searchTreeHelper(node->right, key);
+		}
+
+		const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
+		{
+			if (node->is_nil || key == node->pair.first)
 			{
 				return node;
 			}
@@ -534,7 +610,7 @@ namespace ft
 			base_ptr x;
 			base_ptr y;
 
-			while (node != _null_node)
+			while (!node->is_nil)
 			{
 				if (node->pair.first == key)
 					z = node;
@@ -545,7 +621,7 @@ namespace ft
 					node = node->left;
 			}
 
-			if (z == _null_node)
+			if (z->is_nil)
 			{
 				return;
 			}
@@ -553,12 +629,12 @@ namespace ft
 			y = z;
 			bool y_original_color = y->color;
 
-			if (z->left == _null_node)
+			if (z->left->is_nil)
 			{
 				x = z->right;
 				_rbTransplant(z, z->right);
 			}
-			else if (z->right == _null_node)
+			else if (z->right->is_nil)
 			{
 				x = z->left;
 				_rbTransplant(z, z->left);
@@ -583,7 +659,8 @@ namespace ft
 				y->color = z->color;
 			}
 
-			delete z;
+			_node_alloc.deallocate(z, sizeof(z));
+			// delete z;
 			if (y_original_color == _S_black)
 				_deleteRebalance(x);
 		}
@@ -648,23 +725,72 @@ namespace ft
 			_root->color = _S_black;
 		}
 
+		void _replaceBeginEnd(void)
+		{
+			base_ptr tmp = _minimum(_root);
+			
+			if (_null_begin->parent)
+			{
+				if (_null_begin->parent->left == _null_begin)
+					_null_begin->parent->left = _null_node;
+				tmp->left = _null_begin;
+				_null_begin->parent = tmp;
+			}
+			else
+			{
+				tmp->left = _null_begin;
+				_null_begin->parent = tmp;
+			}
+
+			tmp = _maximum(_root);
+			
+			if (_null_end->parent)
+			{
+				if (_null_end->parent->right == _null_end)
+					_null_end->parent->right = _null_node;
+				tmp->right = _null_end;
+				_null_end->parent = tmp;
+			}
+			else
+			{
+				tmp->right = _null_end;
+				_null_end->parent = tmp;
+			}
+			
+		}
+
 		base_ptr _minimum(base_ptr node)
 		{
-			while (node->left != _null_node)
+			if (node->is_nil)
+				return node;
+			while (!node->left->is_nil)
 				node = node->left;
 			return node;
 		}
 
 		const_base_ptr _minimum(base_ptr node) const
 		{
-			while (node->left != _null_node)
+			if (node->is_nil)
+				return node;
+			while (!node->left->is_nil)
 				node = node->left;
 			return node;
 		}
 
 		base_ptr _maximum(base_ptr node)
 		{
-			while (node->right != _null_node)
+			if (node->is_nil)
+				return node;
+			while (!node->right->is_nil)
+				node = node->right;
+			return node;
+		}
+
+		const_base_ptr _maximum(base_ptr node) const
+		{
+			if (node->is_nil)
+				return node;
+			while (!node->right->is_nil)
 				node = node->right;
 			return node;
 		}
@@ -673,7 +799,7 @@ namespace ft
 		{
 			base_ptr y = x->right;
 			x->right = y->left;
-			if (y->left != _null_node)
+			if (!y->left->is_nil)
 				y->left->parent = x;
 			y->parent = x->parent;
 			if (x->parent == NULL)
@@ -690,7 +816,7 @@ namespace ft
 		{
 			base_ptr y = x->left;
 			x->left = y->right;
-			if (y->right != _null_node)
+			if (!y->right->is_nil)
 				y->right->parent = x;
 			y->parent = x->parent;
 			if (x->parent == NULL)
@@ -703,10 +829,28 @@ namespace ft
 			x->parent = y;
 		}
 
+		void _clearSubTree(base_ptr similiRoot)
+		{
+			if (similiRoot->is_nil)
+				return ;
+
+			base_ptr rightRoot = similiRoot->right;
+			base_ptr leftRoot = similiRoot->left;
+
+			_clearSubTree(rightRoot);
+			_clearSubTree(leftRoot);
+
+			_node_alloc.destroy(similiRoot);
+			_node_alloc.deallocate(similiRoot, sizeof(node_type));
+			
+		}
+
 	public:
 		RBT()
 		{
 			_null_node = _node_alloc.allocate(sizeof(node_type));
+			_null_begin = _node_alloc.allocate(sizeof(node_type));
+			_null_end = _node_alloc.allocate(sizeof(node_type));
 
 			_node_count = 0;
 			_pair_alloc = pair_allocator();
@@ -720,6 +864,27 @@ namespace ft
 			_null_node->right = NULL;
 			_null_node->is_nil = true;
 			_null_node->parent = NULL;
+
+			// null node for before-begin initialization
+			_null_begin->color = _S_black;
+			_null_begin->left = NULL;
+			_null_begin->right = NULL;
+			_null_begin->is_nil = true;
+			_null_begin->parent = NULL;
+
+			// null node for after-end initialization
+			_null_end->color = _S_black;
+			_null_end->left = NULL;
+			_null_end->right = NULL;
+			_null_end->is_nil = true;
+			_null_end->parent = NULL;
+		}
+
+		~RBT()
+		{
+			_node_alloc.deallocate(_null_node, sizeof(_null_node));
+			_node_alloc.deallocate(_null_begin, sizeof(_null_node));
+			_node_alloc.deallocate(_null_end, sizeof(_null_node));
 		}
 
 		// Inserting a node
@@ -738,10 +903,10 @@ namespace ft
 			base_ptr x = this->_root;
 
 			++_node_count;
-			while (x != _null_node)
+			while (!x->is_nil)
 			{
 				y = x;
-				if (node->pair.first < x->pair.first)
+				if (_comp(node->pair.first, x->pair.first))
 					x = x->left;
 				else
 					x = x->right;
@@ -750,7 +915,7 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (node->pair.first < y->pair.first)
+			else if (_comp(node->pair.first, y->pair.first))
 				y->left = node;
 			else
 				y->right = node;
@@ -758,13 +923,18 @@ namespace ft
 			if (node->parent == NULL)
 			{
 				node->color = _S_black;
+				_replaceBeginEnd();
 				return node;
 			}
 
 			if (node->parent->parent == NULL)
+			{
+				_replaceBeginEnd();
 				return node;
+			}
 
 			_insertRebalance(node);
+			_replaceBeginEnd();
 
 			return node;
 		}
@@ -772,21 +942,33 @@ namespace ft
 		base_ptr insert_hint(value_type pair_to_add, iterator hint)
 		{
 			base_ptr node = _node_alloc.allocate(sizeof(node_type));
-			_node_alloc.construct(node, 0);
+			
+			_node_alloc.construct(node, pair_to_add);
 			node->parent = NULL;
-			node->pair.first = pair_to_add.first;
 			node->left = _null_node;
 			node->right = _null_node;
 			node->color = _S_red;
 			node->is_nil = false;
 
+			// arrange hint
+			iterator tmp = hint + 1;
+			while (!tmp.base()->is_nil && tmp.base()->pair.first < pair_to_add.first)
+			{
+				++hint;
+				++tmp;
+			}
+
+			if (_comp(hint.base()->pair.first, pair_to_add.first))
+				hint = iterator(_root);
+
 			base_ptr y = NULL;
 			base_ptr x = hint.base();
 
-			while (x != _null_node)
+			++_node_count;
+			while (!x->is_nil)
 			{
 				y = x;
-				if (node->pair.first < x->pair.first)
+				if (_comp(node->pair.first, x->pair.first))
 					x = x->left;
 				else
 					x = x->right;
@@ -795,22 +977,26 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (node->pair.first < y->pair.first)
+			else if (_comp(node->pair.first, y->pair.first))
 				y->left = node;
 			else
 				y->right = node;
 
 			if (node->parent == NULL)
 			{
-				node->color = 0;
-				return;
+				node->color = _S_black;
+				_replaceBeginEnd();
+				return node;
 			}
 
 			if (node->parent->parent == NULL)
-				return;
+			{
+				_replaceBeginEnd();
+				return node;
+			}
 
 			_insertRebalance(node);
-			++_node_count;
+			_replaceBeginEnd();
 
 			return node;
 		}
@@ -843,11 +1029,17 @@ namespace ft
 			return _searchTreeHelper(_root, k);
 		}
 
+		const_base_ptr searchTree(Key k) const
+		{
+			const_base_ptr ret = _searchTreeHelper(_root, k);
+			return ret;
+		}
+
 		mapped_type &at(const key_type &key)
 		{
 			base_ptr searched_node = searchTree(key);
 
-			if (searched_node == _null_node)
+			if (searched_node->is_nil)
 				throw std::out_of_range("Specified key is out of range");
 			else
 				return searched_node->pair.second;
@@ -857,7 +1049,7 @@ namespace ft
 		{
 			base_ptr searched_node = searchTree(key);
 
-			if (searched_node == _null_node)
+			if (searched_node->is_nil)
 				throw std::out_of_range("Specified key is out of range");
 			else
 				return searched_node->pair.second;
@@ -867,9 +1059,11 @@ namespace ft
 		{
 			base_ptr searched_node = searchTree(key);
 
-			if (searched_node == _null_node)
-				searched_node = insert(make_pair(key, mapped_type()));
-			else
+			if (searched_node->is_nil)
+			{
+				value_type pair_to_insert(key, mapped_type());
+				searched_node = insert(pair_to_insert);
+			}
 				return searched_node->pair.second;
 		}
 
@@ -888,7 +1082,7 @@ namespace ft
 
 		iterator insert_node_loc(iterator pos_to_attach, const value_type &value)
 		{
-			base_ptr *node_inserted;
+			base_ptr node_inserted;
 
 			node_inserted = insert_hint(value, pos_to_attach);
 			iterator ret(node_inserted);
@@ -900,82 +1094,128 @@ namespace ft
 		{
 			base_ptr node_to_be_deleted = pos.node_ptr;
 
-			node_to_be_deleted =
-				Rb_tree_rebalance_for_erase(node_to_be_deleted, _root);
-			_node_alloc.destroy(node_to_be_deleted);
+			if (node_to_be_deleted->left == _null_begin)
+				_null_begin->parent = NULL;
+			if (node_to_be_deleted->right == _null_end)
+				_null_end->parent = NULL;
+
+			deleteNode(node_to_be_deleted->pair.first);
+			
+			_replaceBeginEnd();
 
 			--_node_count;
 		}
 
-		void clear(void)
-		{
-			iterator tmp = begin();
-			iterator tmp_next = tmp + 1;
-
-			while (!tmp.base()->is_nil)
-			{
-				base_ptr node_to_destroy = tmp.base();
-
-				_node_alloc.destroy(node_to_destroy);
-				_node_alloc.deallocate(node_to_destroy, sizeof(node_type));
-
-				tmp = tmp_next;
-				++tmp_next;
-			}
-		}
-
-		void swap(RBT &other)
+		void swap(RBT & other)
 		{
 			std::swap(_root, other._root);
+			std::swap(_null_node, other._null_node);
+			std::swap(_null_begin, other._null_begin);
+			std::swap(_null_end, other._null_end);
 			std::swap(_node_count, other._node_count);
 			std::swap(_pair_alloc, other._pair_alloc);
 			std::swap(_node_alloc, other._node_alloc);
 			std::swap(_comp, other._comp);
 		}
 
+		void clear(void)
+		{
+			_clearSubTree(_root);
+			
+			_root = _null_node;
+			_null_begin->parent = NULL;
+			_null_end->parent = NULL;
+			_node_count = 0;
+		}
+
+		key_compare key_comp() const
+		{
+			return _comp;
+		}
+
 		/* ITERATORS */
 		iterator begin(void)
 		{
-			base_ptr node = _minimum(_root);
-			return RBT_iterator<Key, T>(node);
+			base_ptr node;
+			
+			if (empty())
+				node = _null_node;
+			else
+				node = _null_begin->parent;
+		
+			iterator ret(node);
+			
+			return ret;
 		}
 
 		const_iterator begin() const
 		{
-			base_ptr node = _minimum(_root);
-			return RBT_const_iterator<Key, T>(node);
+			base_ptr node;
+			
+			if (empty())
+				node = _null_node;
+			else
+				node = _null_begin->parent;
+				
+			const_iterator ret(node);
+			
+			return ret;
 		}
 
 		iterator end()
 		{
-			return RBT_iterator<Key, T>(_null_node);
+			base_ptr node;
+			
+			if (empty())
+				node = _null_node;
+			else
+				node = _null_end;
+			
+			iterator ret(node);
+			
+			return ret;
 		}
 
 		const_iterator end() const
 		{
-			return RBT_const_iterator<Key, T>(_null_node);
+			base_ptr node;
+			
+			if (empty())
+				node = _null_node;
+			else
+				node = _null_end;
+			
+			const_iterator ret(node);
+			
+			return ret;
 		}
 
 		reverse_iterator rbegin(void)
 		{
-			base_ptr node = _maximum(_root);
-			return RBT_iterator<Key, T>(node);
+			reverse_iterator ret(end());
+			
+			return ret;
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			base_ptr node = _maximum(_root);
-			return RBT_const_iterator<Key, T>(node);
+			const_reverse_iterator ret(end());
+			
+			return ret;
 		}
 
 		reverse_iterator rend()
 		{
-			return RBT_iterator<Key, T>(_null_node);
+			reverse_iterator ret(begin());
+			
+			return ret;
 		}
 
 		const_reverse_iterator rend() const
 		{
-			return RBT_const_iterator<Key, T>(_null_node);
+			const_reverse_iterator ret(begin());
+			
+			return ret;
 		}
 
 		/* CAPACITY */
@@ -1000,6 +1240,9 @@ namespace ft
 		{
 			base_ptr node_to_find = searchTree(key);
 
+			if (node_to_find->is_nil)
+				return end();
+	
 			iterator ret(node_to_find);
 
 			return (ret);
@@ -1009,6 +1252,9 @@ namespace ft
 		{
 			base_ptr node_to_find = searchTree(key);
 
+			if (node_to_find->is_nil)
+				return end();
+
 			const_iterator ret(node_to_find);
 
 			return (ret);
@@ -1017,6 +1263,9 @@ namespace ft
 		iterator lower_bound(const Key &key)
 		{
 			iterator it = begin();
+
+			if (key < it.base()->pair.first)
+				return it;
 
 			while (it != end())
 			{
@@ -1031,6 +1280,9 @@ namespace ft
 		{
 			const_iterator it = begin();
 
+			if (key < it.base()->pair.first)
+				return it;
+
 			while (it != end())
 			{
 				if (key == (*it).first)
@@ -1043,6 +1295,9 @@ namespace ft
 		iterator upper_bound(const Key &key)
 		{
 			iterator it = begin();
+
+			if (key < it.base()->pair.first)
+				return it;
 
 			while (it != end())
 			{
@@ -1059,6 +1314,9 @@ namespace ft
 		const_iterator upper_bound(const Key &key) const
 		{
 			const_iterator it = begin();
+
+			if (key < it.base()->pair.first)
+				return it;
 
 			while (it != end())
 			{

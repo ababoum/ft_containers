@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/22 18:52:15 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/25 19:08:48 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 #define MAP_HPP
 
 #include "rb_tree/RBT.hpp"
-#include "rb_tree/tree_utils.hpp"
 #include "utils/enable_if.hpp"
 #include "utils/is_integral.hpp"
+#include "utils/equal.hpp"
+#include "utils/lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -102,7 +103,7 @@ namespace ft
 		/* 3 */
 		map(const map &other)
 		{
-			for (iterator it = other.begin(); it != other.end(); ++it) {
+			for (const_iterator it = other.begin(); it != other.end(); ++it) {
 				insert(*it);
 			}
 		}
@@ -120,7 +121,7 @@ namespace ft
 		{
 			clear();
 			
-			for (iterator it = other.begin(); it != other.end(); ++it) {
+			for (const_iterator it = other.begin(); it != other.end(); ++it) {
 				insert(*it);
 			}
 			
@@ -227,7 +228,7 @@ namespace ft
 				ret.second = true;
 			}
 			// key found -> no duplicate allowed
-			else if (searched_key != end())
+			else if (!searched_key.base()->is_nil)
 			{
 				ret.first = searched_key;
 				ret.second = false;
@@ -252,7 +253,7 @@ namespace ft
 				return _storage.insert_node(value);
 			}
 			// key found -> no duplicate allowed
-			else if (searched_key != end())
+			else if (!searched_key.base()->is_nil)
 			{
 				return searched_key;
 			}
@@ -281,8 +282,8 @@ namespace ft
 			iterator tmp;
 			iterator it = first;
 			
-			while(it != last) {
-				tmp = ++it;
+			while (it != last) {
+				tmp = it + 1;
 				erase(it);
 				it = tmp;
 			}
@@ -298,7 +299,7 @@ namespace ft
 				return 0;
 			}
 			// key is found
-			else if (searched_key != end())
+			else if (!searched_key.base()->is_nil)
 			{
 				erase(searched_key);
 				return 1;
@@ -311,6 +312,7 @@ namespace ft
 
 		void swap(map &other)
 		{
+			// std::swap(_storage, other._storage);
 			_storage.swap(other._storage);
 		}
 
@@ -318,16 +320,15 @@ namespace ft
 
 		size_type count(const Key &key) const
 		{
-			iterator it = begin();
+			const_iterator it = begin();
 
-			while (it != end())
+			while (!it.base()->is_nil)
 			{
 				if (key == (*it).first)
 					return 1;
 				++it;
 			}
-			if (it == end())
-				return 0;
+			return 0;
 		}
 
 		iterator find(const Key &key)
@@ -339,10 +340,19 @@ namespace ft
 		{
 			return _storage.find(key);
 		}
-		
-		pair<iterator, iterator> equal_range(const Key &key)
+
+		pair<const_iterator,const_iterator> equal_range (const key_type& key) const
 		{
-			return make_pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+			pair<const_iterator,const_iterator> ret(lower_bound(key), upper_bound(key));
+			
+			return ret;
+		}
+		
+		pair<iterator, iterator> equal_range(const key_type &key)
+		{
+			pair<iterator, iterator> ret(lower_bound(key), upper_bound(key));
+			
+			return ret;
 		}
 
 		iterator lower_bound(const Key &key)
@@ -386,7 +396,7 @@ namespace ft
 			return false;
 		else
 		{
-			return equal(
+			return ft::equal(
 				lhs.begin(), lhs.end(), rhs.begin());
 		}
 	}
@@ -402,13 +412,8 @@ namespace ft
 	bool operator<(const map<Key, T, Compare, Alloc> &lhs,
 				   const map<Key, T, Compare, Alloc> &rhs)
 	{
-		if (lhs.size() != rhs.size())
-			return lhs.size() < rhs.size();
-		else
-		{
-			return lexicographical_compare(
-				lhs.begin(), lhs.end(), rhs.begin(), lhs.end());
-		}
+		return ft::lexicographical_compare(
+			lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
