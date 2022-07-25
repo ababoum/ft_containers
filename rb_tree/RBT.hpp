@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/22 19:50:04 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/25 12:16:32 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -719,7 +719,7 @@ namespace ft
 			_null_node->left = NULL;
 			_null_node->right = NULL;
 			_null_node->is_nil = true;
-			_null_node->parent = _null_node;
+			_null_node->parent = NULL;
 		}
 
 		// Inserting a node
@@ -737,6 +737,7 @@ namespace ft
 			base_ptr y = NULL;
 			base_ptr x = this->_root;
 
+			++_node_count;
 			while (x != _null_node)
 			{
 				y = x;
@@ -764,7 +765,6 @@ namespace ft
 				return node;
 
 			_insertRebalance(node);
-			++_node_count;
 
 			return node;
 		}

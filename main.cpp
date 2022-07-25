@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/22 19:06:20 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/25 12:04:25 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,7 +345,9 @@ int main(void)
 		for (unsigned int i = 0; i < lst_size; ++i)
 		lst.push_back(T3('a' + i, lst_size - i));
 
-		ft::map<T1, T2> mp(lst.begin(), lst.end()), mp2;
+		ft::map<T1, T2> mp(\
+			lst.begin(), \
+			lst.end()), mp2;
 		ft::map<T1, T2>::iterator it;
 
 		lst.clear();
