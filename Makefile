@@ -9,6 +9,7 @@ SRCS		= main.cpp
 INCL		= vector.hpp \
 				map.hpp \
 				stack.hpp \
+				set.hpp \
 				iterators/iterators_traits.hpp \
 				iterators/random_access_iterator.hpp \
 				iterators/reverse_iterator.hpp \

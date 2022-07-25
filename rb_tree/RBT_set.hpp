@@ -1,72 +1,75 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RBT.hpp                                            :+:      :+:    :+:   */
+/*   RBT_set.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 20:58:07 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/25 21:32:11 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RBT_HPP
-#define RBT_HPP
+#ifndef RBT_SET_HPP
+#define RBT_SET_HPP
 
 #include <iostream>
-#include "../pairs/pair.hpp"
 #include "../iterators/reverse_iterator.hpp"
 
 namespace ft
 {
-	template <class Key, class T>
-	struct RBT_iterator;
+	template <class Key>
+	struct RBT_set_iterator;
 	
-	template <class Key, class T>
-	struct RBT_const_iterator;
+	template <class Key>
+	struct RBT_set_const_iterator;
 
 	// definition of red and black colors
-	enum rb_tree_color
+	enum rbt_set_color
 	{
-		_S_red = false,
-		_S_black = true
+		RBT_set_red = false,
+		RBT_set_black = true
 	};
 
 	// structure of a node in the tree
-	template <class Key, class T>
-	struct RBT_node
+	template <class Key>
+	struct RBT_set_node
 	{
-		typedef pair<const Key, T> value_type;
+		typedef RBT_set_node<Key>* base_ptr;
+		typedef const RBT_set_node<Key>* const_base_ptr;
 
-		rb_tree_color color;
-		RBT_node *parent;
-		RBT_node *left;
-		RBT_node *right;
-		value_type pair;
+		typedef Key	value_type;
+		
+		rbt_set_color color;
+		RBT_set_node *parent;
+		RBT_set_node *left;
+		RBT_set_node *right;
+		Key key;
 		bool is_nil;
 
-		RBT_node(): pair(Key(), T()) {}
+		RBT_set_node() {}
 		
-		RBT_node(value_type pair_init):pair(pair_init) {}
+		RBT_set_node(value_type key_init)
+			:key(key_init) {}
 		
 		value_type *value_ptr()
 		{
-			return &(pair);
+			return &(key);
 		}
 
 		const value_type *value_ptr() const
 		{
-			return &(pair);
+			return &(key);
 		}
 	};
 
 	// iterator increment/decrement
 
-	template <class Key, class T>
-	static RBT_node<Key, T> *
-	local_rb_tree_increment(RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	static RBT_set_node<Key> *
+	local_rb_tree_increment(RBT_set_node<Key> *node_ptr) throw()
 	{
-		RBT_node<Key, T> *initial_node = node_ptr;
+		RBT_set_node<Key> *initial_node = node_ptr;
 		
 		// do nothing if a leaf is atteigned
 		if (node_ptr->is_nil)
@@ -85,7 +88,7 @@ namespace ft
 		}
 		else
 		{
-			RBT_node<Key, T> *tmp_node = node_ptr->parent;
+			RBT_set_node<Key> *tmp_node = node_ptr->parent;
 			while (tmp_node &&
 				!tmp_node->is_nil && 
 				node_ptr == tmp_node->right)
@@ -99,25 +102,25 @@ namespace ft
 		}
 	}
 
-	template <class Key, class T>
-	RBT_node<Key, T> *
-	rb_tree_increment(RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	RBT_set_node<Key> *
+	rb_tree_increment(RBT_set_node<Key> *node_ptr) throw()
 	{
 		return local_rb_tree_increment(node_ptr);
 	}
 
-	template <class Key, class T>
-	const RBT_node<Key, T> *
-	rb_tree_increment(const RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	const RBT_set_node<Key> *
+	rb_tree_increment(const RBT_set_node<Key> *node_ptr) throw()
 	{
-		return local_rb_tree_increment(const_cast<RBT_node<Key, T> *>(node_ptr));
+		return local_rb_tree_increment(const_cast<RBT_set_node<Key> *>(node_ptr));
 	}
 
-	template <class Key, class T>
-	static RBT_node<Key, T> *
-	local_rb_tree_decrement(RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	static RBT_set_node<Key> *
+	local_rb_tree_decrement(RBT_set_node<Key> *node_ptr) throw()
 	{
-		RBT_node<Key, T> *initial_node = node_ptr;
+		RBT_set_node<Key> *initial_node = node_ptr;
 
 		// do nothing if a leaf is atteigned, except for end
 		if (node_ptr->is_nil)
@@ -136,7 +139,7 @@ namespace ft
 		}
 		else
 		{
-			RBT_node<Key, T> *tmp_node = node_ptr->parent;
+			RBT_set_node<Key> *tmp_node = node_ptr->parent;
 			while (tmp_node && !tmp_node->is_nil && node_ptr == tmp_node->left)
 			{
 				node_ptr = tmp_node;
@@ -148,50 +151,54 @@ namespace ft
 		}
 	}
 
-	template <class Key, class T>
-	RBT_node<Key, T> *
-	rb_tree_decrement(RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	RBT_set_node<Key> *
+	rb_tree_decrement(RBT_set_node<Key> *node_ptr) throw()
 	{
 		return local_rb_tree_decrement(node_ptr);
 	}
 
-	template <class Key, class T>
-	const RBT_node<Key, T> *
-	rb_tree_decrement(const RBT_node<Key, T> *node_ptr) throw()
+	template <class Key>
+	const RBT_set_node<Key> *
+	rb_tree_decrement(const RBT_set_node<Key> *node_ptr) throw()
 	{
-		return local_rb_tree_decrement(const_cast<RBT_node<Key, T> *>(node_ptr));
+		return local_rb_tree_decrement(const_cast<RBT_set_node<Key> *>(node_ptr));
 	}
 
 	// red-black tree iterator
-	template <class Key, class T>
-	struct RBT_iterator
+	template <class Key>
+	struct RBT_set_iterator
 	{
-		typedef pair<const Key, T> value_type;
+		typedef Key value_type;
 		typedef value_type &reference;
 		typedef value_type *pointer;
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef RBT_iterator<Key, T> iterator;
-		typedef RBT_node<Key, T> *base_ptr;
-		typedef const base_ptr	const_base_ptr;
-		typedef RBT_const_iterator<Key, T> const_iterator;
+		typedef RBT_set_iterator<Key> iterator;
+		typedef RBT_set_const_iterator<Key> const_iterator;
+		typedef typename RBT_set_node<Key>::base_ptr base_ptr;
 
 		base_ptr node_ptr;
 
-		RBT_iterator()
+		RBT_set_iterator()
 			: node_ptr() {}
 
-		RBT_iterator(base_ptr node_ptr_input)
+		RBT_set_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
-		RBT_iterator(const RBT_iterator & other)
+		RBT_set_iterator(const RBT_set_iterator & other)
 		{
 			node_ptr = other.base();
 		}
 
-		RBT_iterator & operator=( const RBT_iterator & other )
+		// RBT_set_iterator(const const_iterator & other)
+		// {
+		// 	node_ptr = const_cast<base_ptr>(other.base());
+		// }
+
+		RBT_set_iterator & operator=( const RBT_set_iterator & other )
 		{
 			node_ptr = other.base();
 			return *this;
@@ -296,30 +303,30 @@ namespace ft
 
 	// red-black tree const iterator
 
-	template <class Key, class T>
-	struct RBT_const_iterator
+	template <class Key>
+	struct RBT_set_const_iterator
 	{
-		typedef pair<const Key, T> value_type;
+		typedef Key value_type;
 		typedef const value_type &reference;
 		typedef const value_type *pointer;
 
-		typedef RBT_iterator<Key, T> iterator;
+		typedef RBT_set_iterator<Key> iterator;
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef std::ptrdiff_t difference_type;
 
-		typedef RBT_const_iterator<Key, T> const_iterator;
-		typedef const RBT_node<Key, T> *base_ptr;
+		typedef RBT_set_const_iterator<Key> const_iterator;
+		typedef typename RBT_set_node<Key>::const_base_ptr base_ptr;
 
 		base_ptr node_ptr;
 
-		RBT_const_iterator()
+		RBT_set_const_iterator()
 			: node_ptr() {}
 
-		RBT_const_iterator(base_ptr node_ptr_input)
+		RBT_set_const_iterator(base_ptr node_ptr_input)
 			: node_ptr(node_ptr_input) {}
 
-		RBT_const_iterator(const RBT_const_iterator & other)
+		RBT_set_const_iterator(const RBT_set_const_iterator & other)
 			: node_ptr(other.node_ptr) {}
 
 		const_iterator & operator=( const const_iterator & other )
@@ -328,14 +335,14 @@ namespace ft
 			return *this;
 		}
 
-		RBT_const_iterator(const iterator & other)
+		RBT_set_const_iterator(const iterator & other)
 			: node_ptr(other.node_ptr) {}
 
 		const_iterator & operator=( const iterator & other )
 		{
 			node_ptr = other.base();
 			return *this;
-		}
+		}	
 
 		base_ptr
 		base() const
@@ -408,6 +415,8 @@ namespace ft
 		friend bool
 		operator==(const const_iterator &lhs, const const_iterator &rhs)
 		{
+			if (lhs.base()->is_nil && rhs.base()->is_nil)
+				return true;
 			return lhs.node_ptr == rhs.node_ptr;
 		}
 
@@ -438,25 +447,23 @@ namespace ft
 
 	template <
 		class Key,
-		class T,
 		class Compare,
 		class Allocator>
-	class RBT
+	class RBT_set
 	{
 	public:
 		typedef std::size_t size_type;
 		typedef Compare key_compare;
-		typedef Allocator pair_allocator;
-		typedef typename Allocator::template rebind<RBT_node<Key, T> >::other node_allocator;
+		typedef Allocator key_allocator;
+		typedef typename Allocator::template rebind<RBT_set_node<Key> >::other node_allocator;
 		typedef Key key_type;
-		typedef T mapped_type;
-		typedef pair<const key_type, mapped_type> value_type;
-		typedef	RBT_node<Key, T> node_type;
-		typedef RBT_node<Key, T> *base_ptr;
+		typedef Key value_type;
+		typedef	RBT_set_node<Key> node_type;
+		typedef RBT_set_node<Key> *base_ptr;
 		typedef const base_ptr	const_base_ptr;
 
-		typedef RBT_iterator<Key, T> iterator;
-		typedef RBT_const_iterator<Key, T> const_iterator;
+		typedef RBT_set_iterator<Key> iterator;
+		typedef RBT_set_const_iterator<Key> const_iterator;
 		typedef reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef reverse_iterator<iterator> reverse_iterator;
 
@@ -466,7 +473,7 @@ namespace ft
 		base_ptr _null_begin;
 		base_ptr _null_end;
 		size_type _node_count;
-		pair_allocator _pair_alloc;
+		key_allocator _key_alloc;
 		node_allocator _node_alloc;
 		key_compare _comp;
 
@@ -474,12 +481,12 @@ namespace ft
 
 		base_ptr _searchTreeHelper(base_ptr node, Key key)
 		{
-			if (node->is_nil || key == node->pair.first)
+			if (node->is_nil || key == node->key)
 			{
 				return node;
 			}
 
-			if (key < node->pair.first)
+			if (key < node->key)
 			{
 				return _searchTreeHelper(node->left, key);
 			}
@@ -488,12 +495,12 @@ namespace ft
 
 		const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
 		{
-			if (node->is_nil || key == node->pair.first)
+			if (node->is_nil || key == node->key)
 			{
 				return node;
 			}
 
-			if (key < node->pair.first)
+			if (key < node->key)
 			{
 				return _searchTreeHelper(node->left, key);
 			}
@@ -505,37 +512,37 @@ namespace ft
 		{
 			base_ptr s;
 
-			while (x != _root && x->color == _S_black)
+			while (x != _root && x->color == RBT_set_black)
 			{
 				if (x == x->parent->left)
 				{
 					s = x->parent->right;
-					if (s->color == _S_red)
+					if (s->color == RBT_set_red)
 					{
-						s->color = _S_black;
-						x->parent->color = _S_red;
+						s->color = RBT_set_black;
+						x->parent->color = RBT_set_red;
 						_leftRotate(x->parent);
 						s = x->parent->right;
 					}
 
-					if (s->left->color == _S_black && s->right->color == _S_black)
+					if (s->left->color == RBT_set_black && s->right->color == RBT_set_black)
 					{
-						s->color = _S_red;
+						s->color = RBT_set_red;
 						x = x->parent;
 					}
 					else
 					{
-						if (s->right->color == _S_black)
+						if (s->right->color == RBT_set_black)
 						{
-							s->left->color = _S_black;
-							s->color = _S_red;
+							s->left->color = RBT_set_black;
+							s->color = RBT_set_red;
 							_rightRotate(s);
 							s = x->parent->right;
 						}
 
 						s->color = x->parent->color;
-						x->parent->color = _S_black;
-						s->right->color = _S_black;
+						x->parent->color = RBT_set_black;
+						s->right->color = RBT_set_black;
 						_leftRotate(x->parent);
 						x = _root;
 					}
@@ -543,38 +550,38 @@ namespace ft
 				else
 				{
 					s = x->parent->left;
-					if (s->color == _S_red)
+					if (s->color == RBT_set_red)
 					{
-						s->color = _S_black;
-						x->parent->color = _S_red;
+						s->color = RBT_set_black;
+						x->parent->color = RBT_set_red;
 						_rightRotate(x->parent);
 						s = x->parent->left;
 					}
 
-					if (s->right->color == _S_black && s->right->color == _S_black)
+					if (s->right->color == RBT_set_black && s->right->color == RBT_set_black)
 					{
-						s->color = _S_red;
+						s->color = RBT_set_red;
 						x = x->parent;
 					}
 					else
 					{
-						if (s->left->color == _S_black)
+						if (s->left->color == RBT_set_black)
 						{
-							s->right->color = _S_black;
-							s->color = _S_red;
+							s->right->color = RBT_set_black;
+							s->color = RBT_set_red;
 							_leftRotate(s);
 							s = x->parent->left;
 						}
 
 						s->color = x->parent->color;
-						x->parent->color = _S_black;
-						s->left->color = _S_black;
+						x->parent->color = RBT_set_black;
+						s->left->color = RBT_set_black;
 						_rightRotate(x->parent);
 						x = _root;
 					}
 				}
 			}
-			x->color = _S_black;
+			x->color = RBT_set_black;
 		}
 
 		void _rbTransplant(base_ptr u, base_ptr v)
@@ -596,10 +603,10 @@ namespace ft
 
 			while (!node->is_nil)
 			{
-				if (node->pair.first == key)
+				if (node->key == key)
 					z = node;
 
-				if (node->pair.first <= key)
+				if (node->key <= key)
 					node = node->right;
 				else
 					node = node->left;
@@ -645,7 +652,7 @@ namespace ft
 
 			_node_alloc.deallocate(z, sizeof(z));
 			
-			if (y_original_color == _S_black)
+			if (y_original_color == RBT_set_black)
 				_deleteRebalance(x);
 		}
 
@@ -654,16 +661,16 @@ namespace ft
 		{
 			base_ptr u;
 
-			while (k->parent->color == _S_red)
+			while (k->parent->color == RBT_set_red)
 			{
 				if (k->parent == k->parent->parent->right)
 				{
 					u = k->parent->parent->left;
-					if (u->color == _S_red)
+					if (u->color == RBT_set_red)
 					{
-						u->color = _S_black;
-						k->parent->color = _S_black;
-						k->parent->parent->color = _S_red;
+						u->color = RBT_set_black;
+						k->parent->color = RBT_set_black;
+						k->parent->parent->color = RBT_set_red;
 						k = k->parent->parent;
 					}
 					else
@@ -673,8 +680,8 @@ namespace ft
 							k = k->parent;
 							_rightRotate(k);
 						}
-						k->parent->color = _S_black;
-						k->parent->parent->color = _S_red;
+						k->parent->color = RBT_set_black;
+						k->parent->parent->color = RBT_set_red;
 						_leftRotate(k->parent->parent);
 					}
 				}
@@ -682,11 +689,11 @@ namespace ft
 				{
 					u = k->parent->parent->right;
 
-					if (u->color == _S_red)
+					if (u->color == RBT_set_red)
 					{
-						u->color = _S_black;
-						k->parent->color = _S_black;
-						k->parent->parent->color = _S_red;
+						u->color = RBT_set_black;
+						k->parent->color = RBT_set_black;
+						k->parent->parent->color = RBT_set_red;
 						k = k->parent->parent;
 					}
 					else
@@ -696,8 +703,8 @@ namespace ft
 							k = k->parent;
 							_leftRotate(k);
 						}
-						k->parent->color = _S_black;
-						k->parent->parent->color = _S_red;
+						k->parent->color = RBT_set_black;
+						k->parent->parent->color = RBT_set_red;
 						_rightRotate(k->parent->parent);
 					}
 				}
@@ -706,7 +713,7 @@ namespace ft
 					break;
 				}
 			}
-			_root->color = _S_black;
+			_root->color = RBT_set_black;
 		}
 
 		void _replaceBeginEnd(void)
@@ -830,41 +837,40 @@ namespace ft
 		}
 
 	public:
-		RBT()
+		RBT_set()
 		{
 			_null_node = _node_alloc.allocate(sizeof(node_type));
 			_null_begin = _node_alloc.allocate(sizeof(node_type));
 			_null_end = _node_alloc.allocate(sizeof(node_type));
 
 			_node_count = 0;
-			_pair_alloc = pair_allocator();
 			_node_alloc = node_allocator();
 			_comp = key_compare();
 			_root = _null_node;
 
 			// null node initialization
-			_null_node->color = _S_black;
+			_null_node->color = RBT_set_black;
 			_null_node->left = NULL;
 			_null_node->right = NULL;
 			_null_node->is_nil = true;
 			_null_node->parent = NULL;
 
 			// null node for before-begin initialization
-			_null_begin->color = _S_black;
+			_null_begin->color = RBT_set_black;
 			_null_begin->left = NULL;
 			_null_begin->right = NULL;
 			_null_begin->is_nil = true;
 			_null_begin->parent = NULL;
 
 			// null node for after-end initialization
-			_null_end->color = _S_black;
+			_null_end->color = RBT_set_black;
 			_null_end->left = NULL;
 			_null_end->right = NULL;
 			_null_end->is_nil = true;
 			_null_end->parent = NULL;
 		}
 
-		~RBT()
+		~RBT_set()
 		{
 			_node_alloc.deallocate(_null_node, sizeof(_null_node));
 			_node_alloc.deallocate(_null_begin, sizeof(_null_node));
@@ -872,15 +878,15 @@ namespace ft
 		}
 
 		// Inserting a node
-		base_ptr insert(value_type pair_to_add)
+		base_ptr insert(value_type key_to_add)
 		{
 			base_ptr node = _node_alloc.allocate(sizeof(node_type));
 			
-			_node_alloc.construct(node, pair_to_add);
+			_node_alloc.construct(node, key_to_add);
 			node->parent = NULL;
 			node->left = _null_node;
 			node->right = _null_node;
-			node->color = _S_red;
+			node->color = RBT_set_red;
 			node->is_nil = false;
 
 			base_ptr y = NULL;
@@ -890,7 +896,7 @@ namespace ft
 			while (!x->is_nil)
 			{
 				y = x;
-				if (_comp(node->pair.first, x->pair.first))
+				if (_comp(node->key, x->key))
 					x = x->left;
 				else
 					x = x->right;
@@ -899,14 +905,14 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (_comp(node->pair.first, y->pair.first))
+			else if (_comp(node->key, y->key))
 				y->left = node;
 			else
 				y->right = node;
 
 			if (node->parent == NULL)
 			{
-				node->color = _S_black;
+				node->color = RBT_set_black;
 				_replaceBeginEnd();
 				return node;
 			}
@@ -923,26 +929,26 @@ namespace ft
 			return node;
 		}
 
-		base_ptr insert_hint(value_type pair_to_add, iterator hint)
+		base_ptr insert_hint(value_type key_to_add, iterator hint)
 		{
 			base_ptr node = _node_alloc.allocate(sizeof(node_type));
 			
-			_node_alloc.construct(node, pair_to_add);
+			_node_alloc.construct(node, key_to_add);
 			node->parent = NULL;
 			node->left = _null_node;
 			node->right = _null_node;
-			node->color = _S_red;
+			node->color = RBT_set_red;
 			node->is_nil = false;
 
 			// arrange hint
 			iterator tmp = hint + 1;
-			while (!tmp.base()->is_nil && tmp.base()->pair.first < pair_to_add.first)
+			while (!tmp.base()->is_nil && tmp.base()->key < key_to_add)
 			{
 				++hint;
 				++tmp;
 			}
 
-			if (_comp(hint.base()->pair.first, pair_to_add.first))
+			if (_comp(hint.base()->key, key_to_add))
 				hint = iterator(_root);
 
 			base_ptr y = NULL;
@@ -952,7 +958,7 @@ namespace ft
 			while (!x->is_nil)
 			{
 				y = x;
-				if (_comp(node->pair.first, x->pair.first))
+				if (_comp(node->key, x->key))
 					x = x->left;
 				else
 					x = x->right;
@@ -961,14 +967,14 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (_comp(node->pair.first, y->pair.first))
+			else if (_comp(node->key, y->key))
 				y->left = node;
 			else
 				y->right = node;
 
 			if (node->parent == NULL)
 			{
-				node->color = _S_black;
+				node->color = RBT_set_black;
 				_replaceBeginEnd();
 				return node;
 			}
@@ -993,12 +999,12 @@ namespace ft
 		/* ACCESSORS */
 		void setAllocator(Allocator alloc)
 		{
-			_pair_alloc = alloc;
+			_key_alloc = alloc;
 		}
 
 		void getAllocator(void)
 		{
-			return _pair_alloc;
+			return _key_alloc;
 		}
 
 		void setComp(Compare comp)
@@ -1019,37 +1025,6 @@ namespace ft
 			return ret;
 		}
 
-		mapped_type &at(const key_type &key)
-		{
-			base_ptr searched_node = searchTree(key);
-
-			if (searched_node->is_nil)
-				throw std::out_of_range("Specified key is out of range");
-			else
-				return searched_node->pair.second;
-		}
-
-		const mapped_type &at(const key_type &key) const
-		{
-			base_ptr searched_node = searchTree(key);
-
-			if (searched_node->is_nil)
-				throw std::out_of_range("Specified key is out of range");
-			else
-				return searched_node->pair.second;
-		}
-
-		mapped_type &getRef_or_insert(const key_type &key)
-		{
-			base_ptr searched_node = searchTree(key);
-
-			if (searched_node->is_nil)
-			{
-				value_type pair_to_insert(key, mapped_type());
-				searched_node = insert(pair_to_insert);
-			}
-				return searched_node->pair.second;
-		}
 
 		/* MODIFIERS */
 
@@ -1083,21 +1058,21 @@ namespace ft
 			if (node_to_be_deleted->right == _null_end)
 				_null_end->parent = NULL;
 
-			deleteNode(node_to_be_deleted->pair.first);
+			deleteNode(node_to_be_deleted->key);
 			
 			_replaceBeginEnd();
 
 			--_node_count;
 		}
 
-		void swap(RBT & other)
+		void swap(RBT_set & other)
 		{
 			std::swap(_root, other._root);
 			std::swap(_null_node, other._null_node);
 			std::swap(_null_begin, other._null_begin);
 			std::swap(_null_end, other._null_end);
 			std::swap(_node_count, other._node_count);
-			std::swap(_pair_alloc, other._pair_alloc);
+			std::swap(_key_alloc, other._key_alloc);
 			std::swap(_node_alloc, other._node_alloc);
 			std::swap(_comp, other._comp);
 		}
@@ -1248,12 +1223,12 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->key)
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it).first)
+				if (key <= (*it))
 					break;
 				++it;
 			}
@@ -1264,12 +1239,12 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->key)
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it).first)
+				if (key <= (*it))
 					break;
 				++it;
 			}
@@ -1280,12 +1255,12 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->key)
 				return it;
 
 			while (it != end())
 			{
-				if (key < (*it).first)
+				if (key < (*it))
 				{
 					break;
 				}
@@ -1298,12 +1273,12 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (_comp(key, it.base()->pair.first))
+			if (_comp(key, it.base()->key))
 				return it;
 
 			while (it != end())
 			{
-				if (key < (*it).first)
+				if (key < (*it))
 				{
 					break;
 				}
