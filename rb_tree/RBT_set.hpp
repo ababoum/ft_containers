@@ -464,8 +464,8 @@ namespace ft
 
 		typedef RBT_set_iterator<Key> iterator;
 		typedef RBT_set_const_iterator<Key> const_iterator;
-		typedef reverse_iterator<const_iterator> const_reverse_iterator;
-		typedef reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
 
 	private:
 		base_ptr _root;
@@ -493,19 +493,19 @@ namespace ft
 			return _searchTreeHelper(node->right, key);
 		}
 
-		const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
-		{
-			if (node->is_nil || key == node->key)
-			{
-				return node;
-			}
+		// const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
+		// {
+		// 	if (node->is_nil || key == node->key)
+		// 	{
+		// 		return node;
+		// 	}
 
-			if (key < node->key)
-			{
-				return _searchTreeHelper(node->left, key);
-			}
-			return _searchTreeHelper(node->right, key);
-		}
+		// 	if (key < node->key)
+		// 	{
+		// 		return _searchTreeHelper(node->left, key);
+		// 	}
+		// 	return _searchTreeHelper(node->right, key);
+		// }
 
 		// For balancing the tree after deletion
 		void _deleteRebalance(base_ptr x)
@@ -759,14 +759,14 @@ namespace ft
 			return node;
 		}
 
-		const_base_ptr _minimum(base_ptr node) const
-		{
-			if (node->is_nil)
-				return node;
-			while (!node->left->is_nil)
-				node = node->left;
-			return node;
-		}
+		// const_base_ptr _minimum(base_ptr node) const
+		// {
+		// 	if (node->is_nil)
+		// 		return node;
+		// 	while (!node->left->is_nil)
+		// 		node = node->left;
+		// 	return node;
+		// }
 
 		base_ptr _maximum(base_ptr node)
 		{
@@ -777,14 +777,14 @@ namespace ft
 			return node;
 		}
 
-		const_base_ptr _maximum(base_ptr node) const
-		{
-			if (node->is_nil)
-				return node;
-			while (!node->right->is_nil)
-				node = node->right;
-			return node;
-		}
+		// const_base_ptr _maximum(base_ptr node) const
+		// {
+		// 	if (node->is_nil)
+		// 		return node;
+		// 	while (!node->right->is_nil)
+		// 		node = node->right;
+		// 	return node;
+		// }
 
 		void _leftRotate(base_ptr x)
 		{
@@ -1019,11 +1019,11 @@ namespace ft
 			return _searchTreeHelper(_root, k);
 		}
 
-		const_base_ptr searchTree(Key k) const
-		{
-			const_base_ptr ret = _searchTreeHelper(_root, k);
-			return ret;
-		}
+		// const_base_ptr searchTree(Key k) const
+		// {
+		// 	const_base_ptr ret = _searchTreeHelper(_root, k);
+		// 	return ret;
+		// }
 
 
 		/* MODIFIERS */

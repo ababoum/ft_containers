@@ -42,21 +42,21 @@ namespace ft
 		RBT_node *parent;
 		RBT_node *left;
 		RBT_node *right;
-		value_type pair;
+		value_type pair_data;
 		bool is_nil;
 
-		RBT_node(): pair(Key(), T()) {}
+		RBT_node(): pair_data(Key(), T()) {}
 		
-		RBT_node(value_type pair_init):pair(pair_init) {}
+		RBT_node(value_type pair_init):pair_data(pair_init) {}
 		
 		value_type *value_ptr()
 		{
-			return &(pair);
+			return &(pair_data);
 		}
 
 		const value_type *value_ptr() const
 		{
-			return &(pair);
+			return &(pair_data);
 		}
 	};
 
@@ -457,8 +457,8 @@ namespace ft
 
 		typedef RBT_iterator<Key, T> iterator;
 		typedef RBT_const_iterator<Key, T> const_iterator;
-		typedef reverse_iterator<const_iterator> const_reverse_iterator;
-		typedef reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
 
 	private:
 		base_ptr _root;
@@ -474,31 +474,31 @@ namespace ft
 
 		base_ptr _searchTreeHelper(base_ptr node, Key key)
 		{
-			if (node->is_nil || key == node->pair.first)
+			if (node->is_nil || key == node->pair_data.first)
 			{
 				return node;
 			}
 
-			if (key < node->pair.first)
+			if (key < node->pair_data.first)
 			{
 				return _searchTreeHelper(node->left, key);
 			}
 			return _searchTreeHelper(node->right, key);
 		}
 
-		const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
-		{
-			if (node->is_nil || key == node->pair.first)
-			{
-				return node;
-			}
+		// const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
+		// {
+		// 	if (node->is_nil || key == node->pair_data.first)
+		// 	{
+		// 		return node;
+		// 	}
 
-			if (key < node->pair.first)
-			{
-				return _searchTreeHelper(node->left, key);
-			}
-			return _searchTreeHelper(node->right, key);
-		}
+		// 	if (key < node->pair_data.first)
+		// 	{
+		// 		return _searchTreeHelper(node->left, key);
+		// 	}
+		// 	return _searchTreeHelper(node->right, key);
+		// }
 
 		// For balancing the tree after deletion
 		void _deleteRebalance(base_ptr x)
@@ -596,10 +596,10 @@ namespace ft
 
 			while (!node->is_nil)
 			{
-				if (node->pair.first == key)
+				if (node->pair_data.first == key)
 					z = node;
 
-				if (node->pair.first <= key)
+				if (node->pair_data.first <= key)
 					node = node->right;
 				else
 					node = node->left;
@@ -752,14 +752,14 @@ namespace ft
 			return node;
 		}
 
-		const_base_ptr _minimum(base_ptr node) const
-		{
-			if (node->is_nil)
-				return node;
-			while (!node->left->is_nil)
-				node = node->left;
-			return node;
-		}
+		// const_base_ptr _minimum(base_ptr node) const
+		// {
+		// 	if (node->is_nil)
+		// 		return node;
+		// 	while (!node->left->is_nil)
+		// 		node = node->left;
+		// 	return node;
+		// }
 
 		base_ptr _maximum(base_ptr node)
 		{
@@ -770,14 +770,14 @@ namespace ft
 			return node;
 		}
 
-		const_base_ptr _maximum(base_ptr node) const
-		{
-			if (node->is_nil)
-				return node;
-			while (!node->right->is_nil)
-				node = node->right;
-			return node;
-		}
+		// const_base_ptr _maximum(base_ptr node) const
+		// {
+		// 	if (node->is_nil)
+		// 		return node;
+		// 	while (!node->right->is_nil)
+		// 		node = node->right;
+		// 	return node;
+		// }
 
 		void _leftRotate(base_ptr x)
 		{
@@ -890,7 +890,7 @@ namespace ft
 			while (!x->is_nil)
 			{
 				y = x;
-				if (_comp(node->pair.first, x->pair.first))
+				if (_comp(node->pair_data.first, x->pair_data.first))
 					x = x->left;
 				else
 					x = x->right;
@@ -899,7 +899,7 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (_comp(node->pair.first, y->pair.first))
+			else if (_comp(node->pair_data.first, y->pair_data.first))
 				y->left = node;
 			else
 				y->right = node;
@@ -936,13 +936,13 @@ namespace ft
 
 			// arrange hint
 			iterator tmp = hint + 1;
-			while (!tmp.base()->is_nil && tmp.base()->pair.first < pair_to_add.first)
+			while (!tmp.base()->is_nil && tmp.base()->pair_data.first < pair_to_add.first)
 			{
 				++hint;
 				++tmp;
 			}
 
-			if (_comp(hint.base()->pair.first, pair_to_add.first))
+			if (_comp(hint.base()->pair_data.first, pair_to_add.first))
 				hint = iterator(_root);
 
 			base_ptr y = NULL;
@@ -952,7 +952,7 @@ namespace ft
 			while (!x->is_nil)
 			{
 				y = x;
-				if (_comp(node->pair.first, x->pair.first))
+				if (_comp(node->pair_data.first, x->pair_data.first))
 					x = x->left;
 				else
 					x = x->right;
@@ -961,7 +961,7 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				_root = node;
-			else if (_comp(node->pair.first, y->pair.first))
+			else if (_comp(node->pair_data.first, y->pair_data.first))
 				y->left = node;
 			else
 				y->right = node;
@@ -1013,11 +1013,11 @@ namespace ft
 			return _searchTreeHelper(_root, k);
 		}
 
-		const_base_ptr searchTree(Key k) const
-		{
-			const_base_ptr ret = _searchTreeHelper(_root, k);
-			return ret;
-		}
+		// const_base_ptr searchTree(Key k) const
+		// {
+		// 	const_base_ptr ret = _searchTreeHelper(_root, k);
+		// 	return ret;
+		// }
 
 		mapped_type &at(const key_type &key)
 		{
@@ -1026,7 +1026,7 @@ namespace ft
 			if (searched_node->is_nil)
 				throw std::out_of_range("Specified key is out of range");
 			else
-				return searched_node->pair.second;
+				return searched_node->pair_data.second;
 		}
 
 		const mapped_type &at(const key_type &key) const
@@ -1036,7 +1036,7 @@ namespace ft
 			if (searched_node->is_nil)
 				throw std::out_of_range("Specified key is out of range");
 			else
-				return searched_node->pair.second;
+				return searched_node->pair_data.second;
 		}
 
 		mapped_type &getRef_or_insert(const key_type &key)
@@ -1048,7 +1048,7 @@ namespace ft
 				value_type pair_to_insert(key, mapped_type());
 				searched_node = insert(pair_to_insert);
 			}
-				return searched_node->pair.second;
+				return searched_node->pair_data.second;
 		}
 
 		/* MODIFIERS */
@@ -1083,7 +1083,7 @@ namespace ft
 			if (node_to_be_deleted->right == _null_end)
 				_null_end->parent = NULL;
 
-			deleteNode(node_to_be_deleted->pair.first);
+			deleteNode(node_to_be_deleted->pair_data.first);
 			
 			_replaceBeginEnd();
 
@@ -1248,7 +1248,7 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->pair_data.first)
 				return it;
 
 			while (it != end())
@@ -1264,7 +1264,7 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->pair_data.first)
 				return it;
 
 			while (it != end())
@@ -1280,7 +1280,7 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair.first)
+			if (key < it.base()->pair_data.first)
 				return it;
 
 			while (it != end())
@@ -1298,7 +1298,7 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (_comp(key, it.base()->pair.first))
+			if (_comp(key, it.base()->pair_data.first))
 				return it;
 
 			while (it != end())

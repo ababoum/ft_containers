@@ -1,2 +1,3 @@
 containers_test/
 *.o
+test_containers

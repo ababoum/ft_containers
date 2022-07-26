@@ -16,6 +16,7 @@
 #include "map.hpp"
 #include "vector.hpp"
 #include "stack.hpp"
+#include "set.hpp"
 
 #define SHOW(...) std::cout << std::setw(35) << #__VA_ARGS__ << " == " << __VA_ARGS__ << std::endl;
 
@@ -348,26 +349,8 @@ int main(void)
 
 	std::cout << "\e[7m==============TESTER AREA==================\e[0m" << std::endl;
 	{
-		std::list<T3> lst;
-		unsigned int lst_size = 6;
-		for (unsigned int i = 0; i < lst_size; ++i)
-			lst.push_back(T3(i, std::string((lst_size - i), i + 65)));
-		ft::map<T1, T2> mp(lst.begin(), lst.end());
-		printSize_map(mp);
+		ft::set<int> s;
 
-		for (int i = 2; i < 4; ++i)
-			ft_erase(mp, i);
-
-		ft_erase(mp, mp.begin()->first);
-		ft_erase(mp, (--mp.end())->first);
-
-		mp[-1] = "Hello";
-		mp[10] = "Hi there";
-		mp[10] = "Hi there";
-		printSize_map(mp);
-
-		ft_erase(mp, 0);
-		ft_erase(mp, 1);
-		
+		return 0;
 	}
 }
