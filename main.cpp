@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 16:57:23 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 12:01:48 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,15 @@ void	is_empty(T const &mp)
 	std::cout << "is_empty: " << mp.empty() << std::endl;
 }
 
-static int iter = 0;
+// static int iter = 0;
 
-template <typename MAP, typename U>
-void	ft_erase(MAP &mp, U param)
-{
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	std::cout << "ret: " << mp.erase(param) << std::endl;
-	printSize_map(mp);
-}
+// template <typename MAP, typename U>
+// void	ft_erase(MAP &mp, U param)
+// {
+// 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+// 	std::cout << "ret: " << mp.erase(param) << std::endl;
+// 	printSize_map(mp);
+// }
 
 int main(void)
 {

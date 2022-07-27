@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/25 19:15:55 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 21:32:07 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 12:21:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ namespace ft
 		typedef typename Allocator::pointer pointer;
 		typedef typename Allocator::const_pointer const_pointer;
 		typedef RBT_set_iterator<Key> iterator;
-		typedef RBT_set_const_iterator<Key> const_iterator;
+		typedef RBT_set_iterator<Key> const_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 
@@ -358,9 +358,9 @@ namespace ft
 		}
 	};
 
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator==(const set<Key,Compare,Alloc> &lhs,
-					const set<Key,Compare,Alloc> &rhs)
+	template <class Key, class Compare, class Alloc>
+	bool operator==(const ft::set<Key,Compare,Alloc> &lhs,
+					const ft::set<Key,Compare,Alloc> &rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return false;
@@ -371,14 +371,14 @@ namespace ft
 		}
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	bool operator!=(const set<Key,Compare,Alloc> &lhs,
 					const set<Key,Compare,Alloc> &rhs)
 	{
 		return !(lhs == rhs);
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	bool operator<(const set<Key,Compare,Alloc> &lhs,
 				   const set<Key,Compare,Alloc> &rhs)
 	{
@@ -386,28 +386,28 @@ namespace ft
 			lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	bool operator<=(const set<Key,Compare,Alloc> &lhs,
 					const set<Key,Compare,Alloc> &rhs)
 	{
 		return (lhs < rhs || lhs == rhs);
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	bool operator>(const set<Key,Compare,Alloc> &lhs,
 				   const set<Key,Compare,Alloc> &rhs)
 	{
 		return !(lhs <= rhs);
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	bool operator>=(const set<Key,Compare,Alloc> &lhs,
 					const set<Key,Compare,Alloc> &rhs)
 	{
 		return !(lhs < rhs);
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
+	template <class Key, class Compare, class Alloc>
 	void swap(set<Key,Compare,Alloc> &lhs,
 			  set<Key,Compare,Alloc> &rhs)
 	{

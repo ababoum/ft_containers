@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 20:58:07 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 12:15:08 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -479,7 +479,7 @@ namespace ft
 				return node;
 			}
 
-			if (key < node->pair_data.first)
+			if (_comp(key, node->pair_data.first))
 			{
 				return _searchTreeHelper(node->left, key);
 			}
