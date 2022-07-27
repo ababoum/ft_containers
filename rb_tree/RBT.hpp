@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 12:15:08 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 13:39:42 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -408,6 +408,8 @@ namespace ft
 		friend bool
 		operator==(const const_iterator &lhs, const const_iterator &rhs)
 		{
+			if (lhs.base()->is_nil && rhs.base()->is_nil)
+				return true;
 			return lhs.node_ptr == rhs.node_ptr;
 		}
 
@@ -472,7 +474,7 @@ namespace ft
 
 		// helper functions
 
-		base_ptr _searchTreeHelper(base_ptr node, Key key)
+		base_ptr _treeExplorer(base_ptr node, Key key)
 		{
 			if (node->is_nil || key == node->pair_data.first)
 			{
@@ -481,27 +483,27 @@ namespace ft
 
 			if (_comp(key, node->pair_data.first))
 			{
-				return _searchTreeHelper(node->left, key);
+				return _treeExplorer(node->left, key);
 			}
-			return _searchTreeHelper(node->right, key);
+			return _treeExplorer(node->right, key);
 		}
 
-		// const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
-		// {
-		// 	if (node->is_nil || key == node->pair_data.first)
-		// 	{
-		// 		return node;
-		// 	}
+		const_base_ptr _treeExplorer(base_ptr node, Key key) const
+		{
+			if (node->is_nil || key == node->pair_data.first)
+			{
+				return node;
+			}
 
-		// 	if (key < node->pair_data.first)
-		// 	{
-		// 		return _searchTreeHelper(node->left, key);
-		// 	}
-		// 	return _searchTreeHelper(node->right, key);
-		// }
+			if (key < node->pair_data.first)
+			{
+				return _treeExplorer(node->left, key);
+			}
+			return _treeExplorer(node->right, key);
+		}
 
 		// For balancing the tree after deletion
-		void _deleteRebalance(base_ptr x)
+		void _rebalance_postDelete(base_ptr x)
 		{
 			base_ptr s;
 
@@ -577,7 +579,7 @@ namespace ft
 			x->color = _S_black;
 		}
 
-		void _rbTransplant(base_ptr u, base_ptr v)
+		void _subTreeReplace(base_ptr u, base_ptr v)
 		{
 			if (u->parent == NULL)
 				_root = v;
@@ -588,7 +590,7 @@ namespace ft
 			v->parent = u->parent;
 		}
 
-		void _deleteNodeHelper(base_ptr node, Key key)
+		void _nodeDeleter(base_ptr node, Key key)
 		{
 			base_ptr z = _null_node;
 			base_ptr x;
@@ -616,12 +618,12 @@ namespace ft
 			if (z->left->is_nil)
 			{
 				x = z->right;
-				_rbTransplant(z, z->right);
+				_subTreeReplace(z, z->right);
 			}
 			else if (z->right->is_nil)
 			{
 				x = z->left;
-				_rbTransplant(z, z->left);
+				_subTreeReplace(z, z->left);
 			}
 			else
 			{
@@ -632,12 +634,12 @@ namespace ft
 					x->parent = y;
 				else
 				{
-					_rbTransplant(y, y->right);
+					_subTreeReplace(y, y->right);
 					y->right = z->right;
 					y->right->parent = y;
 				}
 
-				_rbTransplant(z, y);
+				_subTreeReplace(z, y);
 				y->left = z->left;
 				y->left->parent = y;
 				y->color = z->color;
@@ -646,11 +648,11 @@ namespace ft
 			_node_alloc.deallocate(z, sizeof(z));
 			
 			if (y_original_color == _S_black)
-				_deleteRebalance(x);
+				_rebalance_postDelete(x);
 		}
 
 		// For balancing the tree after insertion
-		void _insertRebalance(base_ptr k)
+		void _rebalance_postInsert(base_ptr k)
 		{
 			base_ptr u;
 
@@ -752,15 +754,6 @@ namespace ft
 			return node;
 		}
 
-		// const_base_ptr _minimum(base_ptr node) const
-		// {
-		// 	if (node->is_nil)
-		// 		return node;
-		// 	while (!node->left->is_nil)
-		// 		node = node->left;
-		// 	return node;
-		// }
-
 		base_ptr _maximum(base_ptr node)
 		{
 			if (node->is_nil)
@@ -769,15 +762,6 @@ namespace ft
 				node = node->right;
 			return node;
 		}
-
-		// const_base_ptr _maximum(base_ptr node) const
-		// {
-		// 	if (node->is_nil)
-		// 		return node;
-		// 	while (!node->right->is_nil)
-		// 		node = node->right;
-		// 	return node;
-		// }
 
 		void _leftRotate(base_ptr x)
 		{
@@ -917,7 +901,7 @@ namespace ft
 				return node;
 			}
 
-			_insertRebalance(node);
+			_rebalance_postInsert(node);
 			_replaceBeginEnd();
 
 			return node;
@@ -979,7 +963,7 @@ namespace ft
 				return node;
 			}
 
-			_insertRebalance(node);
+			_rebalance_postInsert(node);
 			_replaceBeginEnd();
 
 			return node;
@@ -987,7 +971,7 @@ namespace ft
 
 		void deleteNode(Key key)
 		{
-			_deleteNodeHelper(this->_root, key);
+			_nodeDeleter(this->_root, key);
 		}
 
 		/* ACCESSORS */
@@ -1010,14 +994,14 @@ namespace ft
 
 		base_ptr searchTree(Key k)
 		{
-			return _searchTreeHelper(_root, k);
+			return _treeExplorer(_root, k);
 		}
 
-		// const_base_ptr searchTree(Key k) const
-		// {
-		// 	const_base_ptr ret = _searchTreeHelper(_root, k);
-		// 	return ret;
-		// }
+		const_base_ptr searchTree(Key k) const
+		{
+			const_base_ptr ret = _treeExplorer(_root, k);
+			return ret;
+		}
 
 		mapped_type &at(const key_type &key)
 		{
@@ -1150,11 +1134,7 @@ namespace ft
 		{
 			base_ptr node;
 			
-			// if (empty())
-			// 	node = _null_node;
-			// else
-				node = _null_end;
-			
+			node = _null_end;
 			iterator ret(node);
 			
 			return ret;
@@ -1164,11 +1144,7 @@ namespace ft
 		{
 			base_ptr node;
 			
-			// if (empty())
-			// 	node = _null_node;
-			// else
-				node = _null_end;
-			
+			node = _null_end;
 			const_iterator ret(node);
 			
 			return ret;

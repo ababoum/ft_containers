@@ -2,7 +2,8 @@ CXX			= @c++
 
 CXXFLAGS	= -Wall -Werror -Wextra -g -std=c++98
 
-NAME 		= test_containers
+NAME 		= ft_containers
+NAME_STD	= std_containers
 
 SRCS		= main.cpp
 
@@ -15,6 +16,7 @@ INCL		= vector.hpp \
 				iterators/reverse_iterator.hpp \
 				pairs/pair.hpp \
 				rb_tree/RBT.hpp \
+				rb_tree/RBT_set.hpp \
 				utils/enable_if.hpp \
 				utils/equal.hpp \
 				utils/integral_constant.hpp \
@@ -26,15 +28,26 @@ OBJS		= $(SRCS:.cpp=.o)
 all:		$(NAME)
 
 $(NAME):	$(OBJS) $(INCL)
-			$(CXX) $(CXXFLAGS) $(SRCS) -o $(NAME)
+			$(CXX) $(CXXFLAGS) $(SRCS) -DFT -o $(NAME)
 			@echo "\033[1;32m\e[1m $(NAME)\e[0m\033[32m executable is compiled and ready.\e[0m"
+
+std:	$(NAME_STD)
+
+$(NAME_STD): $(OBJS)
+			$(CXX) $(CXXFLAGS) $(SRCS) -o $(NAME_STD)
+			@echo "\033[1;32m\e[1m $(NAME_STD)\e[0m\033[32m executable is compiled and ready.\e[0m"
+
+diff:
+			time ./$(NAME) > ft.out
+			time ./$(NAME_STD) > std.out
+			diff ft.out std.out
 
 clean:		
 			@rm -f $(OBJS)
 			@echo "\033[1;36m .o files successfully deleted.\e[0m"
 
 fclean: 	clean
-			@rm -f $(NAME)
+			@rm -f $(NAME) $(NAME_STD)
 			@echo "\033[1;36m $(NAME) executable successfully deleted.\e[0m"
 
 re: 		fclean ${NAME}

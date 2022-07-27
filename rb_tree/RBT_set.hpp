@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 12:14:30 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 15:54:15 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,6 @@ namespace ft
 	template <class Key>
 	struct RBT_set_iterator;
 	
-	// template <class Key>
-	// struct RBT_set_const_iterator;
-
 	// definition of red and black colors
 	enum rbt_set_color
 	{
@@ -177,7 +174,6 @@ namespace ft
 		typedef std::ptrdiff_t difference_type;
 
 		typedef RBT_set_iterator<Key> iterator;
-		// typedef RBT_set_const_iterator<Key> const_iterator;
 		typedef typename RBT_set_node<Key>::base_ptr base_ptr;
 
 		base_ptr node_ptr;
@@ -189,11 +185,6 @@ namespace ft
 			: node_ptr(node_ptr_input) {}
 
 		RBT_set_iterator(const RBT_set_iterator & other): node_ptr(other.node_ptr) {}
-
-		// RBT_set_iterator(const const_iterator & other)
-		// {
-		// 	node_ptr = const_cast<base_ptr>(other.base());
-		// }
 
 		RBT_set_iterator & operator=( const RBT_set_iterator & other )
 		{
@@ -277,168 +268,13 @@ namespace ft
 			return lhs.node_ptr == rhs.node_ptr;
 		}
 
-		// friend bool
-		// operator==(const iterator &lhs, const const_iterator &rhs)
-		// {
-		// 	if (lhs.base()->is_nil && rhs.base()->is_nil)
-		// 		return true;
-		// 	return lhs.node_ptr == rhs.node_ptr;
-		// }
-
 		friend bool
 		operator!=(const iterator &lhs, const iterator &rhs)
 		{
 			return !(lhs == rhs);
 		}
 
-		// friend bool
-		// operator!=(const iterator &lhs, const const_iterator &rhs)
-		// {
-		// 	return !(lhs == rhs);
-		// }
 	};
-
-	// red-black tree const iterator
-
-	// template <class Key>
-	// struct RBT_set_const_iterator
-	// {
-	// 	typedef Key value_type;
-	// 	typedef const value_type &reference;
-	// 	typedef const value_type *pointer;
-
-	// 	typedef RBT_set_iterator<Key> iterator;
-
-	// 	typedef std::bidirectional_iterator_tag iterator_category;
-	// 	typedef std::ptrdiff_t difference_type;
-
-	// 	typedef RBT_set_const_iterator<Key> const_iterator;
-	// 	typedef typename RBT_set_node<Key>::const_base_ptr base_ptr;
-
-	// 	base_ptr node_ptr;
-
-	// 	RBT_set_const_iterator()
-	// 		: node_ptr() {}
-
-	// 	RBT_set_const_iterator(base_ptr node_ptr_input)
-	// 		: node_ptr(node_ptr_input) {}
-
-	// 	RBT_set_const_iterator(const RBT_set_const_iterator & other)
-	// 		: node_ptr(other.node_ptr) {}
-
-	// 	const_iterator & operator=( const const_iterator & other )
-	// 	{
-	// 		node_ptr = other.base();
-	// 		return *this;
-	// 	}
-
-	// 	RBT_set_const_iterator(const iterator & other)
-	// 		: node_ptr(other.node_ptr) {}
-
-	// 	const_iterator & operator=( const iterator & other )
-	// 	{
-	// 		node_ptr = other.base();
-	// 		return *this;
-	// 	}	
-
-	// 	base_ptr
-	// 	base() const
-	// 	{
-	// 		return node_ptr;
-	// 	}
-
-	// 	reference
-	// 	operator*() const
-	// 	{
-	// 		return *static_cast<base_ptr>(node_ptr)->value_ptr();
-	// 	}
-
-	// 	pointer
-	// 	operator->() const
-	// 	{
-	// 		return static_cast<base_ptr>(node_ptr)->value_ptr();
-	// 	}
-
-	// 	const_iterator &
-	// 	operator++()
-	// 	{
-	// 		node_ptr = rb_tree_increment(node_ptr);
-	// 		return *this;
-	// 	}
-
-	// 	const_iterator
-	// 	operator++(int)
-	// 	{
-	// 		const_iterator tmp = *this;
-	// 		node_ptr = rb_tree_increment(node_ptr);
-	// 		return tmp;
-	// 	}
-
-	// 	const_iterator &
-	// 	operator--()
-	// 	{
-	// 		node_ptr = rb_tree_decrement(node_ptr);
-	// 		return *this;
-	// 	}
-
-	// 	const_iterator
-	// 	operator--(int)
-	// 	{
-	// 		const_iterator tmp = *this;
-	// 		node_ptr = rb_tree_decrement(node_ptr);
-	// 		return tmp;
-	// 	}
-
-	// 	const_iterator operator+( difference_type n ) const
-	// 	{
-	// 		const_iterator tmp(base());
-
-	// 		for (difference_type i = 0; i != n; ++i)
-	// 			++tmp;
-				
-	// 		return (tmp);
-	// 	}
-
-	// 	const_iterator operator-( difference_type n ) const
-	// 	{
-	// 		const_iterator tmp(base());
-
-	// 		for (difference_type i = 0; i != n; ++i)
-	// 			--tmp;
-				
-	// 		return (tmp);
-	// 	}
-
-	// 	friend bool
-	// 	operator==(const const_iterator &lhs, const const_iterator &rhs)
-	// 	{
-	// 		if (lhs.base()->is_nil && rhs.base()->is_nil)
-	// 			return true;
-	// 		return lhs.node_ptr == rhs.node_ptr;
-	// 	}
-
-	// 	friend bool
-	// 	operator==(const const_iterator &lhs, const iterator &rhs)
-	// 	{
-	// 		if (lhs.base()->is_nil && rhs.base()->is_nil)
-	// 			return true;
-	// 		return lhs.node_ptr == rhs.node_ptr;
-	// 	}
-
-	// 	friend bool
-	// 	operator!=(const const_iterator &lhs, const const_iterator &rhs)
-	// 	{
-	// 		return !(lhs == rhs);
-	// 	}
-
-	// 	friend bool
-	// 	operator!=(const const_iterator &lhs, const iterator &rhs)
-	// 	{
-	// 		return !(lhs == rhs);
-	// 	}
-
-		
-	// };
 
 	// RBT reference: https://www.programiz.com/dsa/red-black-tree
 
@@ -476,7 +312,7 @@ namespace ft
 
 		// helper functions
 
-		base_ptr _searchTreeHelper(base_ptr node, Key key) const
+		base_ptr _treeExplorer(base_ptr node, Key key) const
 		{
 			if (node->is_nil || key == node->key)
 			{
@@ -485,27 +321,14 @@ namespace ft
 
 			if (_comp(key, node->key))
 			{
-				return _searchTreeHelper(node->left, key);
+				return _treeExplorer(node->left, key);
 			}
-			return _searchTreeHelper(node->right, key);
+			return _treeExplorer(node->right, key);
 		}
 
-		// const_base_ptr _searchTreeHelper(base_ptr node, Key key) const
-		// {
-		// 	if (node->is_nil || key == node->key)
-		// 	{
-		// 		return node;
-		// 	}
-
-		// 	if (key < node->key)
-		// 	{
-		// 		return _searchTreeHelper(node->left, key);
-		// 	}
-		// 	return _searchTreeHelper(node->right, key);
-		// }
 
 		// For balancing the tree after deletion
-		void _deleteRebalance(base_ptr x)
+		void _rebalance_postDelete(base_ptr x)
 		{
 			base_ptr s;
 
@@ -581,7 +404,7 @@ namespace ft
 			x->color = RBT_set_black;
 		}
 
-		void _rbTransplant(base_ptr u, base_ptr v)
+		void _subTreeReplace(base_ptr u, base_ptr v)
 		{
 			if (u->parent == NULL)
 				_root = v;
@@ -592,7 +415,7 @@ namespace ft
 			v->parent = u->parent;
 		}
 
-		void _deleteNodeHelper(base_ptr node, Key key)
+		void _nodeDeleter(base_ptr node, Key key)
 		{
 			base_ptr z = _null_node;
 			base_ptr x;
@@ -620,12 +443,12 @@ namespace ft
 			if (z->left->is_nil)
 			{
 				x = z->right;
-				_rbTransplant(z, z->right);
+				_subTreeReplace(z, z->right);
 			}
 			else if (z->right->is_nil)
 			{
 				x = z->left;
-				_rbTransplant(z, z->left);
+				_subTreeReplace(z, z->left);
 			}
 			else
 			{
@@ -636,12 +459,12 @@ namespace ft
 					x->parent = y;
 				else
 				{
-					_rbTransplant(y, y->right);
+					_subTreeReplace(y, y->right);
 					y->right = z->right;
 					y->right->parent = y;
 				}
 
-				_rbTransplant(z, y);
+				_subTreeReplace(z, y);
 				y->left = z->left;
 				y->left->parent = y;
 				y->color = z->color;
@@ -650,11 +473,11 @@ namespace ft
 			_node_alloc.deallocate(z, sizeof(z));
 			
 			if (y_original_color == RBT_set_black)
-				_deleteRebalance(x);
+				_rebalance_postDelete(x);
 		}
 
 		// For balancing the tree after insertion
-		void _insertRebalance(base_ptr k)
+		void _rebalance_postInsert(base_ptr k)
 		{
 			base_ptr u;
 
@@ -756,15 +579,6 @@ namespace ft
 			return node;
 		}
 
-		// const_base_ptr _minimum(base_ptr node) const
-		// {
-		// 	if (node->is_nil)
-		// 		return node;
-		// 	while (!node->left->is_nil)
-		// 		node = node->left;
-		// 	return node;
-		// }
-
 		base_ptr _maximum(base_ptr node)
 		{
 			if (node->is_nil)
@@ -773,15 +587,6 @@ namespace ft
 				node = node->right;
 			return node;
 		}
-
-		// const_base_ptr _maximum(base_ptr node) const
-		// {
-		// 	if (node->is_nil)
-		// 		return node;
-		// 	while (!node->right->is_nil)
-		// 		node = node->right;
-		// 	return node;
-		// }
 
 		void _leftRotate(base_ptr x)
 		{
@@ -920,7 +725,7 @@ namespace ft
 				return node;
 			}
 
-			_insertRebalance(node);
+			_rebalance_postInsert(node);
 			_replaceBeginEnd();
 
 			return node;
@@ -982,7 +787,7 @@ namespace ft
 				return node;
 			}
 
-			_insertRebalance(node);
+			_rebalance_postInsert(node);
 			_replaceBeginEnd();
 
 			return node;
@@ -990,7 +795,7 @@ namespace ft
 
 		void deleteNode(Key key)
 		{
-			_deleteNodeHelper(this->_root, key);
+			_nodeDeleter(this->_root, key);
 		}
 
 		/* ACCESSORS */
@@ -1013,15 +818,8 @@ namespace ft
 
 		base_ptr searchTree(Key k) const
 		{
-			return _searchTreeHelper(_root, k);
+			return _treeExplorer(_root, k);
 		}
-
-		// const_base_ptr searchTree(Key k) const
-		// {
-		// 	const_base_ptr ret = _searchTreeHelper(_root, k);
-		// 	return ret;
-		// }
-
 
 		/* MODIFIERS */
 
@@ -1122,11 +920,7 @@ namespace ft
 		{
 			base_ptr node;
 			
-			// if (empty())
-			// 	node = _null_node;
-			// else
-				node = _null_end;
-			
+			node = _null_end;
 			iterator ret(node);
 			
 			return ret;
@@ -1136,11 +930,7 @@ namespace ft
 		{
 			base_ptr node;
 			
-			// if (empty())
-			// 	node = _null_node;
-			// else
-				node = _null_end;
-			
+			node = _null_end;
 			const_iterator ret(node);
 			
 			return ret;
@@ -1190,6 +980,8 @@ namespace ft
 		{
 			return _node_alloc.max_size();
 		}
+
+		
 		/* LOOKUP */
 
 		iterator find(const Key &key) const
@@ -1204,28 +996,16 @@ namespace ft
 			return (ret);
 		}
 
-		// const_iterator find(const Key &key) const
-		// {
-		// 	base_ptr node_to_find = searchTree(key);
-
-		// 	if (node_to_find->is_nil)
-		// 		return end();
-
-		// 	const_iterator ret(node_to_find);
-
-		// 	return (ret);
-		// }
-
 		iterator lower_bound(const Key &key)
 		{
 			iterator it = begin();
 
-			if (key < it.base()->key)
+			if (_comp(key, it.base()->key))
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it))
+				if (_comp(key, (*it)) || key == *it)
 					break;
 				++it;
 			}
@@ -1236,12 +1016,12 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (key < it.base()->key)
+			if (_comp(key, it.base()->key))
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it))
+				if (_comp(key, (*it)) || key == *it)
 					break;
 				++it;
 			}
@@ -1252,12 +1032,12 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->key)
+			if (_comp(key, it.base()->key))
 				return it;
 
 			while (it != end())
 			{
-				if (key < (*it))
+				if (_comp(key, (*it)))
 				{
 					break;
 				}
@@ -1275,7 +1055,7 @@ namespace ft
 
 			while (it != end())
 			{
-				if (key < (*it))
+				if (_comp(key, (*it)))
 				{
 					break;
 				}

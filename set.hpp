@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/25 19:15:55 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 12:21:56 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 13:23:30 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,9 +311,9 @@ namespace ft
 			return _storage.find(key);
 		}
 
-		pair<const_iterator,const_iterator> equal_range (const key_type& key) const
+		pair<const_iterator, const_iterator> equal_range (const key_type& key) const
 		{
-			pair<const_iterator,const_iterator> ret(lower_bound(key), upper_bound(key));
+			pair<const_iterator, const_iterator> ret(lower_bound(key), upper_bound(key));
 			
 			return ret;
 		}

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/09 15:26:06 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 19:17:43 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 14:43:51 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class stack
 		stack& operator=( const stack& other )
 		{
 			c_ = other.c_;
+			return *this;
 		}
 
 		/* ELEMENT ACCESS  */

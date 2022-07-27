@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/21 17:08:21 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 14:52:36 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,18 @@ class vector
 		{
 			if (_size > 0)
 			{
-				for (size_type i = 0; i < _size; i++)
+				for (size_type i = 0; i < _size; ++i)
+				{
 					_allocator.destroy(&_array[i]);
+				}
+				_size = 0;
 			}
 
-			if (_size == 0 && _capacity > 0)
+			if (_size == 0 &&  _capacity > 0)
+			{
 				_allocator.deallocate(_array, _capacity);
+				_capacity = 0;
+			}
 		}
 
 	public:
@@ -99,6 +105,8 @@ class vector
 		/* 5 */
 		vector( const vector& other )
 		{
+			_size = 0;
+			_capacity = 0;
 			*this = other;
 		}
 
@@ -118,7 +126,7 @@ class vector
 				_allocator = other.get_allocator();
 				_array = _allocator.allocate(_capacity);
 				for (size_type i = 0; i < _size; i++)
-					_array[i] = other[i];
+					_allocator.construct(&_array[i], other[i]);
 			}
 			return (*this);
 		}
@@ -285,15 +293,17 @@ class vector
 			if (new_cap > max_size())
 				throw std::length_error("Maximum possible size is exceeded");
 			
+			size_type	initial_size = _size;
 			T*	tmp_array;
 			tmp_array = _allocator.allocate(new_cap);
 			for (size_type i = 0; i < _size; i++)
-				tmp_array[i] = _array[i];
+				_allocator.construct(&tmp_array[i], _array[i]);
 			
 			_reset_array();
 			
 			_capacity = new_cap;
 			_array = tmp_array;
+			_size = initial_size;
 		}
 		
 		size_type	capacity() const

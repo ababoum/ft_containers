@@ -1,3 +1,6 @@
 containers_test/
 *.o
 test_containers
+*.out
+ft_containers
+std_containers
