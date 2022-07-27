@@ -27,13 +27,13 @@ OBJS		= $(SRCS:.cpp=.o)
 
 all:		$(NAME)
 
-$(NAME):	$(OBJS) $(INCL)
+$(NAME):	 $(INCL) $(SRCS)
 			$(CXX) $(CXXFLAGS) $(SRCS) -DFT -o $(NAME)
 			@echo "\033[1;32m\e[1m $(NAME)\e[0m\033[32m executable is compiled and ready.\e[0m"
 
 std:	$(NAME_STD)
 
-$(NAME_STD): $(OBJS)
+$(NAME_STD): $(SRCS)
 			$(CXX) $(CXXFLAGS) $(SRCS) -o $(NAME_STD)
 			@echo "\033[1;32m\e[1m $(NAME_STD)\e[0m\033[32m executable is compiled and ready.\e[0m"
 

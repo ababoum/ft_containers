@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 15:56:26 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 17:49:50 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ std::string	printPair_set(const T &iterator, bool nl = true, std::ostream &o = s
 		o << std::endl;
 	return ("");
 }
+
 template <typename T_SET>
 void	print_set(T_SET const &st, bool print_content = 1)
 {
@@ -154,6 +155,7 @@ int main(void)
 			
 			print_vec(test);
 			print_vec(test2);
+
 		}
 		catch (std::exception & e)
 		{

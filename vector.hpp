@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 14:52:36 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 18:59:38 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,151 @@ class vector
 				_size = 0;
 			}
 
-			if (_size == 0 &&  _capacity > 0)
+			if (_array)
 			{
-				_allocator.deallocate(_array, _capacity);
+				_allocator.deallocate(_array, sizeof(T) * _capacity);
 				_capacity = 0;
+				_array = NULL;
 			}
+		}
+
+		template<typename _ForwardIterator>
+    	void _assignHelper(_ForwardIterator first, _ForwardIterator last,
+		    std::forward_iterator_tag)
+		{
+			size_type count = std::distance(first, last);
+			T* tmp = _allocator.allocate(sizeof(T) * count);
+
+			_ForwardIterator it = first;
+			for (size_type i = 0; i < count; ++i)
+				_allocator.construct(tmp + i, *(it++));
+
+			_reset_array();
+			_size = count;
+			_capacity = count;
+			_array = _allocator.allocate(sizeof(T) * _capacity);
+			for (size_type i = 0; i < _size; ++i)
+				_allocator.construct(_array + i, tmp[i]);
+
+			for (size_type i = 0; i < _size; ++i)
+				_allocator.destroy(tmp + i);
+			_allocator.deallocate(tmp, sizeof(T) * count);
+		}
+
+		template<typename _InputIterator>
+    	void _assignHelper(_InputIterator first, _InputIterator last,
+		    std::input_iterator_tag)
+		{
+			pointer tmp = _array;
+			size_type	count = 0;
+			
+			while (first != last && tmp != (_array + _size))
+			{
+				*tmp = *first;
+				++tmp;
+				++first;
+				++count;
+			}
+
+			if (first == last)
+			{
+				resize(count);
+			}
+			else
+			{
+				insert(end(), first, last);
+			}
+		}
+
+		template<typename _InputIterator>
+		void _insertHelper(iterator pos, _InputIterator first,
+		      _InputIterator last, std::input_iterator_tag)
+		{
+			if (pos == end())
+			{
+				while (first != last)
+				{
+					insert(end(), *first);
+					++first;
+				}
+			}
+			else if (first != last)
+			{
+				size_type pos_index = std::distance(begin(), pos);
+				size_type count = 0;
+				_InputIterator tmp(first);
+			
+				while (tmp != last)
+					++count;
+
+				if (_capacity == 0)
+					reserve(count);
+				size_type	target_capacity = _capacity;
+				while (_size + count > target_capacity)
+					target_capacity *= 2;
+				reserve(target_capacity);
+				
+				iterator it = begin();
+				iterator pos_after_resize(begin() + pos_index);
+
+				while ( it != pos_after_resize && it != end()) {
+					++it;
+				}
+				
+				iterator new_range_start = it;
+				it = end() + count - 1;
+				while ( it != new_range_start + count - 1 ) {
+					*it = *(it - count);
+					--it;
+				}
+				
+				for (size_type i = 0; i < count; ++i) {
+					_allocator.construct(&(*new_range_start), *first);
+					++new_range_start;
+					++first;
+				}
+				_size += count;
+			}
+		}
+
+		template<typename _ForwardIterator>
+		void _insertHelper(iterator pos, _ForwardIterator first,
+		      _ForwardIterator last, std::forward_iterator_tag)
+		{
+			size_t pos_index = std::distance(begin(), pos);
+			
+			if (std::distance(first, last) <= 0)
+				return ;
+
+			size_type count = std::distance(first, last);
+
+			if (_capacity == 0)
+				reserve(count);
+			size_type	target_capacity = _capacity;
+			while (_size + count > target_capacity)
+				target_capacity *= 2;
+			reserve(target_capacity);
+			
+			iterator it = begin();
+			iterator pos_after_resize(begin() + pos_index);
+
+			while ( it != pos_after_resize && it != end()) {
+				++it;
+			}
+			
+			iterator new_range_start = it;
+			it = end() + count - 1;
+			while ( it != new_range_start + count - 1 ) {
+				*it = *(it - count);
+				--it;
+			}
+			
+			for (size_type i = 0; i < count; ++i) {
+				_allocator.construct(&(*new_range_start), *first);
+				++new_range_start;
+				++first;
+			}
+			_size += count;
 		}
 
 	public:
@@ -82,7 +222,7 @@ class vector
 			_size = count;
 			_capacity = count;
 			_allocator = alloc;
-			_array = _allocator.allocate(count);
+			_array = _allocator.allocate(sizeof(T) * count);
 			for (size_type i = 0; i < _size; i++) {
 				_allocator.construct(&_array[i], value);
 			}
@@ -124,7 +264,7 @@ class vector
 				_size = other.size();
 				_capacity = other.size();
 				_allocator = other.get_allocator();
-				_array = _allocator.allocate(_capacity);
+				_array = _allocator.allocate(sizeof(T) * _capacity);
 				for (size_type i = 0; i < _size; i++)
 					_allocator.construct(&_array[i], other[i]);
 			}
@@ -134,13 +274,11 @@ class vector
 		/* 1 */
 		void assign( size_type count, const T& value )
 		{
-			_reset_array();
+			resize(count);
 
 			_size = count;
-			_capacity = count;
-			_array = _allocator.allocate(_capacity);
 			for (size_type i = 0; i < _size; ++i)
-				_allocator.construct(&_array[i], value);
+				_array[i] =  value;
 		}
 
 		/* 2 */
@@ -148,13 +286,7 @@ class vector
 		void assign( InputIt first, InputIt last,
 			typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
 		{
-			_reset_array();
-
-			_size = 0;
-			_capacity = 0;
-			_array = NULL;
-			for (InputIt it = first; it != last; ++it)
-				push_back(*it);
+			_assignHelper(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
 		}
 		
 		allocator_type get_allocator() const
@@ -295,7 +427,7 @@ class vector
 			
 			size_type	initial_size = _size;
 			T*	tmp_array;
-			tmp_array = _allocator.allocate(new_cap);
+			tmp_array = _allocator.allocate(sizeof(T) * new_cap);
 			for (size_type i = 0; i < _size; i++)
 				_allocator.construct(&tmp_array[i], _array[i]);
 			
@@ -390,40 +522,7 @@ class vector
 		void		insert(iterator pos, InputIt first, InputIt last,
 			typename enable_if<!ft::is_integral< InputIt >::value, void* >::type* = NULL)
 		{
-			size_t pos_index = std::distance(begin(), pos);
-			
-			if (std::distance(first, last) <= 0)
-				return ;
-
-			size_type count = std::distance(first, last);
-
-			if (_capacity == 0)
-				reserve(count);
-			size_type	target_capacity = _capacity;
-			while (_size + count > target_capacity)
-				target_capacity *= 2;
-			reserve(target_capacity);
-			
-			iterator it = begin();
-			iterator pos_after_resize(begin() + pos_index);
-
-			while ( it != pos_after_resize && it != end()) {
-				++it;
-			}
-			
-			iterator new_range_start = it;
-			it = end() + count - 1;
-			while ( it != new_range_start + count - 1 ) {
-				*it = *(it - count);
-				--it;
-			}
-			
-			for (size_type i = 0; i < count; ++i) {
-				_allocator.construct(&(*new_range_start), *first);
-				++new_range_start;
-				++first;
-			}
-			_size += count;
+			_insertHelper(pos, first, last, typename ft::iterator_traits<InputIt>::iterator_category());
 		}
 		
 		iterator	erase( iterator pos )

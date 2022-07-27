@@ -4,3 +4,4 @@ test_containers
 *.out
 ft_containers
 std_containers
+ft_containers-terminator/
