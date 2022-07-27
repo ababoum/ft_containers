@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 18:59:38 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/27 21:31:48 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ class vector
 		typedef typename Allocator::const_pointer				const_pointer;
 		typedef random_access_iterator<pointer>					iterator;
 		typedef random_access_iterator<const_pointer>			const_iterator;
-		typedef	ft::reverse_iterator<const_iterator>				const_reverse_iterator;
-		typedef ft::reverse_iterator<iterator>						reverse_iterator;
+		typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+		typedef ft::reverse_iterator<iterator>					reverse_iterator;
 		
 
 	private:
@@ -147,15 +147,27 @@ class vector
 					++it;
 				}
 				
+				if (it == end())
+				{
+					while (first != last)
+					{
+						_allocator.construct(&(*it), *first);
+						++_size;
+						++first;
+						++it;
+					}
+					return ;
+				}
+				
 				iterator new_range_start = it;
 				it = end() + count - 1;
-				while ( it != new_range_start + count - 1 ) {
-					*it = *(it - count);
+				for (size_type i = 0; i < count; ++i) {
+					_allocator.construct(&(*it), *(it - count));
 					--it;
 				}
 				
-				for (size_type i = 0; i < count; ++i) {
-					_allocator.construct(&(*new_range_start), *first);
+				for (size_type i = 0; i < _size - pos_index; ++i) {
+					*new_range_start = *first;
 					++new_range_start;
 					++first;
 				}
@@ -187,20 +199,64 @@ class vector
 			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
+
+			if (it == end())
+			{
+				while (first != last)
+				{
+					_allocator.construct(&(*it), *first);
+					++it;
+					++_size;
+					++first;
+				}
+				return ;
+			}
+
+			iterator new_range_start = pos_after_resize;
+			it = end() + count - 1; // the future end()
 			
-			iterator new_range_start = it;
-			it = end() + count - 1;
-			while ( it != new_range_start + count - 1 ) {
-				*it = *(it - count);
+			// extend the end of the vector with constructions
+			while(it - count >= new_range_start)
+			{
+				_allocator.construct(&(*it), *(it - count));
 				--it;
 			}
-			
-			for (size_type i = 0; i < count; ++i) {
-				_allocator.construct(&(*new_range_start), *first);
-				++new_range_start;
-				++first;
+
+			// translate the remaining values
+			if (_size > pos_index + count)
+			{
+				for (size_type i = 0; i < _size - pos_index - count; ++i) {
+						*it = *(it - count);
+						--it;
+					}
 			}
+				
+			// populate new values
+			while (new_range_start <= it)
+			{
+				if (new_range_start < end())
+					*new_range_start = *first;
+				else
+					_allocator.construct(&(*new_range_start), *first);
+				++first;
+				++new_range_start;
+			}
+			
 			_size += count;
+
+			// iterator new_range_start = pos_after_resize;
+			// it = end() + count - 1;
+			// while ( it != new_range_start + count - 1 ) {
+			// 	_allocator.construct(&(*it), *(it - count));
+			// 	--it;
+			// }
+			
+			// for (size_type i = 0; i < count; ++i) {
+			// 	*new_range_start = *first;
+			// 	++new_range_start;
+			// 	++first;
+			// }
+			// _size += count;
 		}
 
 	public:
@@ -222,6 +278,10 @@ class vector
 			_size = count;
 			_capacity = count;
 			_allocator = alloc;
+			if (sizeof(T) * count > _allocator.max_size())
+			{
+				throw std::length_error("Maximum possible size is exceeded");
+			}
 			_array = _allocator.allocate(sizeof(T) * count);
 			for (size_type i = 0; i < _size; i++) {
 				_allocator.construct(&_array[i], value);
@@ -278,7 +338,7 @@ class vector
 
 			_size = count;
 			for (size_type i = 0; i < _size; ++i)
-				_array[i] =  value;
+				_array[i] = value;
 		}
 
 		/* 2 */
@@ -469,14 +529,24 @@ class vector
 			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
+
+			if (it == end())
+			{
+				_allocator.construct(&(*it), value);
+				++_size;
+				
+				return it;
+			}
 			
 			iterator new_slot = it;
 			it = end();
+			_allocator.construct(&(*it), *(it - 1));
+			--it;
 			while ( it != new_slot ) {
 				*it = *(it - 1);
 				--it;
 			}
-			_allocator.construct(&(*new_slot), value);
+			*it = value;
 			++_size;
 			return (new_slot);
 		}
@@ -502,18 +572,40 @@ class vector
 			while ( it != pos_after_resize && it != end()) {
 				++it;
 			}
+
+			if (it == end())
+			{
+				for (size_type i = 0; i < count; ++i)
+				{
+					_allocator.construct(&(*it), value);
+					++_size;
+					++it;
+				}				
+				return ;
+			}
 			
-			iterator new_range_start = it;
+			iterator new_range_start = pos_after_resize;
 			it = end() + count - 1;
-			while ( it != new_range_start + count - 1 ) {
-				*it = *(it - count);
+			// extend the end of the vector with constructions
+			for (size_type i = 0; i < count; ++i)
+			{
+				_allocator.construct(&(*it), *(it - count));
 				--it;
 			}
-			
-			for (size_type i = 0; i < count; ++i) {
-				_allocator.construct(&(*new_range_start), value);
+
+			// translate the remaining values
+			for (size_type i = 0; i < _size - pos_index - count; ++i) {
+					*it = *(it - count);
+					--it;
+				}
+				
+			// populate new values
+			for (size_type i = 0; i < count; ++i)
+			{
+				*new_range_start = value;
 				++new_range_start;
 			}
+			
 			_size += count;
 		}
 
