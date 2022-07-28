@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/09 15:26:06 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 14:43:51 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 15:54:15 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ class stack
 		/* 1 */
 		explicit stack( const Container& cont = Container() )
 		{
-			c_ = cont;
+			c = cont;
 		}
 
 		/* 2 */
 		stack( const stack& other )
 		{
-			c_ = other.c_;
+			c = other.c;
 		}
 
 		/* DESTRUCTOR */
@@ -61,51 +61,51 @@ class stack
 		/* GENERAL MEMBER FUNCTIONS */
 		stack& operator=( const stack& other )
 		{
-			c_ = other.c_;
+			c = other.c;
 			return *this;
 		}
 
 		/* ELEMENT ACCESS  */
 		reference 		top()
 		{
-			return c_.back();
+			return c.back();
 		}
 		const_reference top() const
 		{
-			return c_.back();
+			return c.back();
 		}
 
 		/* CAPACITY */
 		bool empty() const
 		{
-			return c_.empty();
+			return c.empty();
 		}
 		
 		size_type size() const
 		{
-			return c_.size();
+			return c.size();
 		}
 
 		/* MODIFIERS */
 		void push( const value_type& value )
 		{
-			c_.push_back(value);
+			c.push_back(value);
 		}
 		
 		void pop()
 		{
-			c_.pop_back();
+			c.pop_back();
 		}
 		
 	protected:
-		container_type	c_;
+		container_type	c;
 
 };
 
 template< class T, class Container >
 inline bool operator==( const stack<T,Container>& lhs, const stack<T,Container>& rhs )
 {
-	return lhs.c_ == rhs.c_;
+	return lhs.c == rhs.c;
 }
 
 template< class T, class Container >
@@ -117,7 +117,7 @@ inline bool operator!=( const stack<T,Container>& lhs, const stack<T,Container>&
 template< class T, class Container >
 inline bool operator<( const stack<T,Container>& lhs, const stack<T,Container>& rhs )
 {
-	return lhs.c_ < rhs.c_;
+	return lhs.c < rhs.c;
 }
 
 template< class T, class Container >

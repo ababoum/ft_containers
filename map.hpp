@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/28 15:30:56 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 15:56:14 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,6 +340,12 @@ namespace ft
 				ret.second = true;
 			}
 			return ret;
+		}
+
+		// added exceptionally for the official main...
+		pair<iterator, bool> insert(const _muggle_pair &value)
+		{
+			return _insertPair(value);
 		}
 
 		/* 2 */
