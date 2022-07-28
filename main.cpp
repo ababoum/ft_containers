@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 17:58:57 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 17:49:50 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 16:11:47 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -824,6 +824,36 @@ int main(void)
 			mp.clear();
 			console("after clear");
 			print_set(mp);
+					
+		}
+		catch (std::exception &e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+
+	std::cout << "\e[7m==================PERFORMANCE==============\e[0m" << std::endl;
+	{
+		try
+		{
+			TEST::vector<int> v;
+			TEST::map<int, int> mp;
+			TEST::set<int> st;
+
+
+			for (int i = 0; i < 100000; ++i)
+			{
+				v.push_back(i);
+				mp.insert(TEST::pair<int, int>(i, i));
+				st.insert(i);
+			}
+
+			for (int i = 0; i < 100000; ++i)
+			{
+				v.pop_back();
+				mp.erase(i);
+				st.erase(i);
+			}
 					
 		}
 		catch (std::exception &e)
