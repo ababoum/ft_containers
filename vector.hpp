@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 21:31:48 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 15:27:18 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ class vector
 
 			if (_array)
 			{
-				_allocator.deallocate(_array, sizeof(T) * _capacity);
+				_allocator.deallocate(_array, _capacity);
 				_capacity = 0;
 				_array = NULL;
 			}
@@ -69,7 +69,7 @@ class vector
 		    std::forward_iterator_tag)
 		{
 			size_type count = std::distance(first, last);
-			T* tmp = _allocator.allocate(sizeof(T) * count);
+			T* tmp = _allocator.allocate(count);
 
 			_ForwardIterator it = first;
 			for (size_type i = 0; i < count; ++i)
@@ -78,13 +78,13 @@ class vector
 			_reset_array();
 			_size = count;
 			_capacity = count;
-			_array = _allocator.allocate(sizeof(T) * _capacity);
+			_array = _allocator.allocate(_capacity);
 			for (size_type i = 0; i < _size; ++i)
 				_allocator.construct(_array + i, tmp[i]);
 
 			for (size_type i = 0; i < _size; ++i)
 				_allocator.destroy(tmp + i);
-			_allocator.deallocate(tmp, sizeof(T) * count);
+			_allocator.deallocate(tmp, count);
 		}
 
 		template<typename _InputIterator>
@@ -216,7 +216,7 @@ class vector
 			it = end() + count - 1; // the future end()
 			
 			// extend the end of the vector with constructions
-			while(it - count >= new_range_start)
+			while(it - count >= new_range_start && it >= end())
 			{
 				_allocator.construct(&(*it), *(it - count));
 				--it;
@@ -243,20 +243,6 @@ class vector
 			}
 			
 			_size += count;
-
-			// iterator new_range_start = pos_after_resize;
-			// it = end() + count - 1;
-			// while ( it != new_range_start + count - 1 ) {
-			// 	_allocator.construct(&(*it), *(it - count));
-			// 	--it;
-			// }
-			
-			// for (size_type i = 0; i < count; ++i) {
-			// 	*new_range_start = *first;
-			// 	++new_range_start;
-			// 	++first;
-			// }
-			// _size += count;
 		}
 
 	public:
@@ -278,11 +264,11 @@ class vector
 			_size = count;
 			_capacity = count;
 			_allocator = alloc;
-			if (sizeof(T) * count > _allocator.max_size())
+			if (count > _allocator.max_size())
 			{
 				throw std::length_error("Maximum possible size is exceeded");
 			}
-			_array = _allocator.allocate(sizeof(T) * count);
+			_array = _allocator.allocate(count);
 			for (size_type i = 0; i < _size; i++) {
 				_allocator.construct(&_array[i], value);
 			}
@@ -307,6 +293,7 @@ class vector
 		{
 			_size = 0;
 			_capacity = 0;
+			_array= NULL;
 			*this = other;
 		}
 
@@ -324,7 +311,7 @@ class vector
 				_size = other.size();
 				_capacity = other.size();
 				_allocator = other.get_allocator();
-				_array = _allocator.allocate(sizeof(T) * _capacity);
+				_array = _allocator.allocate(_capacity);
 				for (size_type i = 0; i < _size; i++)
 					_allocator.construct(&_array[i], other[i]);
 			}
@@ -487,9 +474,9 @@ class vector
 			
 			size_type	initial_size = _size;
 			T*	tmp_array;
-			tmp_array = _allocator.allocate(sizeof(T) * new_cap);
+			tmp_array = _allocator.allocate(new_cap);
 			for (size_type i = 0; i < _size; i++)
-				_allocator.construct(&tmp_array[i], _array[i]);
+				_allocator.construct(tmp_array + i, _array[i]);
 			
 			_reset_array();
 			
@@ -538,6 +525,7 @@ class vector
 				return it;
 			}
 			
+			
 			iterator new_slot = it;
 			it = end();
 			_allocator.construct(&(*it), *(it - 1));
@@ -563,8 +551,18 @@ class vector
 				
 			size_type	target_capacity = _capacity;
 			while (_size + count > target_capacity)
+			{
 				target_capacity *= 2;
-			reserve(target_capacity);
+				if (target_capacity > max_size())
+				{
+					target_capacity = max_size();
+					break ;						
+				}			
+			}
+			if (_size + count > target_capacity)
+				reserve(_size + count);
+			else
+				reserve(target_capacity);
 			
 			iterator it = begin();
 			iterator pos_after_resize(begin() + pos_index);
@@ -583,30 +581,38 @@ class vector
 				}				
 				return ;
 			}
-			
+
 			iterator new_range_start = pos_after_resize;
-			it = end() + count - 1;
+			it = end() + count - 1; // the future end()
+			
 			// extend the end of the vector with constructions
-			for (size_type i = 0; i < count; ++i)
+			while(it - count >= new_range_start && it >= end())
 			{
 				_allocator.construct(&(*it), *(it - count));
 				--it;
 			}
 
 			// translate the remaining values
-			for (size_type i = 0; i < _size - pos_index - count; ++i) {
-					*it = *(it - count);
-					--it;
-				}
+			if (_size > pos_index + count)
+			{
+				for (size_type i = 0; i < _size - pos_index - count; ++i) {
+						*it = *(it - count);
+						--it;
+					}
+			}
 				
 			// populate new values
-			for (size_type i = 0; i < count; ++i)
+			while (new_range_start <= it)
 			{
-				*new_range_start = value;
+				if (new_range_start < end())
+					*new_range_start = value;
+				else
+					_allocator.construct(&(*new_range_start), value);
 				++new_range_start;
 			}
 			
 			_size += count;
+			
 		}
 
 		/* 3 */
@@ -667,6 +673,8 @@ class vector
 		
 		void		resize( size_type count, T value = T() )
 		{
+			if (count > max_size())
+				throw std::length_error("Maximum possible size is exceeded"); 
 			if (_size > count) {
 				size_type diff = _size - count;
 				for (size_type i = 0; i < diff; ++i) {

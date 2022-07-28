@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 13:39:42 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 14:53:42 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -645,7 +645,7 @@ namespace ft
 				y->color = z->color;
 			}
 
-			_node_alloc.deallocate(z, sizeof(z));
+			_node_alloc.deallocate(z, sizeof(node_type));
 			
 			if (y_original_color == _S_black)
 				_rebalance_postDelete(x);
@@ -850,9 +850,9 @@ namespace ft
 
 		~RBT()
 		{
-			_node_alloc.deallocate(_null_node, sizeof(_null_node));
-			_node_alloc.deallocate(_null_begin, sizeof(_null_node));
-			_node_alloc.deallocate(_null_end, sizeof(_null_node));
+			_node_alloc.deallocate(_null_node, sizeof(node_type));
+			_node_alloc.deallocate(_null_begin, sizeof(node_type));
+			_node_alloc.deallocate(_null_end, sizeof(node_type));
 		}
 
 		// Inserting a node

@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/08 17:30:30 by mababou           #+#    #+#             */
-/*   Updated: 2022/06/13 17:33:16 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 12:26:01 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <iostream>
 # include <string>
+# include <limits>
 
 namespace ft {
 

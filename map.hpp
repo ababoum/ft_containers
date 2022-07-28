@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/14 14:06:48 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/25 19:43:00 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 15:30:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,109 @@ namespace ft
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 
 	private:
-		typedef RBT<Key, T, key_compare, allocator_type> RBT_map;
+		typedef RBT<Key, T, key_compare, allocator_type> _RBT_map;
+		typedef pair<key_type, mapped_type> _muggle_pair;
 
-		RBT_map _storage;
+		_RBT_map _storage;
 
+
+		pair<iterator, bool> _insertPair(const _muggle_pair & item)
+		{
+			pair<iterator, bool> ret;
+			iterator searched_key = find(item.first);
+
+			value_type item_to_insert(item.first, item.second);
+
+			// if map is empty, insert the node
+			if (empty())
+			{
+				ret.first = _storage.insert_node(item_to_insert);
+				ret.second = true;
+			}
+			// key found -> no duplicate allowed
+			else if (!searched_key.base()->is_nil)
+			{
+				ret.first = searched_key;
+				ret.second = false;
+			}
+			// no key found, proceed with inserting the node
+			else
+			{
+				ret.first = _storage.insert_node(item_to_insert);
+				ret.second = true;
+			}
+			return ret;
+		}
+
+		pair<iterator, bool> _insertPair(const value_type & item)
+		{
+			pair<iterator, bool> ret;
+			iterator searched_key = find(item.first);
+
+			// if map is empty, insert the node
+			if (empty())
+			{
+				ret.first = _storage.insert_node(item);
+				ret.second = true;
+			}
+			// key found -> no duplicate allowed
+			else if (!searched_key.base()->is_nil)
+			{
+				ret.first = searched_key;
+				ret.second = false;
+			}
+			// no key found, proceed with inserting the node
+			else
+			{
+				ret.first = _storage.insert_node(item);
+				ret.second = true;
+			}
+			return ret;
+		}
+
+		iterator _insertPair_hint(iterator hint, const _muggle_pair & item)
+		{
+			iterator searched_key = find(item.first);
+			value_type item_to_insert(item.first, item.second);
+
+			// is map is empty, insert the node
+			if (empty())
+			{
+				return _storage.insert_node(item_to_insert);
+			}
+			// key found -> no duplicate allowed
+			else if (!searched_key.base()->is_nil)
+			{
+				return searched_key;
+			}
+			// no key found, proceed with inserting the node
+			else
+			{
+				return _storage.insert_node_loc(hint, item_to_insert);
+			}
+		}
+
+		iterator _insertPair_hint(iterator hint, const value_type & item)
+		{
+			iterator searched_key = find(item.first);
+
+			// is map is empty, insert the node
+			if (empty())
+			{
+				return _storage.insert_node(item);
+			}
+			// key found -> no duplicate allowed
+			else if (!searched_key.base()->is_nil)
+			{
+				return searched_key;
+			}
+			// no key found, proceed with inserting the node
+			else
+			{
+				return _storage.insert_node_loc(hint, item);
+			}
+		}
+		
 	public:
 		/* MEMBER CLASSES */
 
@@ -96,7 +195,7 @@ namespace ft
 			_storage.setAllocator(alloc);
 			_storage.setComp(comp);
 			for (InputIt it = first; it != last; ++it) {
-				insert(*it);
+				_insertPair(*it);
 			}			
 		}
 
@@ -104,7 +203,7 @@ namespace ft
 		map(const map &other)
 		{
 			for (const_iterator it = other.begin(); it != other.end(); ++it) {
-				insert(*it);
+				_insertPair(*it);
 			}
 		}
 
@@ -240,30 +339,16 @@ namespace ft
 				ret.first = _storage.insert_node(value);
 				ret.second = true;
 			}
-
 			return ret;
 		}
 
 		/* 2 */
 		iterator insert(iterator hint, const value_type &value)
 		{
-			iterator searched_key = find(value.first);
+			iterator ret;
 
-			// is map is empty, insert the node
-			if (empty())
-			{
-				return _storage.insert_node(value);
-			}
-			// key found -> no duplicate allowed
-			else if (!searched_key.base()->is_nil)
-			{
-				return searched_key;
-			}
-			// no key found, proceed with inserting the node
-			else
-			{
-				return _storage.insert_node_loc(hint, value);
-			}
+			ret = _insertPair_hint(hint, value);
+			return ret;
 		}
 
 		/* 3 */
@@ -271,7 +356,7 @@ namespace ft
 		void insert(InputIt first, InputIt last)
 		{
 			for (InputIt it = first; it != last; ++it) {
-				insert(*it);
+				_insertPair(*it);
 			}
 		}
 
