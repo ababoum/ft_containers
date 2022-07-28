@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/28 14:53:42 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 16:21:56 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -495,7 +495,7 @@ namespace ft
 				return node;
 			}
 
-			if (key < node->pair_data.first)
+			if (_comp(key, node->pair_data.first))
 			{
 				return _treeExplorer(node->left, key);
 			}
@@ -601,7 +601,7 @@ namespace ft
 				if (node->pair_data.first == key)
 					z = node;
 
-				if (node->pair_data.first <= key)
+				if (_comp(node->pair_data.first, key) || node->pair_data.first == key)
 					node = node->right;
 				else
 					node = node->left;
@@ -920,7 +920,8 @@ namespace ft
 
 			// arrange hint
 			iterator tmp = hint + 1;
-			while (!tmp.base()->is_nil && tmp.base()->pair_data.first < pair_to_add.first)
+			while (!tmp.base()->is_nil && 
+				_comp(tmp.base()->pair_data.first, pair_to_add.first))
 			{
 				++hint;
 				++tmp;
@@ -1224,12 +1225,12 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair_data.first)
+			if (_comp(key, it.base()->pair_data.first))
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it).first)
+				if (key == (*it).first || _comp(key, (*it).first))
 					break;
 				++it;
 			}
@@ -1240,12 +1241,12 @@ namespace ft
 		{
 			const_iterator it = begin();
 
-			if (key < it.base()->pair_data.first)
+			if (_comp(key, it.base()->pair_data.first))
 				return it;
 
 			while (it != end())
 			{
-				if (key <= (*it).first)
+				if (key == (*it).first || _comp(key, (*it).first))
 					break;
 				++it;
 			}
@@ -1256,12 +1257,12 @@ namespace ft
 		{
 			iterator it = begin();
 
-			if (key < it.base()->pair_data.first)
+			if (_comp(key, it.base()->pair_data.first))
 				return it;
 
 			while (it != end())
 			{
-				if (key < (*it).first)
+				if (_comp(key, (*it).first))
 				{
 					break;
 				}
@@ -1279,7 +1280,7 @@ namespace ft
 
 			while (it != end())
 			{
-				if (key < (*it).first)
+				if (_comp(key, (*it).first))
 				{
 					break;
 				}

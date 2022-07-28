@@ -6,7 +6,7 @@
 /*   By: mababou <mababou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 20:27:11 by mababou           #+#    #+#             */
-/*   Updated: 2022/07/27 15:54:15 by mababou          ###   ########.fr       */
+/*   Updated: 2022/07/28 16:20:21 by mababou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,7 +426,7 @@ namespace ft
 				if (node->key == key)
 					z = node;
 
-				if (node->key <= key)
+				if (node->key == key || _comp(node->key, key))
 					node = node->right;
 				else
 					node = node->left;
@@ -744,7 +744,7 @@ namespace ft
 
 			// arrange hint
 			iterator tmp = hint + 1;
-			while (!tmp.base()->is_nil && tmp.base()->key < key_to_add)
+			while (!tmp.base()->is_nil && _comp(tmp.base()->key, key_to_add))
 			{
 				++hint;
 				++tmp;
